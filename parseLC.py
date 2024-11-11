@@ -64,7 +64,9 @@ class Opis:
         return dane
 
 if __name__ == "__main__":
-    op1 = Opis( 'https://lubimyczytac.pl/ksiazka/4883018/lkajace-ryby-i-inne-opowiadania' )
-    op2 = Opis( 'https://lubimyczytac.pl/ksiazka/168442/miraz-zlota' )
-    op3 = Opis( 'https://lubimyczytac.pl/ksiazka/72428/dom-przy-cmentarzu-t-1' )
-
+    op = []
+    op.append(Opis( 'https://lubimyczytac.pl/ksiazka/4883018/lkajace-ryby-i-inne-opowiadania' ) )
+    op.append(Opis( 'https://lubimyczytac.pl/ksiazka/168442/miraz-zlota' ) )
+    op.append(Opis( 'https://lubimyczytac.pl/ksiazka/72428/dom-przy-cmentarzu-t-1' ) )
+    op.append(Opis( 'https://lubimyczytac.pl/ksiazka/72428/dom-przy-cmentarzu-t-1' ) )
+    op.append(Opis( 'https://lubimyczytac.pl/ksiazka/72428/dom-przy-cmentarzu-t-1' ) )
