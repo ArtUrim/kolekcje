@@ -1,13 +1,12 @@
 <template>
   <nav class="left-menu">
     <div class="logo">
-      <h2>Logo</h2>
+      <h2>Kolekcje</h2>
     </div>
     <ul class="nav-links">
       <li><NuxtLink to="/">Home</NuxtLink></li>
-      <li><NuxtLink to="#features">Features</NuxtLink></li>
-      <li><NuxtLink to="/books">Books</NuxtLink></li>
-      <li><NuxtLink to="/contact">Contact</NuxtLink></li>
+      <li><NuxtLink to="/books">Książki</NuxtLink></li>
+      <li><NuxtLink to="/contact">Kontakt</NuxtLink></li>
     </ul>
   </nav>
 </template>

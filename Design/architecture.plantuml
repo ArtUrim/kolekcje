@@ -1,0 +1,17 @@
+@startuml
+
+
+[nginx] as proxy
+[nuxt] as front
+
+[Flask] as connector
+database mariaDB
+[redis] as cache
+
+proxy -> connector
+connector -> mariaDB
+connector -> cache
+
+proxy -> front
+
+@enduml
