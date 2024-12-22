@@ -11,12 +11,30 @@ services:
     volumes:
       - db-data:/var/lib/mysql
         #-./conf.d:/etc/mysql/conf.d
+    ports:
+      - 3306:3306
 
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
+
+  python:
+    image: ipython:latest
+    tty: true
+    stdin_open: true
+    working_dir: /pg
+    volumes:
+      - ./python:/pg
+
+  node:
+    image: node:lts-bookworm
+    tty: true
+    stdin_open: true
+    working_dir: /pg
+    volumes:
+      - ./node:/pg
 
 volumes:
   db-data:
