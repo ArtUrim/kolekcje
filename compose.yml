@@ -36,7 +36,8 @@ services:
       - 8080:8080
 
   python:
-    image: ipython:latest
+    build: ./connector
+    container_name: connector
     tty: true
     stdin_open: true
     working_dir: /pg
