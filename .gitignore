@@ -1,13 +1,13 @@
 # Nuxt dev/build outputs
-.output
-.data
-.nuxt
-.nitro
-.cache
-dist
+front/.output
+front/.data
+front/.nuxt
+front/.nitro
+front/.cache
+front/dist
 
 # Node dependencies
-node_modules
+front/node_modules
 
 # Logs
 logs
@@ -22,3 +22,7 @@ logs
 .env
 .env.*
 !.env.example
+
+**/Pipfile
+**/*~
+**/.*.swp

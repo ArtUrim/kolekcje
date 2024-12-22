@@ -1,0 +1,2 @@
+-i https://pypi.org/simple
+ddgr==2.2

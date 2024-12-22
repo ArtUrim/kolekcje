@@ -1,0 +1,626 @@
+{
+  "tables": [
+    {
+      "name": "genres",
+      "comment": "",
+      "color": "#175e7a",
+      "fields": [
+        {
+          "name": "id",
+          "type": "INT",
+          "comment": "",
+          "unique": true,
+          "increment": true,
+          "notNull": true,
+          "primary": true,
+          "default": "",
+          "check": "",
+          "id": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "size": 255,
+          "check": "",
+          "id": 1
+        }
+      ],
+      "indices": [],
+      "id": 0,
+      "x": 141.5999999999999,
+      "y": -213.1999999999998
+    },
+    {
+      "name": "language",
+      "comment": "",
+      "color": "#175e7a",
+      "fields": [
+        {
+          "name": "id",
+          "type": "INT",
+          "comment": "",
+          "unique": true,
+          "increment": true,
+          "notNull": true,
+          "primary": true,
+          "default": "",
+          "check": "",
+          "id": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "size": 64,
+          "check": "",
+          "id": 1
+        }
+      ],
+      "indices": [],
+      "id": 1,
+      "x": 146,
+      "y": 408.4000000000001
+    },
+    {
+      "name": "series",
+      "comment": "",
+      "color": "#175e7a",
+      "fields": [
+        {
+          "name": "id",
+          "type": "INT",
+          "comment": "",
+          "unique": true,
+          "increment": true,
+          "notNull": true,
+          "primary": true,
+          "default": "",
+          "check": "",
+          "id": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "size": 255,
+          "check": "",
+          "id": 1
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "check": "",
+          "id": 2
+        },
+        {
+          "name": "note",
+          "type": "TEXT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "check": "",
+          "id": 3
+        }
+      ],
+      "indices": [],
+      "id": 2,
+      "x": 142,
+      "y": 191.2
+    },
+    {
+      "name": "publisher",
+      "comment": "",
+      "color": "#175e7a",
+      "fields": [
+        {
+          "name": "id",
+          "type": "INT",
+          "comment": "",
+          "unique": true,
+          "increment": true,
+          "notNull": true,
+          "primary": true,
+          "default": "",
+          "check": "",
+          "id": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "size": 255,
+          "check": "",
+          "id": 1
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "check": "",
+          "id": 2
+        },
+        {
+          "name": "note",
+          "type": "TEXT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "check": "",
+          "id": 3
+        },
+        {
+          "name": "webpage",
+          "type": "TEXT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "check": "",
+          "id": 4
+        }
+      ],
+      "indices": [],
+      "id": 3,
+      "x": 144,
+      "y": -59.60000000000008
+    },
+    {
+      "name": "Authors",
+      "comment": "",
+      "color": "#175e7a",
+      "fields": [
+        {
+          "name": "id",
+          "type": "INT",
+          "comment": "",
+          "unique": true,
+          "increment": true,
+          "notNull": true,
+          "primary": true,
+          "default": "",
+          "check": "",
+          "id": 0
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "size": 255,
+          "check": "",
+          "id": 1
+        },
+        {
+          "name": "nationality_id",
+          "type": "INT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": true,
+          "default": "",
+          "check": "",
+          "id": 2
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "check": "",
+          "id": 3
+        },
+        {
+          "name": "birth_date",
+          "type": "DATE",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "check": "",
+          "id": 4
+        },
+        {
+          "name": "death_date",
+          "type": "DATE",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "check": "",
+          "id": 5
+        },
+        {
+          "name": "note",
+          "type": "TEXT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "check": "",
+          "id": 6
+        }
+      ],
+      "indices": [],
+      "id": 4,
+      "x": -796.4,
+      "y": 252.20000000000005
+    },
+    {
+      "name": "Books",
+      "comment": "",
+      "color": "#175e7a",
+      "fields": [
+        {
+          "name": "id",
+          "type": "INT",
+          "comment": "",
+          "unique": false,
+          "increment": true,
+          "notNull": true,
+          "primary": true,
+          "default": "",
+          "check": "",
+          "id": 0
+        },
+        {
+          "name": "isbn",
+          "type": "VARCHAR",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "size": 13,
+          "check": "",
+          "id": 1
+        },
+        {
+          "name": "title",
+          "type": "VARCHAR",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": true,
+          "primary": false,
+          "default": "",
+          "size": 512,
+          "check": "",
+          "id": 2
+        },
+        {
+          "name": "genre_id",
+          "type": "INT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": true,
+          "default": "",
+          "check": "",
+          "id": 3
+        },
+        {
+          "name": "release_date",
+          "type": "DATE",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "check": "",
+          "id": 4
+        },
+        {
+          "name": "first_polish_release_date",
+          "type": "DATE",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "check": "",
+          "id": 5
+        },
+        {
+          "name": "format",
+          "type": "ENUM",
+          "values": [
+            "unknown",
+            "hardback",
+            "paperback",
+            "ebook"
+          ],
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": true,
+          "primary": false,
+          "default": "unknown",
+          "check": "",
+          "id": 6
+        },
+        {
+          "name": "publisher_id",
+          "type": "INT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": true,
+          "default": "",
+          "check": "",
+          "id": 7,
+          "size": ""
+        },
+        {
+          "name": "pages",
+          "type": "INT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "check": "",
+          "id": 8
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "check": "",
+          "id": 9
+        },
+        {
+          "name": "note",
+          "type": "TEXT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "check": "",
+          "id": 10
+        },
+        {
+          "name": "series_id",
+          "type": "INT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": true,
+          "default": "",
+          "check": "",
+          "id": 11
+        },
+        {
+          "name": "original_title",
+          "type": "VARCHAR",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "size": 512,
+          "check": "",
+          "id": 12
+        },
+        {
+          "name": "translator",
+          "type": "VARCHAR",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": false,
+          "default": "",
+          "size": 512,
+          "check": "",
+          "id": 13
+        },
+        {
+          "name": "language_id",
+          "type": "INT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": true,
+          "default": "",
+          "check": "",
+          "id": 14,
+          "size": ""
+        }
+      ],
+      "indices": [],
+      "id": 5,
+      "x": -326.80000000000007,
+      "y": -227.8
+    },
+    {
+      "name": "bookAuthors",
+      "comment": "",
+      "color": "#175e7a",
+      "fields": [
+        {
+          "name": "book_id",
+          "type": "INT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": true,
+          "default": "",
+          "check": "",
+          "id": 0
+        },
+        {
+          "name": "author_id",
+          "type": "INT",
+          "comment": "",
+          "unique": false,
+          "increment": false,
+          "notNull": false,
+          "primary": true,
+          "default": "",
+          "check": "",
+          "id": 1
+        }
+      ],
+      "indices": [],
+      "id": 6,
+      "x": -804.0000000000002,
+      "y": -224.20000000000005
+    }
+  ],
+  "relationships": [
+    {
+      "name": "Authors_nationality_id_fk",
+      "startTableId": 4,
+      "endTableId": 1,
+      "endFieldId": 0,
+      "startFieldId": 2,
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "cardinality": "many_to_one",
+      "id": 0
+    },
+    {
+      "name": "Books_genre_id_fk",
+      "startTableId": 5,
+      "endTableId": 0,
+      "endFieldId": 0,
+      "startFieldId": 3,
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "cardinality": "many_to_one",
+      "id": 1
+    },
+    {
+      "name": "Books_language_id_fk",
+      "startTableId": 5,
+      "endTableId": 1,
+      "endFieldId": 0,
+      "startFieldId": 14,
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "cardinality": "many_to_one",
+      "id": 2
+    },
+    {
+      "name": "Books_series_id_fk",
+      "startTableId": 5,
+      "endTableId": 2,
+      "endFieldId": 0,
+      "startFieldId": 11,
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "cardinality": "many_to_one",
+      "id": 3
+    },
+    {
+      "name": "Books_publisher_id_fk",
+      "startTableId": 5,
+      "endTableId": 3,
+      "endFieldId": 0,
+      "startFieldId": 7,
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "cardinality": "many_to_one",
+      "id": 4
+    },
+    {
+      "name": "bookAuthors_book_id_fk",
+      "startTableId": 6,
+      "endTableId": 5,
+      "endFieldId": 0,
+      "startFieldId": 0,
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "cardinality": "many_to_one",
+      "id": 5
+    },
+    {
+      "name": "bookAuthors_author_id_fk",
+      "startTableId": 6,
+      "endTableId": 4,
+      "endFieldId": 0,
+      "startFieldId": 1,
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "cardinality": "many_to_one",
+      "id": 6
+    }
+  ],
+  "notes": [],
+  "subjectAreas": [],
+  "database": "generic",
+  "types": [],
+  "title": "Untitled Diagram"
+}
