@@ -39,7 +39,6 @@ CREATE TABLE `Books` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `isbn` varchar(13) DEFAULT NULL,
   `title` varchar(512) NOT NULL,
-  `genre_id` int(11) NOT NULL,
   `release_date` date DEFAULT NULL,
   `first_polish_release_date` date DEFAULT NULL,
   `format` enum('unknown','hardback','paperback','ebook') NOT NULL DEFAULT 'unknown',
@@ -51,12 +50,10 @@ CREATE TABLE `Books` (
   `original_title` varchar(512) DEFAULT NULL,
   `translator` varchar(512) DEFAULT NULL,
   `language_id` char(3) NOT NULL,
-  PRIMARY KEY (`id`,`genre_id`,`publisher_id`,`series_id`,`language_id`),
-  KEY `genre_id` (`genre_id`),
+  PRIMARY KEY (`id`,`publisher_id`,`series_id`,`language_id`),
   KEY `language_id` (`language_id`),
   KEY `series_id` (`series_id`),
   KEY `publisher_id` (`publisher_id`),
-  CONSTRAINT `Books_ibfk_1` FOREIGN KEY (`genre_id`) REFERENCES `genres` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `Books_ibfk_2` FOREIGN KEY (`language_id`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `Books_ibfk_3` FOREIGN KEY (`series_id`) REFERENCES `series` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `Books_ibfk_4` FOREIGN KEY (`publisher_id`) REFERENCES `publisher` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
@@ -84,6 +81,17 @@ INSERT INTO `genres` (`id`, `name`) VALUES
 (12,	'humanistyka'),
 (13,	'komiks'),
 (14,	'historia');
+
+DROP TABLE IF EXISTS `bookGenres`;
+CREATE TABLE `bookGenres` (
+  `book_id` int(11) NOT NULL,
+  `genre_id` int(11) NOT NULL,
+  PRIMARY KEY (`book_id`,`genre_id`),
+  KEY `genre_id` (`genre_id`),
+  CONSTRAINT `bookGenres_ibfk_1` FOREIGN KEY (`book_id`) REFERENCES `Books` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `bookGenres_ibfk_2` FOREIGN KEY (`genre_id`) REFERENCES `genres` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
 
 DROP TABLE IF EXISTS `language`;
 CREATE TABLE `language` (
