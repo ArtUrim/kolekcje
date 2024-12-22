@@ -14,6 +14,21 @@ services:
     ports:
       - 3306:3306
 
+  front:
+    container_name: front
+    image: node:lts-bookworm  
+    restart: always
+
+    working_dir: /front
+    entrypoint: ["npm", "run", "dev", "--", "-o", "--host", "0.0.0.0"]
+    #  mount the volumes so we can change code and hot reload
+    volumes:
+        - './front:/front'
+    #  port allows the host machine to link to container
+    #  8000 for vue ui, 5000 for our vue app
+    ports:
+        - "3000:3000"
+
   adminer:
     image: adminer
     restart: always
@@ -26,15 +41,16 @@ services:
     stdin_open: true
     working_dir: /pg
     volumes:
-      - ./python:/pg
+      - ./connector:/pg
+    entrypoint: ["ipython3"]
 
-  node:
-    image: node:lts-bookworm
-    tty: true
-    stdin_open: true
-    working_dir: /pg
-    volumes:
-      - ./node:/pg
+#  node:
+#    image: node:lts-bookworm
+#    tty: true
+#    stdin_open: true
+#    working_dir: /pg
+#    volumes:
+#      - ./node:/pg
 
 volumes:
   db-data:
