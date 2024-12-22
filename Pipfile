@@ -5,6 +5,10 @@ name = "pypi"
 
 [packages]
 ddgr = "*"
+mariadb = "*"
+bs4 = "*"
+requests = "*"
+selenium = "*"
 
 [dev-packages]
 

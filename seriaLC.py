@@ -13,7 +13,10 @@ bb[0].text
 
     
 try:
-    br.find_element( By.CLASS_NAME, 'icon-arrow-next').click()
+    pass
+    # ian = br.find_element( By.CLASS_NAME, 'icon-arrow-next')
+    # if ian:
+    #     ian.click()
 except Exception as e:
-    display(e)
+    print(e)
     

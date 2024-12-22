@@ -14,3 +14,24 @@ vals =
  'Tytuł oryginału',
  'Tłumacz',
  'Wydawnictwo'}
+
+autor = {
+    'Imie',
+    'Nazwisko',
+    'Narodowość',
+    'Opis',
+    'Data urodzenia',
+    'Data śmierci'
+    }
+
+wydawnictwo = {
+        'Nazwa',
+        'strona',
+        'Opis'
+        }
+
+seria = {
+    'Nazwa',
+    'Wydawnictwo',
+    'Opis'
+    }

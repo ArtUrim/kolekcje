@@ -1,6 +1,7 @@
 # coding: utf-8
 from bs4 import BeautifulSoup
 import requests
+import json
 
 class Opis:
 
@@ -68,5 +69,7 @@ if __name__ == "__main__":
     op.append(Opis( 'https://lubimyczytac.pl/ksiazka/4883018/lkajace-ryby-i-inne-opowiadania' ) )
     op.append(Opis( 'https://lubimyczytac.pl/ksiazka/168442/miraz-zlota' ) )
     op.append(Opis( 'https://lubimyczytac.pl/ksiazka/72428/dom-przy-cmentarzu-t-1' ) )
-    op.append(Opis( 'https://lubimyczytac.pl/ksiazka/72428/dom-przy-cmentarzu-t-1' ) )
-    op.append(Opis( 'https://lubimyczytac.pl/ksiazka/72428/dom-przy-cmentarzu-t-1' ) )
+
+    tj = [ o.dane for o in op ]
+    with open('output.json', 'w') as json_file:
+        json.dump(tj, json_file, indent=3)
