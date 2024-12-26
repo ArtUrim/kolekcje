@@ -1,0 +1,21 @@
+_HiStOrY_V2_
+\134h
+use katalog;
+show tables;
+insert into publisher (name,webpage) VALUES ('Wydawnictwo Akademickie Dialog','https://wydawnictwodialog.pl');
+describe publisher;
+describe Authors;
+describe language;
+select * from language where name like '%chi%';
+insert into Books (isbn,title,release_date,format,publisher_id,pages,language_id) VALUES ('9878380026520','Księżyc nad Funzhou',2016,'paperback',1,290,'pl_');
+
+describe bookGenres;
+select  * from genres;
+select  * from Authors;
+select a.id from Authors a where a.name = 'praca zbiorowa';
+describe Authors;
+insert into Authors (name,nationality_id) VALUES ('praca zbiorowa','zh_');
+ insert into Authors (name,nationality_id) VALUES ('praca zbiorowa','pl_');
+insert into bookAuthors (book_id ,author_id ) values (2,1);
+insert into bookGenres (book_id ,genre_id) value (2,5);
+select * from Books b where b.id = 2;
