@@ -26,3 +26,4 @@ logs
 **/Pipfile.lock
 **/*~
 **/.*.swp
+**/__pycache__
