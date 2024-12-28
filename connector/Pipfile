@@ -9,6 +9,7 @@ mariadb = "*"
 bs4 = "*"
 requests = "*"
 selenium = "*"
+flask = "*"
 
 [dev-packages]
 
