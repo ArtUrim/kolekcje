@@ -100,10 +100,7 @@ def get_books():
         for row in cur:
             book_dict = {}
             for i, column in enumerate(columns):
-                if column == 'release_date' and row[i]:
-                    book_dict[column] = row[i].strftime('%Y-%m-%d')
-                else:
-                    book_dict[column] = row[i]
+                book_dict[column] = row[i]
             results.append(book_dict)
 
         return jsonify({
