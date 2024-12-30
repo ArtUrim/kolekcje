@@ -43,7 +43,7 @@ services:
     working_dir: /pg
     volumes:
       - ./connector:/pg
-    entrypoint: ["ipython3"]
+    entrypoint: ["flask", "run", "--host=0.0.0.0"]
 
 #  node:
 #    image: node:lts-bookworm
