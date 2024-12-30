@@ -22,6 +22,44 @@ def get_db_connection():
         print(f"Error connecting to MariaDB: {e}")
         return None
 
+def sortPagination_query(params: Dict[str, Any]) -> tuple[str, list]:
+    """
+    Builds a sort and limit part of dynamic SQL query based on provided parameters
+    Returns tuple of (query_string, parameters_list)
+    """
+
+    conditions = []
+    parameters = []
+
+    if params.get('sort'):
+        order = 'ASC'
+        if params.get('order') and params['order'] == 'DESC':
+            order = 'DESC'
+        otype = None
+        if params['sort'] == 'title':
+            otype = 'b.title'
+        elif params['sort'] == 'author':
+            otype = 'authors'
+        elif params['sort'] == 'publisher':
+            otype = 'p.name'
+        elif params['sort'] == 'release':
+            otype = 'b.release_date'
+        elif params['sort'] == 'serie':
+            otype = 's.name'
+
+        if otype:
+            conditions.append( f"ORDER BY {otype} {order}" )
+
+    if params.get('items'):
+        page = 1
+        if params.get('page'):
+            page = int(params['page'])
+        conditions.append( "LIMIT ? OFFSET ?" )
+        parameters.extend( [int(params.get('items')), page])
+
+    return (conditions,parameters)
+        
+
 def build_query(params: Dict[str, Any]) -> tuple[str, list]:
     """
     Builds a dynamic SQL query based on provided parameters
@@ -65,6 +103,12 @@ def build_query(params: Dict[str, Any]) -> tuple[str, list]:
 
     base_query += " GROUP BY b.id, b.title, p.name, b.release_date, s.name"
 
+    (c,p) = sortPagination_query( params )
+    if c:
+        base_query += "\n" + "\n".join(c)
+    if p:
+        parameters.extend(p)
+
     return base_query, parameters
 
 @app.route('/book', methods=['GET'])
@@ -75,18 +119,7 @@ def get_books():
 
     try:
         # Get query parameters
-        params = {
-            'author': request.args.get('author'),
-            'title': request.args.get('title'),
-            'publisher': request.args.get('publisher'),
-            'serie': request.args.get('serie')
-        }
-
-        # Remove None values
-        params = {k: v for k, v in params.items() if v is not None}
-
-        if not params:
-            return jsonify({"error": "No search parameters provided"}), 400
+        params = { k: request.args.get(k) for k in request.args.keys() }
 
         query, parameters = build_query(params)
 
