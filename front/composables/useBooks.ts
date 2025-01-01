@@ -25,13 +25,7 @@ export const useBooks = () => {
       if (options.publisher) queryParams.append('publisher', options.publisher);
       if (options.serie) queryParams.append('serie', options.serie);
       
-      const { data, error } = await useAsyncData<BookResponse>(
-        'books',
-        () => $fetch(`/book?${queryParams.toString()}`),
-        {
-          watch: [searchParams],
-        }
-      );
+      const { data, error } = await useApi( '/book' )
 
       if (error.value) {
         throw new Error(error.value.message);
