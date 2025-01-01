@@ -24,8 +24,10 @@ export const useBooks = () => {
       if (options.author) queryParams.append('author', options.author);
       if (options.publisher) queryParams.append('publisher', options.publisher);
       if (options.serie) queryParams.append('serie', options.serie);
+
+		console.log( 'qqryq', queryParams.toString() )
       
-      const { data, error } = await useApi( '/book' )
+      const { data, error } = await useAPI( `/book?${queryParams.toString()}` )
 
       if (error.value) {
         throw new Error(error.value.message);
@@ -34,6 +36,7 @@ export const useBooks = () => {
       if (data.value) {
         items.value = data.value.books;
         totalItems.value = data.value.count;
+		  console.log( 'Items: ', items.value, ' total: ', totalItems.value )
       }
     } catch (err) {
       console.error('Error fetching books:', err);
