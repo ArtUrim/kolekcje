@@ -25,6 +25,8 @@ export const useBooks = () => {
       if (options.publisher) queryParams.append('publisher', options.publisher);
       if (options.serie) queryParams.append('serie', options.serie);
 
+		console.trace( 'Stack trace: ' )
+		console.log( options )
 		console.log( 'qqryq', queryParams.toString() )
       
       const { data, error } = await useAPI( `/book?${queryParams.toString()}` )

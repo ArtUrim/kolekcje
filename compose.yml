@@ -23,11 +23,13 @@ services:
     entrypoint: ["npm", "run", "dev", "--", "-o", "--host", "0.0.0.0"]
     #  mount the volumes so we can change code and hot reload
     volumes:
-        - './front:/front'
+      - './front:/front'
     #  port allows the host machine to link to container
     #  8000 for vue ui, 5000 for our vue app
     ports:
-        - "3000:3000"
+      - "3000:3000"
+    depends_on:
+      - connector
 
   adminer:
     image: adminer
@@ -35,7 +37,7 @@ services:
     ports:
       - 8080:8080
 
-  python:
+  connector:
     build: ./connector
     container_name: connector
     tty: true
@@ -44,6 +46,18 @@ services:
     volumes:
       - ./connector:/pg
     entrypoint: ["flask", "run", "--host=0.0.0.0"]
+    ports:
+      - "5000:5000"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80" # Expose Nginx on port 80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro # Mount custom Nginx config
+    depends_on:
+      - front
+      - connector
 
 #  node:
 #    image: node:lts-bookworm

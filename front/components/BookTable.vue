@@ -118,10 +118,10 @@ const formatDate = (date: string) => {
 };
 
 // Initial fetch
-onMounted(() => {
-  fetchBooks({
-    page: page.value,
-    itemsPerPage: itemsPerPage.value,
-  });
-});
+ // onMounted(() => {
+ //   fetchBooks({
+ //     page: page.value,
+ //     itemsPerPage: itemsPerPage.value,
+ //   });
+ // });
 </script>
