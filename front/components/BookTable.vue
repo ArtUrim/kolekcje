@@ -51,7 +51,7 @@
       @update:options="handleOptionsUpdate"
     >
       <template #item.release_date="{ item }">
-        {{ formatDate(item.release_date) }}
+        {{ item.release_date }}
       </template>
       
       <template #item.series_name="{ item }">
@@ -112,16 +112,11 @@ const handleOptionsUpdate = (options: any) => {
   });
 };
 
-// Format date helper
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString();
-};
-
 // Initial fetch
- // onMounted(() => {
- //   fetchBooks({
- //     page: page.value,
- //     itemsPerPage: itemsPerPage.value,
- //   });
- // });
+onMounted(() => {
+  fetchBooks({
+ 	page: page.value,
+ 	itemsPerPage: itemsPerPage.value,
+  });
+});
 </script>

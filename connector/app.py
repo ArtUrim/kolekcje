@@ -31,31 +31,33 @@ def sortPagination_query(params: Dict[str, Any]) -> tuple[str, list]:
     conditions = []
     parameters = []
 
-    if params.get('sort'):
+    if params.get('sortBy'):
         order = 'ASC'
-        if params.get('order') and params['order'] == 'DESC':
+        if params.get('orderDesc') and params['orderDesc'] == 'desc':
             order = 'DESC'
         otype = None
-        if params['sort'] == 'title':
+        if params['sortBy'] == 'title':
             otype = 'b.title'
-        elif params['sort'] == 'author':
+        elif params['sortBy'] == 'author':
             otype = 'authors'
-        elif params['sort'] == 'publisher':
+        elif params['sortBy'] == 'publisher':
             otype = 'p.name'
-        elif params['sort'] == 'release':
+        elif params['sortBy'] == 'release':
             otype = 'b.release_date'
-        elif params['sort'] == 'serie':
+        elif params['sortBy'] == 'serie':
             otype = 's.name'
 
         if otype:
             conditions.append( f"ORDER BY {otype} {order}" )
 
-    if params.get('items'):
+    if params.get('itemsPerPage'):
+        itemsPP = int(params.get('itemsPerPage'))
         page = 1
         if params.get('page'):
             page = int(params['page'])
+        offset = itemsPP*(page-1)
         conditions.append( "LIMIT ? OFFSET ?" )
-        parameters.extend( [int(params.get('items')), page])
+        parameters.extend( [itemsPP, offset] )
 
     return (conditions,parameters)
         
@@ -66,7 +68,7 @@ def build_query(params: Dict[str, Any]) -> tuple[str, list]:
     Returns tuple of (query_string, parameters_list)
     """
     base_query = """
-        SELECT DISTINCT
+        SELECT SQL_CALC_FOUND_ROWS DISTINCT
             b.title,
             GROUP_CONCAT(DISTINCT a.name) as authors,
             p.name as publisher,
@@ -136,9 +138,12 @@ def get_books():
                 book_dict[column] = row[i]
             results.append(book_dict)
 
+        cur.execute( "SELECT FOUND_ROWS()" )
+        count = cur.fetchall()[0][0] #@ TODO: error check!
+
         return jsonify({
             "status": "success",
-            "count": len(results),
+            "count": count,
             "books": results
         })
 
