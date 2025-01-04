@@ -24,10 +24,10 @@ export const useBooks = () => {
       if (options.author) queryParams.append('author', options.author);
       if (options.publisher) queryParams.append('publisher', options.publisher);
       if (options.serie) queryParams.append('serie', options.serie);
-
-		console.trace( 'Stack trace: ' )
-		console.log( options )
-		console.log( 'qqryq', queryParams.toString() )
+		if (options.page) queryParams.append('page', options.page );
+		if (options.itemsPerPage) queryParams.append('itemsPerPage', options.itemsPerPage );
+	   if (options.sortBy !== undefined && options.sortBy.length) queryParams.append('sortBy', options.sortBy[0]['key'] );
+	   if (options.sortBy !== undefined && options.sortBy.length) queryParams.append('sortDesc', options.sortBy[0]['order'] );
       
       const { data, error } = await useAPI( `/book?${queryParams.toString()}` )
 
@@ -38,7 +38,6 @@ export const useBooks = () => {
       if (data.value) {
         items.value = data.value.books;
         totalItems.value = data.value.count;
-		  console.log( 'Items: ', items.value, ' total: ', totalItems.value )
       }
     } catch (err) {
       console.error('Error fetching books:', err);
