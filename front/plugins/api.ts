@@ -2,7 +2,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   // const { session } = useUserSession()
 
   const api = $fetch.create({
-    baseURL: 'http://orange5.local',
+    baseURL: process.client ? `http://${window.location.host}` : 'http://localhost',
     onRequest({ request, options, error }) {
       // if (session.value?.token) {
       //   // note that this relies on ofetch >= 1.4.0 - you may need to refresh your lockfile
