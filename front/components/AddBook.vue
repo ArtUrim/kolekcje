@@ -5,53 +5,128 @@
         <v-row>
           <v-col cols="12" sm="6">
             <v-text-field
-              v-model="firstName"
-              label="First Name"
-              :rules="nameRules"
-              required
+              v-model="isbn"
+              label="ISBN"
+              :rules="isbnRules"
+              hint="10 or 13 characters"
             ></v-text-field>
           </v-col>
-          
+
           <v-col cols="12" sm="6">
             <v-text-field
-              v-model="lastName"
-              label="Last Name"
-              :rules="nameRules"
+              v-model="title"
+              label="Tytuł"
+              :rules="titleRules"
               required
             ></v-text-field>
           </v-col>
 
           <v-col cols="12" sm="6">
             <v-text-field
-              v-model="age"
-              label="Age"
+              v-model="author"
+              label="Autor"
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" sm="6">
+            <v-text-field
+              v-model="publishYear"
+              label="Data wydania"
               type="number"
-              :rules="ageRules"
-              required
+              :rules="yearRules"
             ></v-text-field>
           </v-col>
 
           <v-col cols="12" sm="6">
             <v-text-field
-              v-model="email"
-              label="Email"
-              :rules="emailRules"
-              required
+              v-model="firstPublishYear"
+              label="Data pierwszego wydania"
+              type="number"
+              :rules="yearRules"
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" sm="6">
+            <v-select
+              v-model="format"
+              :items="formatOptions"
+              label="Format"
+            ></v-select>
+          </v-col>
+
+          <v-col cols="12" sm="6">
+            <v-autocomplete
+              v-model="publisher"
+              :items="publisherHints"
+              label="Wydawca"
+              :search-input.sync="publisherSearch"
+              clearable
+              @update:search-input="searchPublisher"
+            ></v-autocomplete>
+          </v-col>
+
+          <v-col cols="12" sm="6">
+            <v-text-field
+              v-model="pages"
+              label="Liczba stron"
+              type="number"
+              :rules="pagesRules"
             ></v-text-field>
           </v-col>
 
           <v-col cols="12">
             <v-textarea
-              v-model="interests"
-              label="Interests"
+              v-model="description"
+              label="Opis"
               rows="3"
-              placeholder="Tell us about your interests..."
             ></v-textarea>
+          </v-col>
+
+          <v-col cols="12">
+            <v-textarea
+              v-model="notes"
+              label="Uwagi"
+              rows="3"
+            ></v-textarea>
+          </v-col>
+
+          <v-col cols="12" sm="6">
+            <v-text-field
+              v-model="series"
+              label="Seria"
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" sm="6">
+            <v-text-field
+              v-model="originalTitle"
+              label="Tytuł oryginalny"
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" sm="6">
+            <v-text-field
+              v-model="translator"
+              label="Tłumacz"
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" sm="6">
+            <v-text-field
+              v-model="language"
+              label="Język"
+            ></v-text-field>
           </v-col>
         </v-row>
 
         <v-card-actions class="pt-4">
           <v-spacer></v-spacer>
+          <v-btn
+            color="info"
+            @click="verifyForm"
+          >
+            Verify
+          </v-btn>
           <v-btn
             color="grey"
             text
@@ -76,37 +151,83 @@
 export default {
   data: () => ({
     valid: false,
-    firstName: '',
-    lastName: '',
-    age: '',
-    email: '',
-    interests: '',
-    nameRules: [
-      v => !!v || 'Name is required',
-      v => v.length <= 50 || 'Name must be less than 50 characters'
+    isbn: '',
+    title: '',
+    author: '',
+    publishYear: '',
+    firstPublishYear: '',
+    format: 'unknown',
+    publisher: '',
+    publisherSearch: null,
+    publisherHints: [],
+    pages: '',
+    description: '',
+    notes: '',
+    series: '',
+    originalTitle: '',
+    translator: '',
+    language: '',
+
+    formatOptions: [
+      { text: 'Unknown', value: 'unknown' },
+      { text: 'Hardback', value: 'hardback' },
+      { text: 'Paperback', value: 'paperback' },
+      { text: 'Ebook', value: 'ebook' }
     ],
-    ageRules: [
-      v => !!v || 'Age is required',
-      v => v >= 13 && v <= 19 || 'Age must be between 13 and 19'
+
+    isbnRules: [
+      v => !v || [10, 13].includes(v.length) || 'ISBN must be 10 or 13 characters'
     ],
-    emailRules: [
-      v => !!v || 'Email is required',
-      v => /.+@.+\..+/.test(v) || 'Email must be valid'
+    titleRules: [
+      v => !!v || 'Title is required'
+    ],
+    yearRules: [
+      v => !v || (parseInt(v) > 1000 && parseInt(v) <= new Date().getFullYear()) || 
+        'Year must be valid'
+    ],
+    pagesRules: [
+      v => !v || (parseInt(v) > 0) || 'Pages must be positive number'
     ]
   }),
+
   methods: {
+    async searchPublisher(val) {
+      if (val && val.length > 2) {
+        try {
+          const response = await fetch(`/api/series/hint?q=${val}`)
+          const data = await response.json()
+          this.publisherHints = data
+        } catch (error) {
+          console.error('Error fetching publisher hints:', error)
+        }
+      }
+    },
+
+    verifyForm() {
+      this.$refs.form.validate()
+    },
+
     submitForm() {
       if (this.$refs.form.validate()) {
-        // Handle form submission
         console.log('Form submitted:', {
-          firstName: this.firstName,
-          lastName: this.lastName,
-          age: this.age,
-          email: this.email,
-          interests: this.interests
+          isbn: this.isbn,
+          title: this.title,
+          author: this.author,
+          publishYear: this.publishYear,
+          firstPublishYear: this.firstPublishYear,
+          format: this.format,
+          publisher: this.publisher,
+          pages: this.pages,
+          description: this.description,
+          notes: this.notes,
+          series: this.series,
+          originalTitle: this.originalTitle,
+          translator: this.translator,
+          language: this.language
         })
       }
     },
+
     resetForm() {
       this.$refs.form.reset()
     }
