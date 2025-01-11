@@ -1,9 +1,11 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 import mariadb
 from typing import Optional, Dict, Any
 import sys
+import logging
 
 app = Flask(__name__)
+app.url_map.strict_slashes = False
 
 # Database configuration
 DB_CONFIG = {
@@ -153,6 +155,19 @@ def get_books():
     finally:
         if conn:
             conn.close()
+
+@app.route('/addbook', methods=['POST'])
+def add_books():
+    print("ok" )
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        # Process JSON data
+        data = request.get_json()
+        # ... your logic here ...
+        return jsonify({'message': 'Data received successfully'})
+    else:
+        return jsonify({'error': 'Unsupported Media Type'}), 415
+    return Response( status = 204 )
 
 @app.errorhandler(404)
 def not_found(error):

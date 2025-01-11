@@ -6,10 +6,21 @@
     <ul class="nav-links">
       <li><NuxtLink to="/">Home</NuxtLink></li>
       <li><NuxtLink to="/books">Książki</NuxtLink></li>
+		<li v-if="showAddBook">
+        <NuxtLink to="/addbook" class="small-text indent-left">Dodaj</NuxtLink>
+      </li>
       <li><NuxtLink to="/contact">Kontakt</NuxtLink></li>
     </ul>
   </nav>
 </template>
+
+<script setup>
+const route = useRoute()
+
+const showAddBook = computed(() => {
+  return ['/books', '/addbook'].includes(route.path)
+})
+</script>
 
 <style scoped>
 .left-menu {
@@ -62,5 +73,15 @@
     flex-direction: row;
     justify-content: center;
   }
+}
+
+.small-text {
+  font-size: 0.85em;
+  list-style-type: disc;
+  color: black;
+}
+
+.indent-left {
+  margin-left: 1rem; /* You can adjust this value to move it more or less */
 }
 </style>
