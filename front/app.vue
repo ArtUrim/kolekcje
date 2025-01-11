@@ -8,6 +8,5 @@
 
 <script setup>
 	const { $api } = useNuxtApp()
-	const { data: book } = await useAsyncData('book', () => $api('/book'))
 </script>
 

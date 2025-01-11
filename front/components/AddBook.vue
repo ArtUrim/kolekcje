@@ -207,7 +207,7 @@ export default {
       this.$refs.form.validate()
     },
 
-    submitForm() {
+    async submitForm() {
       if (this.$refs.form.validate()) {
         console.log('Form submitted:', {
           isbn: this.isbn,
@@ -225,6 +225,24 @@ export default {
           translator: this.translator,
           language: this.language
         })
+		  try {
+		  	
+		  	const { data, error } = await useAPI( "/addbook" )
+
+		  	if (error.value) {
+		 	 	throw new Error(error.value.message);
+		  	}
+
+		  	if (data.value) {
+		  	items.value = data.value.books;
+		  	totalItems.value = data.value.count;
+		  	}
+		  } catch (err) {
+		  	console.error('Error fetching books:', err);
+		  	// Handle error appropriately
+		  } finally {
+		  	loading.value = false;
+		  }
       }
     },
 

@@ -77,12 +77,11 @@ const showAddBook = computed(() => {
 
 .small-text {
   font-size: 0.85em;
+  list-style-type: disc;
+  color: black;
 }
 
 .indent-left {
   margin-left: 1rem; /* You can adjust this value to move it more or less */
-  /* Alternative approach using padding:
-  padding-left: 1rem;
-  */
 }
 </style>
