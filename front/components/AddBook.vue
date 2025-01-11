@@ -169,10 +169,10 @@ export default {
     language: '',
 
     formatOptions: [
-      { text: 'Unknown', value: 'unknown' },
-      { text: 'Hardback', value: 'hardback' },
-      { text: 'Paperback', value: 'paperback' },
-      { text: 'Ebook', value: 'ebook' }
+       'unknown',
+       'hardback',
+       'paperback',
+       'ebook'
     ],
 
     isbnRules: [
@@ -209,7 +209,7 @@ export default {
 
     async submitForm() {
       if (this.$refs.form.validate()) {
-        console.log('Form submitted:', {
+			const bookData = {
           isbn: this.isbn,
           title: this.title,
           author: this.author,
@@ -224,27 +224,31 @@ export default {
           originalTitle: this.originalTitle,
           translator: this.translator,
           language: this.language
-        })
-		  try {
-		  	
-		  	const { data, error } = await useAPI( "/addbook" )
+        };
+        console.log('Form submitted:', bookData )
+			try {
+				const response = await fetch('/api/addbook', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(bookData)
+				});
 
-		  	if (error.value) {
-		 	 	throw new Error(error.value.message);
-		  	}
+				const data = await response.json();
+				if (!response.ok) {
+					throw new Error(data.message || 'Error adding book');
+				}
 
-		  	if (data.value) {
-		  	items.value = data.value.books;
-		  	totalItems.value = data.value.count;
-		  	}
-		  } catch (err) {
-		  	console.error('Error fetching books:', err);
-		  	// Handle error appropriately
-		  } finally {
-		  	loading.value = false;
-		  }
-      }
-    },
+				// Handle successful response
+				console.log('Book added successfully:', data);
+
+			} catch (err) {
+				console.error('Error adding book:', err);
+				// Handle error appropriately
+			}
+		}
+	 },
 
     resetForm() {
       this.$refs.form.reset()
