@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import requests
 import json
 
+import nameUtils
+
 class Opis:
 
     def __init__(self, page : str ):
@@ -64,7 +66,8 @@ class Opis:
 
         return dane
 
-if __name__ == "__main__":
+
+def oldMain():
     op = []
     op.append(Opis( 'https://lubimyczytac.pl/ksiazka/4883018/lkajace-ryby-i-inne-opowiadania' ) )
     op.append(Opis( 'https://lubimyczytac.pl/ksiazka/168442/miraz-zlota' ) )
@@ -74,3 +77,14 @@ if __name__ == "__main__":
     tj = [ o.dane for o in op ]
     with open('output.json', 'w') as json_file:
         json.dump(tj, json_file, indent=3)
+
+if __name__ == "__main__":
+    with open( "newUnicorns.txt", "rt" ) as fh:
+        books = [ b.strip('\n') for b in fh.readlines()]
+
+    for b in books:
+        bn = nameUtils.transform_name( nameUtils.get_basename_from_uri( b ) )
+        print(bn)
+        opis = Opis( b )
+        with open( bn + '.json', 'w' ) as fh:
+            json.dump( nameUtils.translate_keys(opis.dane), fh, indent=3 )

@@ -3,6 +3,7 @@ import mariadb
 from typing import Optional, Dict, Any
 import sys
 import logging
+import json
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -164,6 +165,10 @@ def add_books():
         import ipdb; ipdb.set_trace()
         # Process JSON data
         data = request.get_json()
+        with open('data.json', 'w') as f:
+            json.dump(data, f, indent=3)
+        if data.get('title'):
+            print("ok")
         # ... your logic here ...
         return jsonify({'message': 'Data received successfully'})
     else:
