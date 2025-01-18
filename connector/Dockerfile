@@ -1,4 +1,6 @@
-FROM ipython:latest
+FROM python:latest
+
+RUN pip install ipython mariadb requests bs4
 
 ADD requirements.txt .
 
