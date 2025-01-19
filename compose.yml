@@ -45,7 +45,7 @@ services:
     working_dir: /pg
     volumes:
       - ./connector:/pg
-    entrypoint: ["flask", "run", "--host=0.0.0.0"]
+    entrypoint: ["flask", "run", "--debug", "--host=0.0.0.0"]
     ports:
       - "5000:5000"
 

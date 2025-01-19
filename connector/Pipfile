@@ -10,6 +10,7 @@ bs4 = "*"
 requests = "*"
 selenium = "*"
 flask = "*"
+jsonschema = "*"
 
 [dev-packages]
 
