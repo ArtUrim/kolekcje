@@ -5,6 +5,8 @@ import sys
 import logging
 import json
 
+from addBook import BookDatabase
+
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
@@ -162,15 +164,24 @@ def add_books():
     print("ok" )
     content_type = request.headers.get('Content-Type')
     if content_type == 'application/json':
-        import ipdb; ipdb.set_trace()
-        # Process JSON data
-        data = request.get_json()
-        with open('data.json', 'w') as f:
-            json.dump(data, f, indent=3)
-        if data.get('title'):
-            print("ok")
-        # ... your logic here ...
-        return jsonify({'message': 'Data received successfully'})
+        try:
+            # Process JSON data
+            data = request.get_json()
+            with open('data.json', 'w') as f: # temporary: for debug
+                json.dump(data, f, indent=3)
+            if data.get('title'): 
+                logging.info(f"Receive new book, title: {data['title']}")
+            conn = get_db_connection()
+            if conn:
+                db = BookDatabase( conn )
+                db.insert_book( data )
+                conn.close()
+            else:
+                logging.warn( f"Connection to DB not successful" )
+        except Exception as e:
+            logging.warn(f"Error processing addbook POST request: {e}")
+            if data and data.get('title'):
+                logging.warn( f"for the book {data['title']}")
     else:
         return jsonify({'error': 'Unsupported Media Type'}), 415
     return Response( status = 204 )
