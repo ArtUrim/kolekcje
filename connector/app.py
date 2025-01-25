@@ -186,6 +186,53 @@ def add_books():
         return jsonify({'error': 'Unsupported Media Type'}), 415
     return Response( status = 204 )
 
+# In-memory storage for publishers (in a real app, this would be a database)
+publishers: List[Dict[str, any]] = [
+    {"title": "Penguin Random House", "value": "Penguin Random House"},
+    {"title": "HarperCollins", "value": "HarperCollins"},
+    {"title": "Simon & Schuster", "value": "Simon & Schuster"}
+]
+
+@app.route('/api/publishers', methods=['GET'])
+def get_publishers():
+    query = request.args.get('query', '').lower()
+
+    if query:
+        filtered_publishers = [
+            publisher for publisher in publishers
+            if query in publisher['title'].lower()
+        ]
+        return jsonify(filtered_publishers)
+
+    return jsonify(publishers)
+
+@app.route('/api/publisher/add', methods=['POST'])
+def add_publisher():
+    try:
+        data = request.get_json()
+
+        # Validate required fields
+        if not all(key in data for key in ['value', 'title']):
+            return jsonify({'error': 'Missing required fields'}), 400
+
+        # Validate data types
+        if not isinstance(data['value'], str):
+            return jsonify({'error': 'Value must be a string'}), 400
+        if not isinstance(data['title'], str):
+            return jsonify({'error': 'Title must be a string'}), 400
+
+        # Check if publisher with same ID already exists
+        if any(p['value'] == data['value'] for p in publishers):
+            return jsonify({'error': 'Publisher with this title already exists'}), 409
+
+        publishers.append( data )
+
+        return jsonify({'message': 'Publisher added successfully'}), 201
+
+    except json.JSONDecodeError:
+        return jsonify({'error': 'Invalid JSON'}), 400
+
+
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({"error": "Not found"}), 404
