@@ -1,7 +1,7 @@
 <template>
   <div class="grid-container">
     <div class="centered-content">
-		 <h2>아르두르</h2>
+		 <h2>아르두르 Łoziński</h2>
     </div>
   </div>
 </template>
