@@ -187,27 +187,43 @@ def add_books():
         return jsonify({'error': 'Unsupported Media Type'}), 415
     return Response( status = 204 )
 
-# In-memory storage for publishers (in a real app, this would be a database)
-publishers: List[Dict[str, any]] = [
-    {"title": "Penguin Random House", "value": "Penguin Random House"},
-    {"title": "HarperCollins", "value": "HarperCollins"},
-    {"title": "Simon & Schuster", "value": "Simon & Schuster"}
-]
-
-@app.route('/api/publishers', methods=['GET'])
+@app.route('/publishers', methods=['GET'])
 def get_publishers():
-    query = request.args.get('query', '').lower()
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database connection failed"}), 500
 
-    if query:
-        filtered_publishers = [
-            publisher for publisher in publishers
-            if query in publisher['title'].lower()
-        ]
-        return jsonify(filtered_publishers)
+    try:
+        query = request.args.get('query', '').lower()
+        cur = conn.cursor()
 
-    return jsonify(publishers)
+        if query:
+            # Query with filter
+            sql = "SELECT name as title, name as value FROM publisher WHERE LOWER(name) LIKE ?"
+            cur.execute(sql, [f'%{query}%'])
+        else:
+            # Query all publishers
+            sql = "SELECT name as title, name as value FROM publisher"
+            cur.execute(sql)
 
-@app.route('/api/publisher/add', methods=['POST'])
+        # Fetch results
+        publishers = []
+        for row in cur:
+            publishers.append({
+                "title": row[0],
+                "value": row[1]
+            })
+
+        return jsonify(publishers)
+
+    except mariadb.Error as e:
+        return jsonify({"error": f"Database error: {str(e)}"}), 500
+
+    finally:
+        if conn:
+            conn.close()
+
+@app.route('/publisher/add', methods=['POST'])
 def add_publisher():
     try:
         data = request.get_json()

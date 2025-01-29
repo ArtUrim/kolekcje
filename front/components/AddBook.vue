@@ -34,7 +34,7 @@
               label="Data wydania"
               type="number"
               :rules="yearRules"
-            ></v-text-field>
+           ></v-text-field>
           </v-col>
 
           <v-col cols="12" sm="6">
@@ -54,16 +54,10 @@
             ></v-select>
           </v-col>
 
-          <v-col cols="12" sm="6">
-            <v-autocomplete
-              v-model="publisher"
-              :items="publisherHints"
-              label="Wydawca"
-              :search-input.sync="publisherSearch"
-              clearable
-              @update:search-input="searchPublisher"
-            ></v-autocomplete>
-          </v-col>
+			 <!-- Replace the existing v-autocomplete block with: -->
+			 <v-col cols="12" sm="6">
+				 <Publisher v-model="publisher" />
+			 </v-col>
 
           <v-col cols="12" sm="6">
             <v-text-field
@@ -149,6 +143,7 @@
 
 <script>
 export default {
+
   data: () => ({
     valid: false,
     isbn: '',
@@ -158,8 +153,6 @@ export default {
     firstPublishYear: '',
     format: 'unknown',
     publisher: '',
-    publisherSearch: null,
-    publisherHints: [],
     pages: '',
     description: '',
     notes: '',
@@ -191,17 +184,6 @@ export default {
   }),
 
   methods: {
-    async searchPublisher(val) {
-      if (val && val.length > 2) {
-        try {
-          const response = await fetch(`/api/series/hint?q=${val}`)
-          const data = await response.json()
-          this.publisherHints = data
-        } catch (error) {
-          console.error('Error fetching publisher hints:', error)
-        }
-      }
-    },
 
     verifyForm() {
       this.$refs.form.validate()
