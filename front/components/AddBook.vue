@@ -54,9 +54,13 @@
             ></v-select>
           </v-col>
 
-			 <!-- Replace the existing v-autocomplete block with: -->
-			 <v-col cols="12" sm="6">
-				 <Publisher v-model="publisher" />
+			 <v-col cols="12" sm="6">  
+				 <AutocompleteField  
+						v-model="publisher"  
+						label="Publisher"  
+						placeholder="Select or add a publisher"  
+						api-endpoint="/api/publishers"  
+						/>  
 			 </v-col>
 
           <v-col cols="12" sm="6">
@@ -84,12 +88,14 @@
             ></v-textarea>
           </v-col>
 
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="series"
-              label="Seria"
-            ></v-text-field>
-          </v-col>
+			 <v-col cols="12" sm="6">
+				 <AutocompleteField
+					v-model="series"
+					label="Series"
+					placeholder="Select or add a series"
+					api-endpoint="/api/series"
+					/>
+			 </v-col>
 
           <v-col cols="12" sm="6">
             <v-text-field
@@ -198,11 +204,11 @@ export default {
           publishYear: this.publishYear,
           firstPublishYear: this.firstPublishYear,
           format: this.format,
-          publisher: this.publisher,
+          publisher: this.publisher.value,
           pages: this.pages,
           description: this.description,
           notes: this.notes,
-          series: this.series,
+          series: this.series.title,
           originalTitle: this.originalTitle,
           translator: this.translator,
           language: this.language
@@ -217,17 +223,28 @@ export default {
 					body: JSON.stringify(bookData)
 				});
 
-				const data = await response.json();
-				if (!response.ok) {
-					throw new Error(data.message || 'Error adding book');
-				}
+				if (response.status === 204) {
+                // Success case - status 204 No Content
+                console.log('Book added successfully');
+                // You might want to add user feedback here, like:
+                // this.$emit('book-added') or show a success message
+                return;
+            }
 
-				// Handle successful response
-				console.log('Book added successfully:', data);
+            // For non-204 responses, try to parse response body
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || `Error adding book (Status: ${response.status})`);
+            }
+
+            // Handle other successful responses (if any)
+            console.log('Book added with response:', data);
 
 			} catch (err) {
 				console.error('Error adding book:', err);
-				// Handle error appropriately
+				// You might want to add user feedback here, like:  
+            // this.$emit('error', err.message) or show an error message
 			}
 		}
 	 },

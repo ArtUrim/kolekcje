@@ -7,6 +7,12 @@ import json
 from typing import List, Dict
 
 from addBook import BookDatabase
+# Add to imports at the top
+from table_handler import TableHandler
+
+# Create handlers after app initialization
+publisher_handler = TableHandler('publisher')
+series_handler = TableHandler('series')
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -175,7 +181,7 @@ def add_books():
             conn = get_db_connection()
             if conn:
                 db = BookDatabase( conn )
-                db.insert_book( data )
+                #db.insert_book( data )
                 conn.close()
             else:
                 logging.warn( f"Connection to DB not successful" )
@@ -187,68 +193,84 @@ def add_books():
         return jsonify({'error': 'Unsupported Media Type'}), 415
     return Response( status = 204 )
 
-@app.route('/publishers', methods=['GET'])
-def get_publishers():
-    conn = get_db_connection()
-    if not conn:
-        return jsonify({"error": "Database connection failed"}), 500
+# Modify the existing get_publishers function  
+@app.route('/publishers', methods=['GET'])  
+def get_publishers():  
+    conn = get_db_connection()  
+    if not conn:  
+        return jsonify({"error": "Database connection failed"}), 500  
 
-    try:
-        query = request.args.get('query', '').lower()
-        cur = conn.cursor()
+    try:  
+        query = request.args.get('query', '')  
+        publishers = publisher_handler.get_items(conn, query)  
+        return jsonify(publishers)  
 
-        if query:
-            # Query with filter
-            sql = "SELECT name as title, name as value FROM publisher WHERE LOWER(name) LIKE ?"
-            cur.execute(sql, [f'%{query}%'])
-        else:
-            # Query all publishers
-            sql = "SELECT name as title, name as value FROM publisher"
-            cur.execute(sql)
+    except Exception as e:  
+        return jsonify({"error": str(e)}), 500  
 
-        # Fetch results
-        publishers = []
-        for row in cur:
-            publishers.append({
-                "title": row[0],
-                "value": row[1]
-            })
+    finally:  
+        if conn:  
+            conn.close()  
 
-        return jsonify(publishers)
+# Add new series endpoints  
+@app.route('/series', methods=['GET'])  
+def get_series():  
+    conn = get_db_connection()  
+    if not conn:  
+        return jsonify({"error": "Database connection failed"}), 500  
 
-    except mariadb.Error as e:
-        return jsonify({"error": f"Database error: {str(e)}"}), 500
+    try:  
+        query = request.args.get('query', '')  
+        series = series_handler.get_items(conn, query)  
+        return jsonify(series)  
 
-    finally:
-        if conn:
+    except Exception as e:  
+        return jsonify({"error": str(e)}), 500  
+
+    finally:  
+        if conn:  
+            conn.close()  
+
+@app.route('/series/add', methods=['POST'])  
+def add_series():  
+    conn = get_db_connection()  
+    if not conn:  
+        return jsonify({"error": "Database connection failed"}), 500  
+
+    try:  
+        data = request.get_json()  
+        series_handler.add_item(conn, data)  
+        return jsonify({'message': 'Series added successfully'}), 201  
+
+    except ValueError as e:  
+        return jsonify({'error': str(e)}), 400  
+    except Exception as e:  
+        return jsonify({'error': str(e)}), 500  
+
+    finally:  
+        if conn:  
+            conn.close()  
+
+# Modify the existing publisher/add endpoint  
+@app.route('/publisher/add', methods=['POST'])  
+def add_publisher():  
+    conn = get_db_connection()  
+    if not conn:  
+        return jsonify({"error": "Database connection failed"}), 500  
+
+    try:  
+        data = request.get_json()  
+        publisher_handler.add_item(conn, data)  
+        return jsonify({'message': 'Publisher added successfully'}), 201  
+
+    except ValueError as e:  
+        return jsonify({'error': str(e)}), 400  
+    except Exception as e:  
+        return jsonify({'error': str(e)}), 500  
+
+    finally:  
+        if conn:  
             conn.close()
-
-@app.route('/publisher/add', methods=['POST'])
-def add_publisher():
-    try:
-        data = request.get_json()
-
-        # Validate required fields
-        if not all(key in data for key in ['value', 'title']):
-            return jsonify({'error': 'Missing required fields'}), 400
-
-        # Validate data types
-        if not isinstance(data['value'], str):
-            return jsonify({'error': 'Value must be a string'}), 400
-        if not isinstance(data['title'], str):
-            return jsonify({'error': 'Title must be a string'}), 400
-
-        # Check if publisher with same ID already exists
-        if any(p['value'] == data['value'] for p in publishers):
-            return jsonify({'error': 'Publisher with this title already exists'}), 409
-
-        publishers.append( data )
-
-        return jsonify({'message': 'Publisher added successfully'}), 201
-
-    except json.JSONDecodeError:
-        return jsonify({'error': 'Invalid JSON'}), 400
-
 
 @app.errorhandler(404)
 def not_found(error):
