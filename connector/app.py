@@ -181,7 +181,7 @@ def add_books():
             conn = get_db_connection()
             if conn:
                 db = BookDatabase( conn )
-                #db.insert_book( data )
+                db.insert_book( data )
                 conn.close()
             else:
                 logging.warn( f"Connection to DB not successful" )
