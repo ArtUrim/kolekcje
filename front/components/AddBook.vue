@@ -117,6 +117,15 @@
               label="Język"
             ></v-text-field>
           </v-col>
+
+			 <v-col cols="12" sm="6">
+				 <AutocompleteField
+					v-model="genre"
+					label="gatunek"
+					placeholder="Select or add a series"
+					api-endpoint="/api/genres"
+					/>
+			 </v-col>
         </v-row>
 
         <v-card-actions class="pt-4">
@@ -166,6 +175,8 @@ export default {
     originalTitle: '',
     translator: '',
     language: '',
+	 genre: [],
+	 genreProp: ['proza','poezja'],
 
     formatOptions: [
        'unknown',
@@ -196,6 +207,7 @@ export default {
     },
 
     async submitForm() {
+		console.log( `PP: ${this.publisher}` )
       if (this.$refs.form.validate()) {
 			const bookData = {
           isbn: this.isbn,
@@ -204,14 +216,18 @@ export default {
           publishYear: this.publishYear,
           firstPublishYear: this.firstPublishYear,
           format: this.format,
-          publisher: this.publisher.value,
+				publisher: { 
+					name: this.publisher.value,
+					id: this.publisher.id,
+				},
           pages: this.pages,
           description: this.description,
           notes: this.notes,
           series: this.series.title,
-          originalTitle: this.originalTitle,
+			 originalTitle: this.originalTitle,
           translator: this.translator,
-          language: this.language
+          language: this.language,
+		  	 genre: this.genre.split(',').map( str => str.trim() )
         };
         console.log('Form submitted:', bookData )
 			try {

@@ -8,6 +8,8 @@
         :placeholder="placeholder"
         clearable
         @input="updateValue"
+		  :multiple="clearOnSelect"
+		  :clear-on-select="false"
     >
         <template v-slot:no-data>
             <v-list-item>
@@ -38,7 +40,11 @@ export default {
         apiEndpoint: {
             type: String,
             required: true
-        }
+        },
+		 clearOnSelect: {
+			 type: Boolean,
+			 default: false
+		 }
     },
     data() {
         return {
@@ -79,6 +85,7 @@ export default {
         value: {
             immediate: true,
             handler(newValue) {
+					 console.log( ` selectedValueLocal ${newValue}` )
                 this.selectedValueLocal = newValue
             }
         },

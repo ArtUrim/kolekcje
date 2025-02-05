@@ -11,17 +11,18 @@ class TableHandler:
             cur = conn.cursor()
 
             if query:
-                sql = f"SELECT {self.name_field} as title, {self.name_field} as value FROM {self.table_name} WHERE LOWER({self.name_field}) LIKE ?"
+                sql = f"SELECT {self.name_field} as title, id FROM {self.table_name} WHERE LOWER({self.name_field}) LIKE ?"
                 cur.execute(sql, [f'%{query.lower()}%'])
             else:
-                sql = f"SELECT {self.name_field} as title, {self.name_field} as value FROM {self.table_name}"
+                sql = f"SELECT {self.name_field} as title, id  FROM {self.table_name}"
                 cur.execute(sql)
 
             items = []
             for row in cur:
                 items.append({
                     "title": row[0],
-                    "value": row[1]
+                    "value": row[0],
+                    "id": row[1]
                 })
             return items
 
