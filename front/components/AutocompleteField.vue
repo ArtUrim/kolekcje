@@ -85,7 +85,6 @@ export default {
         value: {
             immediate: true,
             handler(newValue) {
-					 console.log( ` selectedValueLocal ${newValue}` )
                 this.selectedValueLocal = newValue
             }
         },

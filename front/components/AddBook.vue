@@ -167,7 +167,7 @@ export default {
     publishYear: '',
     firstPublishYear: '',
     format: 'unknown',
-    publisher: '',
+    publisher: null,
     pages: '',
     description: '',
     notes: '',
@@ -207,7 +207,6 @@ export default {
     },
 
     async submitForm() {
-		console.log( `PP: ${this.publisher}` )
       if (this.$refs.form.validate()) {
 			const bookData = {
           isbn: this.isbn,
@@ -216,19 +215,21 @@ export default {
           publishYear: this.publishYear,
           firstPublishYear: this.firstPublishYear,
           format: this.format,
-				publisher: { 
-					name: this.publisher.value,
-					id: this.publisher.id,
-				},
           pages: this.pages,
           description: this.description,
           notes: this.notes,
-          series: this.series.title,
 			 originalTitle: this.originalTitle,
           translator: this.translator,
           language: this.language,
-		  	 genre: this.genre.split(',').map( str => str.trim() )
         };
+			if( typeof this.publisher == 'string' || this.publisher instanceof String  ) {
+				bookData.publisher = this.publisher;
+			} else {
+				if( this.publisher !== null ) {
+					bookData.publisher = { name: this.publisher.value,
+						id: this.publisher.id }
+				}
+			}
         console.log('Form submitted:', bookData )
 			try {
 				const response = await fetch('/api/addbook', {
