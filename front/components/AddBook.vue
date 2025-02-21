@@ -119,7 +119,7 @@
           </v-col>
 
 			 <v-col cols="12" sm="6">
-				 <AutocompleteField
+				 <GenreCheck
 					v-model="genre"
 					label="gatunek"
 					placeholder="Select or add a series"
