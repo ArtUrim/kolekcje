@@ -14,12 +14,12 @@ export default defineNuxtConfig({
   ],
 
   vuetify: {
-	  moduleOptions: {
-		  /* module specific options */
-	  },
-	  vuetifyOptions: {
-		  /* vuetify options */
-	  }
+      moduleOptions: {
+          /* module specific options */
+      },
+      vuetifyOptions: {
+          /* vuetify options */
+      }
   },
 
   // Build Configuration

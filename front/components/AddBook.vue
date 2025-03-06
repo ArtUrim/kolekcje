@@ -21,6 +21,27 @@
             ></v-text-field>
           </v-col>
 
+			 <v-col cols="12">
+				 <GenreCheck
+					v-model="genre"
+					label="gatunek"
+					placeholder="Select or add a series"
+					api-endpoint="/api/genres"
+					/>
+			 </v-col>
+
+			 <v-col cols="12" sm="6">  
+				 <ExtendedAutocompleteField  
+						v-model="publisher"  
+						label="Publisher"  
+						placeholder="Select or add a publisher"  
+						api-endpoint="/api/publishers"  
+						@additional-inputs="handleAdditionalInputs"
+						/>  
+			 </v-col>
+
+<!--
+
           <v-col cols="12" sm="6">
             <v-text-field
               v-model="author"
@@ -53,15 +74,6 @@
               label="Format"
             ></v-select>
           </v-col>
-
-			 <v-col cols="12" sm="6">  
-				 <AutocompleteField  
-						v-model="publisher"  
-						label="Publisher"  
-						placeholder="Select or add a publisher"  
-						api-endpoint="/api/publishers"  
-						/>  
-			 </v-col>
 
           <v-col cols="12" sm="6">
             <v-text-field
@@ -117,15 +129,7 @@
               label="Język"
             ></v-text-field>
           </v-col>
-
-			 <v-col cols="12" sm="6">
-				 <GenreCheck
-					v-model="genre"
-					label="gatunek"
-					placeholder="Select or add a series"
-					api-endpoint="/api/genres"
-					/>
-			 </v-col>
+        -->
         </v-row>
 
         <v-card-actions class="pt-4">
@@ -200,75 +204,158 @@ export default {
     ]
   }),
 
-  methods: {
+	methods: {
+		/**
+		* Handles additional inputs from the ExtendedAutocompleteField component
+		* @param {Array} inputs - Array of values entered in the additional comboboxes
+		*/
+		handleAdditionalInputs(inputs) {
+			// Store the additional inputs in the parent component
+			this.additionalValues = inputs;
 
-    verifyForm() {
-      this.$refs.form.validate()
-    },
+			// Log the received values
+			console.log('Received additional inputs:', inputs);
 
-    async submitForm() {
-      if (this.$refs.form.validate()) {
-			const bookData = {
-          isbn: this.isbn,
-          title: this.title,
-          author: this.author,
-          publishYear: this.publishYear,
-          firstPublishYear: this.firstPublishYear,
-          format: this.format,
-          pages: this.pages,
-          description: this.description,
-          notes: this.notes,
-			 originalTitle: this.originalTitle,
-          translator: this.translator,
-          language: this.language,
-        };
-			if( typeof this.publisher == 'string' || this.publisher instanceof String  ) {
-				bookData.publisher = this.publisher;
-			} else {
-				if( this.publisher !== null ) {
-					bookData.publisher = { name: this.publisher.value,
-						id: this.publisher.id }
-				}
+			// You could also process these values in various ways:
+
+			// 1. Merge with existing values if you're maintaining a collection
+			if (this.allValues) {
+				this.allValues = [...new Set([...this.allValues, ...inputs])];
 			}
-        console.log('Form submitted:', bookData )
+
+			// 2. Send to an API endpoint
+			this.saveAdditionalValues(inputs);
+
+			// 3. Update UI to show the additional values
+			this.showAdditionalValuesInUI(inputs);
+		},
+
+		/**
+		* Example method to save additional values to an API
+		*/
+		async saveAdditionalValues(values) {
 			try {
-				const response = await fetch('/api/addbook', {
+				const response = await fetch('/api/save-additional-values', {
 					method: 'POST',
 					headers: {
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(bookData)
+					body: JSON.stringify({ values }),
 				});
 
-				if (response.status === 204) {
-                // Success case - status 204 No Content
-                console.log('Book added successfully');
-                // You might want to add user feedback here, like:
-                // this.$emit('book-added') or show a success message
-                return;
-            }
+				if (!response.ok) {
+					throw new Error('Failed to save additional values');
+				}
 
-            // For non-204 responses, try to parse response body
-            const data = await response.json();
+				const result = await response.json();
+				console.log('Values saved successfully:', result);
 
-            if (!response.ok) {
-                throw new Error(data.message || `Error adding book (Status: ${response.status})`);
-            }
+				// Optionally show a success notification
+				this.$notify({
+					type: 'success',
+					title: 'Success',
+					text: 'Additional values have been saved'
+				});
+			} catch (error) {
+				console.error('Error saving additional values:', error);
 
-            // Handle other successful responses (if any)
-            console.log('Book added with response:', data);
-
-			} catch (err) {
-				console.error('Error adding book:', err);
-				// You might want to add user feedback here, like:  
-            // this.$emit('error', err.message) or show an error message
+				// Show error notification
+				this.$notify({
+					type: 'error',
+					title: 'Error',
+					text: 'Failed to save additional values'
+				});
 			}
-		}
-	 },
+		},
 
-    resetForm() {
-      this.$refs.form.reset()
-    }
-  }
+		/**
+		* Example method to update UI with the additional values
+		*/
+		showAdditionalValuesInUI(values) {
+			// This would depend on your UI structure
+			// For example, you might want to show these values as tags or in a list
+			this.displayedAdditionalValues = values.map(value => ({
+				id: this.generateUniqueId(),
+				text: value,
+				timestamp: new Date()
+			}));
+		},
+
+		/**
+		* Helper method to generate unique IDs for UI elements
+		*/
+		generateUniqueId() {
+			return '_' + Math.random().toString(36).substr(2, 9);
+		},
+
+		verifyForm() {
+			this.$refs.form.validate()
+		},
+
+		async submitForm() {
+			if (this.$refs.form.validate()) {
+				const bookData = {
+					isbn: this.isbn,
+					title: this.title,
+					author: this.author,
+					publishYear: this.publishYear,
+					firstPublishYear: this.firstPublishYear,
+					format: this.format,
+					pages: this.pages,
+					description: this.description,
+					notes: this.notes,
+					originalTitle: this.originalTitle,
+					translator: this.translator,
+					language: this.language,
+				};
+				console.log( "genre ", this.genre)
+				if( typeof this.publisher == 'string' || this.publisher instanceof String  ) {
+					bookData.publisher = this.publisher;
+				} else {
+					if( this.publisher !== null ) {
+						bookData.publisher = { name: this.publisher.value,
+							id: this.publisher.id }
+					}
+				}
+				console.log('Form submitted:', bookData )
+				try {
+					const response = await fetch('/api/addbook', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(bookData)
+					});
+
+					if (response.status === 204) {
+						// Success case - status 204 No Content
+						console.log('Book added successfully');
+						// You might want to add user feedback here, like:
+						// this.$emit('book-added') or show a success message
+						return;
+					}
+
+					// For non-204 responses, try to parse response body
+					const data = await response.json();
+
+					if (!response.ok) {
+						throw new Error(data.message || `Error adding book (Status: ${response.status})`);
+					}
+
+					// Handle other successful responses (if any)
+					console.log('Book added with response:', data);
+
+				} catch (err) {
+					console.error('Error adding book:', err);
+					// You might want to add user feedback here, like:  
+					// this.$emit('error', err.message) or show an error message
+				}
+			}
+		},
+
+		resetForm() {
+			this.$refs.form.reset()
+		}
+	}
 }
 </script>
