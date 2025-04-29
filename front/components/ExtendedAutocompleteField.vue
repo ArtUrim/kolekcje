@@ -8,6 +8,7 @@
       :api-endpoint="apiEndpoint"
       :clear-on-select="clearOnSelect"
       @input="updateValue"
+      ref="baseAutocomplete"
     />
     
     <!-- More button -->
@@ -32,15 +33,17 @@
               :key="index"
               class="mb-3"
             >
-              <v-col cols="9">
-                <v-combobox
-                  v-model="item.value"
-                  :items="items"
-                  :label="label"
-                  :placeholder="placeholder"
-                  clearable
-                />
-              </v-col>
+<!-- Replace the v-combobox section with AutocompleteField -->
+<v-col cols="9">
+  <AutocompleteField
+    v-model="item.value"
+    :label="label"
+    :placeholder="placeholder"
+    :api-endpoint="apiEndpoint"
+    :clear-on-select="clearOnSelect"
+    @input="(val) => handleInputChange(val, index)"
+  />
+</v-col>
               <v-col cols="3">
                 <v-btn
                   v-if="index === additionalInputs.length - 1"
@@ -76,7 +79,6 @@
 </template>
 
 <script>
-
 export default {
   props: {
     value: {
@@ -105,7 +107,6 @@ export default {
       selectedValue: null,
       dialogOpen: false,
       additionalInputs: [],
-      items: [] // This would typically be populated from the API
     };
   },
   watch: {
@@ -121,21 +122,27 @@ export default {
       this.$emit('input', val);
     },
     openMoreDialog() {
-      // Initialize with at least one input that copies the current value
       this.additionalInputs = [{ value: this.selectedValue || '' }];
       this.dialogOpen = true;
     },
     addNewInput() {
-      this.additionalInputs.push({ value: '' });
+      this.additionalInputs.push({ value: ''});
     },
-    saveAdditionalInputs() {
-      // Here you can implement logic to save or process the additional inputs
-      // For example, emit an event with all values
-      const values = this.additionalInputs.map(item => item.value).filter(Boolean);
-      this.$emit('additional-inputs', values);
-      this.dialogOpen = false;
-    }
+
+  handleInputChange(val, index) {
+    // Update the value in additionalInputs array
+    this.$set(this.additionalInputs[index], 'value', val);
+  },
+
+  saveAdditionalInputs() {
+    // Get all non-empty values from the additional inputs
+    const values = this.additionalInputs
+      .map(item => item.value)
+      .filter(Boolean);
+    this.$emit('additional-inputs', values);
+    this.dialogOpen = false;
   }
+}
 };
 </script>
 
