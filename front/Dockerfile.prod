@@ -1,0 +1,23 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+ENV CI=yes
+
+RUN npx nuxi init test-app --packageManager=npm  --gitInit=no --modules=nuxt-icon --telemetry=disabled
+
+WORKDIR /app/test-app
+
+RUN npx nuxi@latest module add vuetify-nuxt-module
+
+EXPOSE 3000
+
+COPY app.vue ./app.vue
+COPY components ./components
+COPY nuxt.config.ts ./nuxt.config.ts
+COPY pages ./pages
+COPY package.json ./package.json
+
+RUN npm install
+
+CMD ["npm", "run", "dev", "--", "-o", "--host", "0.0.0.0"]
