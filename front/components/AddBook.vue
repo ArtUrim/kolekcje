@@ -1,46 +1,28 @@
 <template>
-  <v-container>
-    <v-card class="pa-4">
-      <v-form ref="form" v-model="valid">
-        <v-row>
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="isbn"
-              label="ISBN"
-              :rules="isbnRules"
-              hint="10 or 13 characters"
-            ></v-text-field>
-          </v-col>
+	<v-container>
+		<v-card class="pa-4">
+			<v-form ref="form" v-model="valid">
+				<v-row>
+					<v-col cols="12" sm="6">
+						<v-text-field v-model="isbn" label="ISBN" :rules="isbnRules"
+							hint="10 or 13 characters"></v-text-field>
+					</v-col>
 
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="title"
-              label="Tytuł"
-              :rules="titleRules"
-              required
-            ></v-text-field>
-          </v-col>
+					<v-col cols="12" sm="6">
+						<v-text-field v-model="title" label="Tytuł" :rules="titleRules" required></v-text-field>
+					</v-col>
 
-			 <v-col cols="12">
-				 <GenreCheck
-					v-model="genre"
-					label="gatunek"
-					placeholder="Select or add a series"
-					api-endpoint="/api/genres"
-					/>
-			 </v-col>
+					<v-col cols="12" sm="6">
+						<GenreCheck v-model="genre" label="gatunek" placeholder="Select or add a series"
+							api-endpoint="/api/genres" />
+					</v-col>
 
-			 <v-col cols="12" sm="6">  
-				 <ExtendedAutocompleteField  
-						v-model="publisher"  
-						label="Publisher"  
-						placeholder="Select or add a publisher"  
-						api-endpoint="/api/publishers"  
-						@additional-inputs="handleAdditionalInputs"
-						/>  
-			 </v-col>
+					<v-col cols="12" sm="6">
+						<MultiAutocompleteField v-model="publisher" label="Publisher" placeholder="Select or add a publisher"
+							api-endpoint="/api/publishers" @additional-inputs="handleAdditionalInputs" />
+					</v-col>
 
-<!--
+					<!--
 
           <v-col cols="12" sm="6">
             <v-text-field
@@ -99,15 +81,14 @@
               rows="3"
             ></v-textarea>
           </v-col>
+		          -->
 
-			 <v-col cols="12" sm="6">
-				 <AutocompleteField
-					v-model="series"
-					label="Series"
-					placeholder="Select or add a series"
-					api-endpoint="/api/series"
-					/>
-			 </v-col>
+					<v-col cols="12" sm="6">
+						<AutocompleteField v-model="series" label="Series" placeholder="Select or add a series"
+							api-endpoint="/api/series" />
+					</v-col>
+
+					<!--
 
           <v-col cols="12" sm="6">
             <v-text-field
@@ -130,79 +111,68 @@
             ></v-text-field>
           </v-col>
         -->
-        </v-row>
+				</v-row>
 
-        <v-card-actions class="pt-4">
-          <v-spacer></v-spacer>
-          <v-btn
-            color="info"
-            @click="verifyForm"
-          >
-            Verify
-          </v-btn>
-          <v-btn
-            color="grey"
-            text
-            @click="resetForm"
-          >
-            Reset
-          </v-btn>
-          <v-btn
-            color="primary"
-            :disabled="!valid"
-            @click="submitForm"
-          >
-            Submit
-          </v-btn>
-        </v-card-actions>
-      </v-form>
-    </v-card>
-  </v-container>
+				<v-card-actions class="pt-4">
+					<v-spacer></v-spacer>
+					<v-btn color="info" @click="verifyForm">
+						Verify
+					</v-btn>
+					<v-btn color="grey" text @click="resetForm">
+						Reset
+					</v-btn>
+					<v-btn color="primary" :disabled="!valid" @click="submitForm">
+						Submit
+					</v-btn>
+				</v-card-actions>
+			</v-form>
+		</v-card>
+	</v-container>
 </template>
 
 <script>
 export default {
 
-  data: () => ({
-    valid: false,
-    isbn: '',
-    title: '',
-    author: '',
-    publishYear: '',
-    firstPublishYear: '',
-    format: 'unknown',
-    publisher: null,
-    pages: '',
-    description: '',
-    notes: '',
-    series: '',
-    originalTitle: '',
-    translator: '',
-    language: '',
-	 genre: [],
-	 genreProp: ['proza','poezja'],
+	data: () => ({
+		valid: false,
+		isbn: '',
+		title: '',
+		author: '',
+		publishYear: '',
+		firstPublishYear: '',
+		format: 'unknown',
+		publisher: null,
+		pages: '',
+		description: '',
+		notes: '',
+		series: '',
+		originalTitle: '',
+		translator: '',
+		language: '',
+		genre: [],
+		genreProp: ['proza', 'poezja'],
 
-    formatOptions: [
-       'unknown',
-       'hardback',
-       'paperback',
-       'ebook'
-    ],
+		formatOptions: [
+			'unknown',
+			'hardback',
+			'paperback',
+			'ebook'
+		],
 
-    isbnRules: [
-      v => !v || [10, 13].includes(v.length) || 'ISBN must be 10 or 13 characters'
-    ],
-    titleRules: [
-      v => !!v || 'Title is required'
-    ],
-    yearRules: [
-      v => !v || (parseInt(v) > 1000 && parseInt(v) <= new Date().getFullYear()) || 
-        'Year must be valid'
-    ],
-    pagesRules: [
-      v => !v || (parseInt(v) > 0) || 'Pages must be positive number'
-    ]
-  }),
+		isbnRules: [
+			v => !v || [10, 13].includes(v.length) || 'ISBN must be 10 or 13 characters'
+		],
+		titleRules: [
+			v => !!v || 'Title is required'
+		],
+		yearRules: [
+			v => !v || (parseInt(v) > 1000 && parseInt(v) <= new Date().getFullYear()) ||
+				'Year must be valid'
+		],
+		pagesRules: [
+			v => !v || (parseInt(v) > 0) || 'Pages must be positive number'
+		]
+	}),
 
 	methods: {
 		/**
@@ -308,16 +278,19 @@ export default {
 					translator: this.translator,
 					language: this.language,
 				};
-				console.log( "genre ", this.genre)
-				if( typeof this.publisher == 'string' || this.publisher instanceof String  ) {
+				console.log("genre ", this.genre)
+				console.log("wydawca ", this.publisher)
+				if (typeof this.publisher == 'string' || this.publisher instanceof String) {
 					bookData.publisher = this.publisher;
 				} else {
-					if( this.publisher !== null ) {
-						bookData.publisher = { name: this.publisher.value,
-							id: this.publisher.id }
+					if (this.publisher !== null) {
+						bookData.publisher = {
+							name: this.publisher.value,
+							id: this.publisher.id
+						}
 					}
 				}
-				console.log('Form submitted:', bookData )
+				console.log('Form submitted:', bookData)
 				try {
 					const response = await fetch('/api/addbook', {
 						method: 'POST',
