@@ -7,9 +7,10 @@
         :label="label"
         :placeholder="placeholder"
         clearable
-        @input="updateValue"
-		  :multiple="clearOnSelect"
-		  :clear-on-select="false"
+        :multiple="false"
+        :clear-on-select="clearOnSelect"
+        @input="handleInput"
+        @change="handleChange"
     >
         <template v-slot:no-data>
             <v-list-item>
@@ -57,8 +58,11 @@ export default {
         }
     },
     methods: {
-        updateValue(val) {
-            this.$emit('input', val)
+        handleInput(value) {
+            this.$emit('input', value);
+        },
+        handleChange(value) {
+            this.$emit('change', value);
         },
         async searchItems(query) {
             if (!query) return

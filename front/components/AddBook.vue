@@ -18,8 +18,13 @@
 					</v-col>
 
 					<v-col cols="12" sm="6">
-						<MultiAutocompleteField v-model="publisher" label="Publisher" placeholder="Select or add a publisher"
-							api-endpoint="/api/publishers" @additional-inputs="handleAdditionalInputs" />
+						<MultiAutocompleteField
+							v-model="publisher"
+							label="Publisher"
+							placeholder="Select or add a publisher"
+							api-endpoint="/api/publishers"
+							@input="debugPublisher"
+						/>
 					</v-col>
 
 					<!--
@@ -141,7 +146,7 @@ export default {
 		publishYear: '',
 		firstPublishYear: '',
 		format: 'unknown',
-		publisher: null,
+		publisher: [],
 		pages: '',
 		description: '',
 		notes: '',
@@ -175,88 +180,6 @@ export default {
 	}),
 
 	methods: {
-		/**
-		* Handles additional inputs from the ExtendedAutocompleteField component
-		* @param {Array} inputs - Array of values entered in the additional comboboxes
-		*/
-		handleAdditionalInputs(inputs) {
-			// Store the additional inputs in the parent component
-			this.additionalValues = inputs;
-
-			// Log the received values
-			console.log('Received additional inputs:', inputs);
-
-			// You could also process these values in various ways:
-
-			// 1. Merge with existing values if you're maintaining a collection
-			if (this.allValues) {
-				this.allValues = [...new Set([...this.allValues, ...inputs])];
-			}
-
-			// 2. Send to an API endpoint
-			this.saveAdditionalValues(inputs);
-
-			// 3. Update UI to show the additional values
-			this.showAdditionalValuesInUI(inputs);
-		},
-
-		/**
-		* Example method to save additional values to an API
-		*/
-		async saveAdditionalValues(values) {
-			try {
-				const response = await fetch('/api/save-additional-values', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ values }),
-				});
-
-				if (!response.ok) {
-					throw new Error('Failed to save additional values');
-				}
-
-				const result = await response.json();
-				console.log('Values saved successfully:', result);
-
-				// Optionally show a success notification
-				this.$notify({
-					type: 'success',
-					title: 'Success',
-					text: 'Additional values have been saved'
-				});
-			} catch (error) {
-				console.error('Error saving additional values:', error);
-
-				// Show error notification
-				this.$notify({
-					type: 'error',
-					title: 'Error',
-					text: 'Failed to save additional values'
-				});
-			}
-		},
-
-		/**
-		* Example method to update UI with the additional values
-		*/
-		showAdditionalValuesInUI(values) {
-			// This would depend on your UI structure
-			// For example, you might want to show these values as tags or in a list
-			this.displayedAdditionalValues = values.map(value => ({
-				id: this.generateUniqueId(),
-				text: value,
-				timestamp: new Date()
-			}));
-		},
-
-		/**
-		* Helper method to generate unique IDs for UI elements
-		*/
-		generateUniqueId() {
-			return '_' + Math.random().toString(36).substr(2, 9);
-		},
 
 		verifyForm() {
 			this.$refs.form.validate()
@@ -279,17 +202,9 @@ export default {
 					language: this.language,
 				};
 				console.log("genre ", this.genre)
+				console.log("series ", this.series)
 				console.log("wydawca ", this.publisher)
-				if (typeof this.publisher == 'string' || this.publisher instanceof String) {
-					bookData.publisher = this.publisher;
-				} else {
-					if (this.publisher !== null) {
-						bookData.publisher = {
-							name: this.publisher.value,
-							id: this.publisher.id
-						}
-					}
-				}
+				bookData.publisher = this.publisher;
 				console.log('Form submitted:', bookData)
 				try {
 					const response = await fetch('/api/addbook', {
@@ -328,7 +243,21 @@ export default {
 
 		resetForm() {
 			this.$refs.form.reset()
-		}
+		},
+
+		debugPublisher(value) {
+			console.log('Publisher received in AddBook:', value, typeof value);
+			console.log('Publisher array contents:', value.map(v => ({ value: v, type: typeof v })));
+
+			// Ensure we're storing clean string values
+			if (Array.isArray(value)) {
+				this.publisher = value.filter(v => typeof v === 'string' && v.trim() !== '');
+			} else {
+				this.publisher = [];
+			}
+
+			console.log('Publisher after processing:', this.publisher);
+		},
 	}
 }
 </script>

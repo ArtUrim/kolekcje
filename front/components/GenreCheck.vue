@@ -103,8 +103,6 @@ export default {
                 console.error("Error in fetch genres", error)
             } finally {
                 this.loading = false
-                console.log( "cocojumbo" )
-            
             }
         },
         handleChange(value) {
