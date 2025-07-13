@@ -4,8 +4,16 @@ from typing import Optional, Dict, Any
 import sys
 import logging
 import json
+from typing import List, Dict
 
 from addBook import BookDatabase
+# Add to imports at the top
+from table_handler import TableHandler
+
+# Create handlers after app initialization
+publisher_handler = TableHandler('publisher')
+series_handler = TableHandler('series')
+genres_handler = TableHandler('genres')
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -174,7 +182,7 @@ def add_books():
             conn = get_db_connection()
             if conn:
                 db = BookDatabase( conn )
-                db.insert_book( data )
+                #db.insert_book( data )
                 conn.close()
             else:
                 logging.warn( f"Connection to DB not successful" )
@@ -185,6 +193,104 @@ def add_books():
     else:
         return jsonify({'error': 'Unsupported Media Type'}), 415
     return Response( status = 204 )
+
+# Modify the existing get_publishers function  
+@app.route('/publishers', methods=['GET'])  
+def get_publishers():  
+    conn = get_db_connection()  
+    if not conn:  
+        return jsonify({"error": "Database connection failed"}), 500  
+
+    try:  
+        query = request.args.get('query', '')  
+        publishers = publisher_handler.get_items(conn, query)  
+        return jsonify(publishers)  
+
+    except Exception as e:  
+        return jsonify({"error": str(e)}), 500  
+
+    finally:  
+        if conn:  
+            conn.close()  
+
+# Add new series endpoints  
+@app.route('/series', methods=['GET'])  
+def get_series():  
+    conn = get_db_connection()  
+    if not conn:  
+        return jsonify({"error": "Database connection failed"}), 500  
+
+    try:  
+        query = request.args.get('query', '')  
+        series = series_handler.get_items(conn, query)  
+        return jsonify(series)  
+
+    except Exception as e:  
+        return jsonify({"error": str(e)}), 500  
+
+    finally:  
+        if conn:  
+            conn.close()  
+
+# Add new genres endpoints  
+@app.route('/genres', methods=['GET'])  
+def get_genres():  
+    conn = get_db_connection()  
+    if not conn:  
+        return jsonify({"error": "Database connection failed"}), 500  
+
+    try:  
+        query = request.args.get('query', '')  
+        genres = genres_handler.get_items(conn, query)  
+        return jsonify(genres)  
+
+    except Exception as e:  
+        return jsonify({"error": str(e)}), 500  
+
+    finally:  
+        if conn:  
+            conn.close()  
+
+@app.route('/series/add', methods=['POST'])  
+def add_series():  
+    conn = get_db_connection()  
+    if not conn:  
+        return jsonify({"error": "Database connection failed"}), 500  
+
+    try:  
+        data = request.get_json()  
+        series_handler.add_item(conn, data)  
+        return jsonify({'message': 'Series added successfully'}), 201  
+
+    except ValueError as e:  
+        return jsonify({'error': str(e)}), 400  
+    except Exception as e:  
+        return jsonify({'error': str(e)}), 500  
+
+    finally:  
+        if conn:  
+            conn.close()  
+
+# Modify the existing publisher/add endpoint  
+@app.route('/publisher/add', methods=['POST'])  
+def add_publisher():  
+    conn = get_db_connection()  
+    if not conn:  
+        return jsonify({"error": "Database connection failed"}), 500  
+
+    try:  
+        data = request.get_json()  
+        publisher_handler.add_item(conn, data)  
+        return jsonify({'message': 'Publisher added successfully'}), 201  
+
+    except ValueError as e:  
+        return jsonify({'error': str(e)}), 400  
+    except Exception as e:  
+        return jsonify({'error': str(e)}), 500  
+
+    finally:  
+        if conn:  
+            conn.close()
 
 @app.errorhandler(404)
 def not_found(error):
