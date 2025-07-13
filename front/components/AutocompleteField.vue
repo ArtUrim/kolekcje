@@ -16,7 +16,7 @@
     <template #no-data>
       <v-list-item>
         <v-list-item-title>
-          No results found. Press <kbd>Enter</kbd> to create "{{ searchInput }}"
+          Wprowadź co najmniej 3 litery, aby uzyskać podpowiedź
         </v-list-item-title>
       </v-list-item>
     </template>
@@ -115,6 +115,11 @@ const searchItems = async (query) => {
     }
 
     const data = await response.json()
+
+    data.forEach((item, index) => {
+      console.log(`Item ${index}:`, JSON.stringify(item, null, 2))
+      console.log(`Item ${index} fields:`, Object.keys(item))
+    })
 
     // Ensure items have the expected format
     items.value = data.map(item => {
