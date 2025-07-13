@@ -1,203 +1,191 @@
 <template>
-  <div>
-    <div v-for="(field, index) in fieldValues" :key="index" class="d-flex align-center" :class="{ 'mt-2': index > 0 }">
-      <AutocompleteField
-        :value="field"
-        @input="updateFieldValue(index, $event)"
-        @change="handleFieldChange(index, $event)"
-        :label="index === 0 ? label : `Additional ${label}`"
-        :placeholder="placeholder"
-        :api-endpoint="apiEndpoint"
-        :clear-on-select="clearOnSelect"
-        class="flex-grow-1 mr-2"
-      />
-      <v-btn
-        v-if="index > 0"
-        icon="mdi-minus"
-        size="small"
-        variant="text"
-        @click="removeField(index)"
-      ></v-btn>
-      <v-btn
-        v-if="index === fieldValues.length - 1"
-        icon="mdi-plus"
-        size="small"
-        variant="text"
-        @click="addField"
-      ></v-btn>
+  <div class="multi-autocomplete-field">
+    <div
+      v-for="(field, index) in fields"
+      :key="field.id"
+      class="field-row"
+      :class="{ 'mt-3': index > 0 }"
+    >
+      <div class="field-container">
+        <AutocompleteField
+          v-model="field.value"
+          :label="getFieldLabel(index)"
+          :placeholder="placeholder"
+          :api-endpoint="apiEndpoint"
+          :clear-on-select="clearOnSelect"
+        />
+      </div>
+
+      <div class="button-container">
+        <!-- Remove button (only show if more than one field) -->
+        <v-btn
+          v-if="fields.length > 1"
+          icon="mdi-minus"
+          size="small"
+          variant="text"
+          color="error"
+          @click="removeField(index)"
+        />
+
+        <!-- Add button (only show on last field) -->
+        <v-btn
+          v-if="index === fields.length - 1"
+          icon="mdi-plus"
+          size="small"
+          variant="text"
+          color="primary"
+          @click="addField"
+        />
+      </div>
     </div>
   </div>
 </template>
 
-<script>
-import AutocompleteField from './AutocompleteField.vue';
+<script setup>
+import { ref, watch, computed } from 'vue'
+import AutocompleteField from './AutocompleteField.vue'
 
-export default {
-  name: 'MultiAutocompleteField',
-  components: {
-    AutocompleteField,
+// Props
+const props = defineProps({
+  modelValue: {
+    type: Array,
+    default: () => []
   },
-  props: {
-    value: {
-      type: Array,
-      default: () => [],
-    },
-    label: {
-      type: String,
-      required: true,
-    },
-    placeholder: {
-      type: String,
-      required: true,
-    },
-    apiEndpoint: {
-      type: String,
-      required: true,
-    },
-    clearOnSelect: {
-      type: Boolean,
-      default: false,
-    },
+  label: {
+    type: String,
+    required: true
   },
-  data() {
-    return {
-      fieldValues: [null],
-      committedValues: [null], // Track only committed/selected values
-    };
+  placeholder: {
+    type: String,
+    required: true
   },
-  watch: {
-    value: {
-      immediate: true,
-      handler(newValue) {
-        console.log('value watch:', newValue);
-        if (newValue && newValue.length > 0) {
-          this.fieldValues = [...newValue, null];
-          this.committedValues = [...newValue, null];
-        } else {
-          this.fieldValues = [null];
-          this.committedValues = [null];
-        }
-      },
-    },
+  apiEndpoint: {
+    type: String,
+    required: true
   },
-  methods: {
-    updateFieldValue(index, value) {
-      // This handles typing/input events - update display but don't emit
-      console.log('updateFieldValue (typing):', { index, value, type: typeof value });
+  clearOnSelect: {
+    type: Boolean,
+    default: false
+  }
+})
 
-      let actualValue = this.extractActualValue(value);
-      console.log('Processed actualValue (typing):', actualValue);
+// Emits
+const emit = defineEmits(['update:modelValue'])
 
-      // Update the field value for display
-      this.fieldValues[index] = actualValue || null;
+// Reactive data
+const fields = ref([])
+let fieldIdCounter = 0
+const emitTimeout = ref(null)
 
-      // Don't emit here - wait for selection/change event
-    },
+// Create a new field object
+const createField = (value = null) => ({
+  id: ++fieldIdCounter,
+  value: value
+})
 
-    handleFieldChange(index, value) {
-      // This handles selection/blur events - commit the value and emit
-      console.log('handleFieldChange (selection):', { index, value, type: typeof value });
+// Initialize fields
+const initializeFields = () => {
+  if (props.modelValue && props.modelValue.length > 0) {
+    fields.value = props.modelValue.map(value => createField(value))
+    // Always ensure there's an empty field at the end
+    fields.value.push(createField())
+  } else {
+    fields.value = [createField()]
+  }
+}
 
-      let actualValue = this.extractActualValue(value);
-      console.log('Processed actualValue (selection):', actualValue);
+// Get label for field based on index
+const getFieldLabel = (index) => {
+  return index === 0 ? props.label : `Additional ${props.label}`
+}
 
-      // Update both display and committed values
-      this.fieldValues[index] = actualValue || null;
-      this.committedValues[index] = actualValue || null;
+// Add new field
+const addField = () => {
+  fields.value.push(createField())
+}
 
-      // Auto-add new field if this field has content and it's the last field
-      if (actualValue && actualValue.trim() !== '' && index === this.fieldValues.length - 1) {
-        this.fieldValues.push(null);
-        this.committedValues.push(null);
-      }
+// Remove field
+const removeField = (index) => {
+  if (fields.value.length > 1 && index >= 0 && index < fields.value.length) {
+    fields.value.splice(index, 1)
 
-      // Emit the committed values
-      this.emitValidValues();
-    },
+    // Ensure we always have at least one field
+    if (fields.value.length === 0) {
+      fields.value.push(createField())
+    }
 
-    extractActualValue(value) {
-      // Handle different types of values that might be received
-      if (value === null || value === undefined) {
-        return null;
-      }
+    // Emit immediately when removing
+    emitValues()
+  }
+}
 
-      if (typeof value === 'string') {
-        return value;
-      }
+// Debounced emit to avoid too frequent updates
+const debouncedEmit = () => {
+  if (emitTimeout.value) {
+    clearTimeout(emitTimeout.value)
+  }
 
-      if (typeof value === 'object') {
-        // Handle InputEvent objects
-        if (value.target && value.target.value !== undefined) {
-          return value.target.value;
-        }
-        // Handle composition events
-        if (value.data !== undefined) {
-          return value.data;
-        }
-        // Handle other event-like objects
-        if (value.inputType && value.target) {
-          return value.target.value;
-        }
-        // Fallback for objects
-        if (typeof value.toString === 'function' && value.toString() !== '[object Object]') {
-          return value.toString();
-        }
+  emitTimeout.value = setTimeout(() => {
+    emitValues()
+  }, 500)
+}
 
-        console.warn('Unexpected object value:', value);
-        return null;
-      }
+// Emit current values to parent
+const emitValues = () => {
+  const validValues = fields.value
+    .map(field => field.value)
+    .filter(value => value !== null && value !== undefined && value !== '')
+    .map(value => String(value).trim())
+    .filter(value => value !== '')
 
-      // For numbers or other primitive types
-      return String(value);
-    },
+  emit('update:modelValue', validValues)
+}
 
-    emitValidValues() {
-      // Filter out null/empty values from committed values only
-      const validValues = this.committedValues
-        .filter(v => v !== null && v !== undefined && v !== '')
-        .map(v => String(v).trim())
-        .filter(v => v !== '');
+// Watch for changes in field values and emit debounced updates
+watch(fields, () => {
+  debouncedEmit()
+}, { deep: true })
 
-      console.log('Emitting committed values:', validValues);
-      this.$emit('input', validValues);
-    },
+// Watch for external changes to modelValue
+watch(() => props.modelValue, (newValue) => {
+  const currentVals = fields.value
+    .map(field => field.value)
+    .filter(value => value !== null && value !== undefined && value !== '')
 
-    addField() {
-      this.fieldValues.push(null);
-      this.committedValues.push(null);
-    },
+  const newVals = newValue || []
 
-    removeField(index) {
-      if (this.fieldValues.length > 1) {
-        this.fieldValues.splice(index, 1);
-        this.committedValues.splice(index, 1);
+  if (JSON.stringify(currentVals) !== JSON.stringify(newVals)) {
+    initializeFields()
+  }
+}, { immediate: true, deep: true })
 
-        // Ensure we always have at least one field
-        if (this.fieldValues.length === 0) {
-          this.fieldValues.push(null);
-          this.committedValues.push(null);
-        }
-        this.emitValidValues();
-      }
-    },
-  },
-};
+// Initialize on mount
+initializeFields()
 </script>
 
 <style scoped>
-.d-flex {
+.multi-autocomplete-field {
+  width: 100%;
+}
+
+.field-row {
   display: flex;
-}
-.align-center {
   align-items: center;
+  gap: 8px;
 }
-.flex-grow-1 {
-  flex-grow: 1;
+
+.field-container {
+  flex: 1;
 }
-.mr-2 {
-  margin-right: 8px;
+
+.button-container {
+  display: flex;
+  gap: 4px;
+  min-width: 80px;
+  justify-content: flex-end;
 }
-.mt-2 {
-  margin-top: 8px;
+
+.mt-3 {
+  margin-top: 12px;
 }
 </style>

@@ -23,7 +23,6 @@
 							label="Publisher"
 							placeholder="Select or add a publisher"
 							api-endpoint="/api/publishers"
-							@input="debugPublisher"
 						/>
 					</v-col>
 
@@ -245,19 +244,6 @@ export default {
 			this.$refs.form.reset()
 		},
 
-		debugPublisher(value) {
-			console.log('Publisher received in AddBook:', value, typeof value);
-			console.log('Publisher array contents:', value.map(v => ({ value: v, type: typeof v })));
-
-			// Ensure we're storing clean string values
-			if (Array.isArray(value)) {
-				this.publisher = value.filter(v => typeof v === 'string' && v.trim() !== '');
-			} else {
-				this.publisher = [];
-			}
-
-			console.log('Publisher after processing:', this.publisher);
-		},
 	}
 }
 </script>

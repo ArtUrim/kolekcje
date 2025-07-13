@@ -1,108 +1,140 @@
 <template>
-    <v-combobox
-        v-model="selectedValueLocal"
-        :items="items"
-        :loading="loading"
-        :search-input.sync="search"
-        :label="label"
-        :placeholder="placeholder"
-        clearable
-        :multiple="false"
-        :clear-on-select="clearOnSelect"
-        @input="handleInput"
-        @change="handleChange"
-    >
-        <template v-slot:no-data>
-            <v-list-item>
-                <v-list-item-title>
-                    No results found. Press <kbd>enter</kbd> to create "{{ search }}"
-                </v-list-item-title>
-            </v-list-item>
-        </template>
-    </v-combobox>
+  <v-combobox
+    v-model="internalValue"
+    :items="items"
+    :loading="loading"
+    :label="label"
+    :placeholder="placeholder"
+    :clearable="true"
+    :multiple="false"
+    :hide-no-data="false"
+    :search="searchInput"
+    item-title="title"
+    item-value="value"
+    @update:search="onSearchInput"
+  >
+    <template #no-data>
+      <v-list-item>
+        <v-list-item-title>
+          No results found. Press <kbd>Enter</kbd> to create "{{ searchInput }}"
+        </v-list-item-title>
+      </v-list-item>
+    </template>
+  </v-combobox>
 </template>
 
-<script>
-export default {
-    name: 'AutocompleteField',
-    props: {
-        value: {
-            type: String,
-            default: null
-        },
-        label: {
-            type: String,
-            required: true
-        },
-        placeholder: {
-            type: String,
-            required: true
-        },
-        apiEndpoint: {
-            type: String,
-            required: true
-        },
-		 clearOnSelect: {
-			 type: Boolean,
-			 default: false
-		 }
-    },
-    data() {
-        return {
-            valid: false,
-            selectedValueLocal: null,
-            items: [],
-            loading: false,
-            search: null,
-            searchTimeout: null
-        }
-    },
-    methods: {
-        handleInput(value) {
-            this.$emit('input', value);
-        },
-        handleChange(value) {
-            this.$emit('change', value);
-        },
-        async searchItems(query) {
-            if (!query) return
+<script setup>
+import { ref, watch, computed, nextTick } from 'vue'
 
-            if (this.searchTimeout) clearTimeout(this.searchTimeout)
-            
-            this.searchTimeout = setTimeout(async () => {
-                try {
-                    this.loading = true
-                    const response = await fetch(`${this.apiEndpoint}?query=${encodeURIComponent(query)}`)
-                    if (!response.ok) throw new Error(`Failed to fetch ${this.label}`)
-                    
-                    const data = await response.json()
-                    this.items = data
-                } catch (error) {
-                    console.error(`Error fetching ${this.label}:`, error)
-                } finally {
-                    this.loading = false
-                }
-            }, 300)
-        },
-    },
-    watch: {
-        value: {
-            immediate: true,
-            handler(newValue) {
-                this.selectedValueLocal = newValue
-            }
-        },
-        selectedValueLocal(newValue) {
-            if (newValue) {
-                if (newValue.length > 2) {
-                    if (newValue.length === 3) {
-                        this.searchItems(newValue)
-                    }
-                } else {
-                    this.items = []
-                }
-            }
-        }
+// Props
+const props = defineProps({
+  modelValue: {
+    type: String,
+    default: null
+  },
+  label: {
+    type: String,
+    required: true
+  },
+  placeholder: {
+    type: String,
+    required: true
+  },
+  apiEndpoint: {
+    type: String,
+    required: true
+  },
+  clearOnSelect: {
+    type: Boolean,
+    default: false
+  }
+})
+
+// Emits
+const emit = defineEmits(['update:modelValue'])
+
+// Reactive data
+const items = ref([])
+const loading = ref(false)
+const searchInput = ref('')
+const searchTimeout = ref(null)
+
+// Internal value that syncs with modelValue
+const internalValue = computed({
+  get: () => props.modelValue,
+  set: (value) => {
+    // Extract string value from various formats
+    let cleanValue = null
+
+    if (value === null || value === undefined || value === '') {
+      cleanValue = null
+    } else if (typeof value === 'string') {
+      cleanValue = value.trim() || null
+    } else if (typeof value === 'object' && value !== null) {
+      // Handle selected items from dropdown
+      cleanValue = value.title || value.value || value.text || value.name || null
     }
+
+    emit('update:modelValue', cleanValue)
+
+    // Clear on select if enabled
+    if (props.clearOnSelect && cleanValue) {
+      nextTick(() => {
+        searchInput.value = ''
+      })
+    }
+  }
+})
+
+// Search functionality
+const onSearchInput = (query) => {
+  searchInput.value = query
+
+  if (!query || query.length < 3) {
+    items.value = []
+    return
+  }
+
+  // Debounce search requests
+  if (searchTimeout.value) {
+    clearTimeout(searchTimeout.value)
+  }
+
+  searchTimeout.value = setTimeout(async () => {
+    await searchItems(query)
+  }, 300)
 }
-</script>
+
+const searchItems = async (query) => {
+  try {
+    loading.value = true
+    const response = await fetch(`${props.apiEndpoint}?query=${encodeURIComponent(query)}`)
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${props.label}`)
+    }
+
+    const data = await response.json()
+
+    // Ensure items have the expected format
+    items.value = data.map(item => {
+      if (typeof item === 'string') {
+        return { title: item, value: item }
+      }
+      return item
+    })
+  } catch (error) {
+    console.error(`Error fetching ${props.label}:`, error)
+    items.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
+// Watch for external value changes
+watch(() => props.modelValue, (newValue) => {
+  if (newValue !== internalValue.value) {
+    searchInput.value = newValue || ''
+  }
+}, { immediate: true })
+  </script>
