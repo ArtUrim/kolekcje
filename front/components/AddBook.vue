@@ -200,10 +200,56 @@ export default {
 					translator: this.translator,
 					language: this.language,
 				};
+
 				console.log("genre ", this.genre)
 				console.log("series ", this.series)
 				console.log("wydawca ", this.publisher)
-				bookData.publisher = this.publisher;
+
+				// Process genre array - handle both objects and strings
+				if (this.genre && this.genre.length > 0) {
+					bookData.genre = this.genre.map(item => {
+						// Check if the item is an object
+						if (typeof item === 'object' && item !== null) {
+							return {
+								id: item.id,
+								title: item.title,
+								isCustom: false
+							};
+						}
+						// If it's a string, create object format
+						else if (typeof item === 'string') {
+							return {
+								id: null,
+								title: item,
+								isCustom: true
+							};
+						}
+						// Fallback for any other type
+						return {
+							id: null,
+							title: String(item),
+							isCustom: true
+						};
+					});
+				}
+
+				// Process publisher array - extract IDs and titles
+				if (this.publisher && this.publisher.length > 0) {
+					bookData.publisher = this.publisher.map(pub => ({
+						id: pub.id,
+						title: pub.title,
+						isCustom: pub.isCustom
+					}));
+				}
+
+				// Process series object - extract ID and title
+				if (this.series) {
+					bookData.series= {
+						id: this.series.id,
+						title: this.series.title,
+						isCustom: this.series.isCustom
+					};
+				}
 				console.log('Form submitted:', bookData)
 				try {
 					const response = await fetch('/api/addbook', {
@@ -241,7 +287,10 @@ export default {
 		},
 
 		resetForm() {
-			this.$refs.form.reset()
+			this.$refs.form.reset();
+			// Reset object fields to their initial state
+			this.publisher = [];
+			this.series = null;
 		},
 
 	}
