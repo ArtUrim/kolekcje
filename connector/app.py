@@ -12,6 +12,7 @@ from table_handler import TableHandler
 
 # Create handlers after app initialization
 publisher_handler = TableHandler('publisher')
+author_handler = TableHandler('Authors')
 series_handler = TableHandler('series')
 genres_handler = TableHandler('genres')
 
@@ -193,6 +194,25 @@ def add_books():
     else:
         return jsonify({'error': 'Unsupported Media Type'}), 415
     return Response( status = 204 )
+
+# Modify the existing get_authors function  
+@app.route('/authors', methods=['GET'])  
+def get_authors():  
+    conn = get_db_connection()  
+    if not conn:  
+        return jsonify({"error": "Database connection failed"}), 500  
+
+    try:  
+        query = request.args.get('query', '')  
+        authors = author_handler.get_items(conn, query)  
+        return jsonify(authors)  
+
+    except Exception as e:  
+        return jsonify({"error": str(e)}), 500  
+
+    finally:  
+        if conn:  
+            conn.close()  
 
 # Modify the existing get_publishers function  
 @app.route('/publishers', methods=['GET'])  
