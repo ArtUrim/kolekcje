@@ -4,56 +4,110 @@
   "required": ["title"],
   "properties": {
     "isbn": {
-      "type": "integer",
-      "minimum": 0,
-      "pattern": "^\\d{10}$|^\\d{13}$"
+    "type": "integer",
+    "minimum": 0,
+    "pattern": "^\\d{10}$|^\\d{13}$"
     },
     "title": {
-      "type": "string",
-      "minLength": 1
+    "type": "string",
+    "minLength": 1
     },
     "author": {
-      "type": "string"
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "isCustom"],
+        "properties": {
+          "id": {
+            "type": ["integer", "null"],
+            "minimum": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "isCustom": {
+            "type": "boolean"
+          }
+        }
+      }
     },
     "publishYear": {
-      "type": "integer",
-      "minimum": 0,
-      "pattern": "^\\d{4}$"
+    "type": "integer",
+    "minimum": 0,
+    "pattern": "^\\d{4}$"
     },
     "firstPublishYear": {
-      "type": "integer",
-      "minimum": 0,
-      "pattern": "^\\d{4}$"
+    "type": "integer",
+    "minimum": 0,
+    "pattern": "^\\d{4}$"
     },
     "format": {
-      "type": "string",
-      "enum": ["unknown", "paperback", "hardback", "ebook"]
+    "type": "string",
+    "enum": ["unknown", "paperback", "hardback", "ebook"]
     },
     "pages": {
-      "type": "integer",
-      "minimum": 0
+    "type": "integer",
+    "minimum": 0
     },
     "description": {
-      "type": "string"
+    "type": "string"
     },
     "notes": {
-      "type": "string"
+    "type": "string"
     },
     "series": {
-      "type": "string"
+    "type": "string"
     },
     "genre": {
-      "type": "string"
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "isCustom"],
+        "properties": {
+          "id": {
+            "type": ["integer", "null"],
+            "minimum": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "isCustom": {
+            "type": "boolean"
+          }
+        }
+      }
     },
     "originalTitle": {
-      "type": "string"
+    "type": "string"
     },
     "translator": {
-      "type": "string"
+    "type": "string"
     },
     "language": {
-      "type": "string",
-      "pattern": "^[a-zA-Z]{2}[a-z_]$"
+    "type": "string",
+    "pattern": "^[a-zA-Z]{2}[a-z_]$"
+    },
+    "publisher": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "isCustom"],
+        "properties": {
+          "id": {
+            "type": ["integer", "null"],
+            "minimum": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "isCustom": {
+            "type": "boolean"
+          }
+        }
+      }
     }
   }
 }

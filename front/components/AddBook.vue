@@ -184,23 +184,18 @@ export default {
 		async submitForm() {
 			if (this.$refs.form.validate()) {
 				const bookData = {
-					isbn: this.isbn,
+					isbn: this.isbn ? parseInt(this.isbn) : null,
 					title: this.title,
-					publishYear: this.publishYear,
-					firstPublishYear: this.firstPublishYear,
+					publishYear: this.publishYear ? parseInt(this.publishYear) : null,
+					firstPublishYear: this.firstPublishYear ? parseInt(this.firstPublishYear) : null,
 					format: this.format,
-					pages: this.pages,
+					pages: this.pages ? parseInt(this.pages) : null,
 					description: this.description,
 					notes: this.notes,
 					originalTitle: this.originalTitle,
 					translator: this.translator,
 					language: this.language,
 				};
-
-				console.log("genre ", this.genre)
-				console.log("series ", this.series)
-				console.log("wydawca ", this.publisher)
-				console.log("autor ", this.author)
 
 				// Process genre array - handle both objects and strings
 				if (this.genre && this.genre.length > 0) {

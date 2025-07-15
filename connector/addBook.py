@@ -2,6 +2,8 @@ import mariadb
 from typing import Dict, Any
 import json
 import sys
+import jsonschema
+from jsonschema import validate, ValidationError
 
 class BookDatabase:
     def __init__(self, connection: mariadb.connections.Connection ):
@@ -125,17 +127,51 @@ class BookDatabase:
         finally:
             cursor.close()
 
-    def insert_book_from_json_file(self, json_file_path: str) -> int:
-        """Insert book data from JSON file"""
+    def _load_schema(self, schema_path: str) -> Dict[str, Any]:
+        """Load JSON schema from file"""
         try:
+            with open(schema_path, 'r', encoding='utf-8') as file:
+                return json.load(file)
+        except FileNotFoundError:
+            print(f"Error: Schema file {schema_path} not found")
+            raise
+        except json.JSONDecodeError:
+            print(f"Error: Invalid JSON format in schema file {schema_path}")
+            raise
+
+    def _validate_book_data(self, book_data: Dict[str, Any], schema: Dict[str, Any]) -> None:
+        """Validate book data against JSON schema"""
+        try:
+            validate(instance=book_data, schema=schema)
+        except ValidationError as e:
+            print(f"Validation error: {e.message}")
+            print(f"Failed at path: {' -> '.join(str(x) for x in e.path)}")
+            raise
+
+    def insert_book_from_json_file(self, json_file_path: str, schema_path: str = 'schemaBookNew.json') -> int:
+        """Insert book data from JSON file with schema validation"""
+        try:
+            # Load the JSON schema
+            schema = self._load_schema(schema_path)
+
+            # Load and parse the book data
             with open(json_file_path, 'r', encoding='utf-8') as file:
                 book_data = json.load(file)
+
+            # Validate the book data against the schema
+            self._validate_book_data(book_data, schema)
+
+            # If validation passes, insert the book
             return self.insert_book(book_data)
+
         except FileNotFoundError:
             print(f"Error: File {json_file_path} not found")
             raise
         except json.JSONDecodeError:
             print(f"Error: Invalid JSON format in {json_file_path}")
+            raise
+        except ValidationError:
+            print(f"Error: JSON data in {json_file_path} does not match the required schema")
             raise
 
 # Example usage:
