@@ -69,15 +69,13 @@ const internalValue = computed({
     if (value === null || value === undefined || value === '') {
       emitValue = null
     } else if (typeof value === 'string') {
-      // Handle custom input (not selected from dropdown)
-      emitValue = {
-        id: null,
-        title: value.trim(),
-        value: value.trim(),
-        isCustom: true
-      }
+        emitValue = {
+          id: null,
+          title: value,
+          value: value,
+          isCustom: true
+        }
     } else if (typeof value === 'object' && value !== null) {
-      // Handle selected items from dropdown or existing object
       emitValue = {
         id: value.id || null,
         title: value.title || value.value || value.text || value.name,
@@ -88,7 +86,6 @@ const internalValue = computed({
 
     emit('update:modelValue', emitValue)
 
-    // Clear on select if enabled
     if (props.clearOnSelect && emitValue) {
       nextTick(() => {
         searchInput.value = ''

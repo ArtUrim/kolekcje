@@ -27,13 +27,13 @@
 					</v-col>
 
 					<!--
-
           <v-col cols="12" sm="6">
             <v-text-field
               v-model="author"
               label="Autor"
             ></v-text-field>
           </v-col>
+		          -->
 
           <v-col cols="12" sm="6">
             <v-text-field
@@ -85,14 +85,11 @@
               rows="3"
             ></v-textarea>
           </v-col>
-		          -->
 
 					<v-col cols="12" sm="6">
 						<AutocompleteField v-model="series" label="Series" placeholder="Select or add a series"
 							api-endpoint="/api/series" />
 					</v-col>
-
-					<!--
 
           <v-col cols="12" sm="6">
             <v-text-field
@@ -114,7 +111,6 @@
               label="Język"
             ></v-text-field>
           </v-col>
-        -->
 				</v-row>
 
 				<v-card-actions class="pt-4">
