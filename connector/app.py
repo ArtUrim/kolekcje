@@ -91,7 +91,8 @@ def build_query(params: Dict[str, Any]) -> tuple[str, list]:
         FROM Books b
         LEFT JOIN bookAuthors ba ON b.id = ba.book_id
         LEFT JOIN Authors a ON ba.author_id = a.id
-        LEFT JOIN publisher p ON b.publisher_id = p.id
+        LEFT JOIN bookPublishers bp ON b.id = bp.book_id
+        LEFT JOIN publisher p ON bp.publisher_id = p.id
         LEFT JOIN series s ON b.series_id = s.id
     """
 
