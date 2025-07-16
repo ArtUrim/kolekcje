@@ -45,6 +45,16 @@ CREATE TABLE `bookGenres` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 
+CREATE TABLE `bookPublishers` (
+  `book_id` int(11) NOT NULL,
+  `publisher_id` int(11) NOT NULL,
+  PRIMARY KEY (`book_id`,`publisher_id`),
+  KEY `publisher_id` (`publisher_id`),
+  CONSTRAINT `bookPublishers_ibfk_1` FOREIGN KEY (`book_id`) REFERENCES `Books` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `bookPublishers_ibfk_2` FOREIGN KEY (`publisher_id`) REFERENCES `publisher` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+
 CREATE TABLE `Books` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `isbn` varchar(13) DEFAULT NULL,
@@ -52,7 +62,6 @@ CREATE TABLE `Books` (
   `release_date` year(4) DEFAULT NULL,
   `first_polish_release_date` year(4) DEFAULT NULL,
   `format` enum('unknown','hardback','paperback','ebook') NOT NULL DEFAULT 'unknown',
-  `publisher_id` int(11) NOT NULL,
   `pages` int(11) DEFAULT NULL,
   `description` text DEFAULT NULL,
   `note` text DEFAULT NULL,
@@ -60,13 +69,11 @@ CREATE TABLE `Books` (
   `original_title` varchar(512) DEFAULT NULL,
   `translator` varchar(512) DEFAULT NULL,
   `language_id` char(3) NOT NULL,
-  PRIMARY KEY (`id`,`publisher_id`,`language_id`),
+  PRIMARY KEY (`id`,`language_id`),
   KEY `language_id` (`language_id`),
   KEY `series_id` (`series_id`),
-  KEY `publisher_id` (`publisher_id`),
   CONSTRAINT `Books_ibfk_2` FOREIGN KEY (`language_id`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `Books_ibfk_3` FOREIGN KEY (`series_id`) REFERENCES `series` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `Books_ibfk_4` FOREIGN KEY (`publisher_id`) REFERENCES `publisher` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+  CONSTRAINT `Books_ibfk_3` FOREIGN KEY (`series_id`) REFERENCES `series` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 
@@ -93,7 +100,8 @@ CREATE TABLE `publisher` (
   `note` text DEFAULT NULL,
   `webpage` text DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`)
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 
@@ -103,7 +111,8 @@ CREATE TABLE `series` (
   `description` text DEFAULT NULL,
   `note` text DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`)
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 
