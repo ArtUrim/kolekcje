@@ -171,7 +171,6 @@ def get_books():
 
 @app.route('/addbook', methods=['POST'])
 def add_books():
-    print("ok" )
     content_type = request.headers.get('Content-Type')
     if content_type == 'application/json':
         try:
@@ -181,10 +180,11 @@ def add_books():
                 json.dump(data, f, indent=3)
             if data.get('title'): 
                 logging.info(f"Receive new book, title: {data['title']}")
+                print(f"Receive new book, title: {data['title']}")
             conn = get_db_connection()
             if conn:
                 db = BookDatabase( conn )
-                #db.insert_book( data )
+                db.insert_book( data )
                 conn.close()
             else:
                 logging.warn( f"Connection to DB not successful" )

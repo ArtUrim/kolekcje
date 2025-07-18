@@ -48,10 +48,24 @@ class BookDatabase:
         finally:
             cursor.close()
 
-    def _get_or_create_series(self, series_name: str) -> Optional[int]:
+    def _get_or_create_series(self, series_data: Union[str, Dict[str, Any]]) -> int:
         """Get series ID or create new series"""
-        if not series_name or not series_name.strip():
-            return None
+        if isinstance(series_data, str):
+            series_name = series_data.strip()
+            if not series_name:
+                raise ValueError("Publisher name cannot be empty")
+            series_id = None
+            is_custom = True
+        elif isinstance(series_data, dict):
+            series_name = series_data.get('title', '').strip()
+            if not series_name:
+                raise ValueError("Publisher name cannot be empty")
+            series_id = series_data.get('id')
+            is_custom = series_data.get('isCustom', True)
+            if series_id is not None and not is_custom:
+                return series_id
+        else:
+            raise ValueError("Invalid series data format")
             
         cursor = self.connection.cursor()
         try:
@@ -61,9 +75,12 @@ class BookDatabase:
             if result:
                 return result[0]
 
-            cursor.execute("INSERT INTO series (name) VALUES (?)", (series_name,))
-            self.connection.commit()
-            return cursor.lastrowid
+            if is_custom:
+                cursor.execute("INSERT INTO series (name) VALUES (?)", (series_name,))
+                self.connection.commit()
+                return cursor.lastrowid
+            else:
+                raise ValueError(f"Serie {series_name} not found in database")
         finally:
             cursor.close()
 
@@ -182,6 +199,10 @@ class BookDatabase:
         
         raise ValueError(f"Cannot extract year from {type(year_data)}: {year_data}")
 
+    def _extract_isbn(self, isbn_data: Any) -> Optional[int]:
+        """Extract isbn from various formats"""
+        return isbn_data
+
     def _normalize_format(self, format_value: Any) -> str:
         """Normalize format value"""
         if not format_value:
@@ -209,8 +230,10 @@ class BookDatabase:
         lang_str = str(language_data).strip()
         
         # Basic validation for language code format (e.g., 'en_', 'pl_')
-        if len(lang_str) >= 2:
+        if len(lang_str) >= 3:
             return lang_str
+        elif len(lang_str) == 2:
+            return lang_str + '_'
         
         return 'pl_'  # Default fallback
 
@@ -242,14 +265,18 @@ class BookDatabase:
             original_title = str(original_title).strip() if original_title else None
             
             # Handle publish year - try both publishYear and firstPublishYear
-            publish_year = (self._extract_year(book_data.get('publishYear')) or 
-                          self._extract_year(book_data.get('firstPublishYear')))
+            publish_year = self._extract_year(book_data.get('publishYear'))
+            firstPublYear = self._extract_year(book_data.get('firstPublishYear'))
+            isbn = self._extract_isbn(book_data.get('isbn'))
             
             format_value = self._normalize_format(book_data.get('format'))
             pages = self._safe_int_conversion(book_data.get('pages'), 'pages')
             
             description = book_data.get('description', '')
             description = str(description) if description else ''
+            
+            notes = book_data.get('notes', '')
+            notes = str(notes) if notes else ''
             
             translator = book_data.get('translator')
             translator = str(translator).strip() if translator else None
@@ -259,9 +286,10 @@ class BookDatabase:
             # Insert book
             query = """
                 INSERT INTO Books (
-                    title, original_title, release_date, format, publisher_id,
-                    pages, description, series_id, translator, language_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    title, original_title, release_date, format, note,
+                    pages, description, series_id, translator,
+                    language_id, first_polish_release_date, isbn
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
 
             values = (
@@ -269,11 +297,14 @@ class BookDatabase:
                 original_title,
                 publish_year,
                 format_value,
+                notes,
                 pages,
                 description,
                 series_id,
                 translator,
-                language_id
+                language_id,
+                firstPublYear,
+                isbn
             )
 
             cursor.execute(query, values)
@@ -298,7 +329,7 @@ class BookDatabase:
                     )
 
             # Handle additional publishers if multiple
-            for publisher_item in publishers[1:]:
+            for publisher_item in publishers:
                 publisher_id = self._get_or_create_publisher(publisher_item)
                 # Assuming there's a bookPublishers table for many-to-many relationship
                 try:
