@@ -11,12 +11,13 @@
     :search="searchInput"
     item-title="title"
     item-value="value"
+    return-object
     @update:search="onSearchInput"
   >
     <template #no-data>
       <v-list-item>
         <v-list-item-title>
-          No results found. Press <kbd>Enter</kbd> to create "{{ searchInput }}"
+          Wprowadź co najmniej 3 litery, aby uzyskać podpowiedź
         </v-list-item-title>
       </v-list-item>
     </template>
@@ -29,7 +30,7 @@ import { ref, watch, computed, nextTick } from 'vue'
 // Props
 const props = defineProps({
   modelValue: {
-    type: String,
+    type: [String, Object],
     default: null
   },
   label: {
@@ -63,22 +64,29 @@ const searchTimeout = ref(null)
 const internalValue = computed({
   get: () => props.modelValue,
   set: (value) => {
-    // Extract string value from various formats
-    let cleanValue = null
+    let emitValue = null
 
     if (value === null || value === undefined || value === '') {
-      cleanValue = null
+      emitValue = null
     } else if (typeof value === 'string') {
-      cleanValue = value.trim() || null
+        emitValue = {
+          id: null,
+          title: value,
+          value: value,
+          isCustom: true
+        }
     } else if (typeof value === 'object' && value !== null) {
-      // Handle selected items from dropdown
-      cleanValue = value.title || value.value || value.text || value.name || null
+      emitValue = {
+        id: value.id || null,
+        title: value.title || value.value || value.text || value.name,
+        value: value.value || value.title || value.text || value.name,
+        isCustom: value.isCustom || false
+      }
     }
 
-    emit('update:modelValue', cleanValue)
+    emit('update:modelValue', emitValue)
 
-    // Clear on select if enabled
-    if (props.clearOnSelect && cleanValue) {
+    if (props.clearOnSelect && emitValue) {
       nextTick(() => {
         searchInput.value = ''
       })
@@ -119,9 +127,19 @@ const searchItems = async (query) => {
     // Ensure items have the expected format
     items.value = data.map(item => {
       if (typeof item === 'string') {
-        return { title: item, value: item }
+        return {
+          id: null,
+          title: item,
+          value: item,
+          isCustom: false
+        }
       }
-      return item
+      return {
+        id: item.id || null,
+        title: item.title || item.value || item.text || item.name,
+        value: item.value || item.title || item.text || item.name,
+        isCustom: false
+      }
     })
   } catch (error) {
     console.error(`Error fetching ${props.label}:`, error)
@@ -134,7 +152,7 @@ const searchItems = async (query) => {
 // Watch for external value changes
 watch(() => props.modelValue, (newValue) => {
   if (newValue !== internalValue.value) {
-    searchInput.value = newValue || ''
+    searchInput.value = typeof newValue === 'object' ? newValue?.title || '' : newValue || ''
   }
 }, { immediate: true })
-  </script>
+</script>

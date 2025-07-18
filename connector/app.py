@@ -12,6 +12,7 @@ from table_handler import TableHandler
 
 # Create handlers after app initialization
 publisher_handler = TableHandler('publisher')
+author_handler = TableHandler('Authors')
 series_handler = TableHandler('series')
 genres_handler = TableHandler('genres')
 
@@ -90,7 +91,8 @@ def build_query(params: Dict[str, Any]) -> tuple[str, list]:
         FROM Books b
         LEFT JOIN bookAuthors ba ON b.id = ba.book_id
         LEFT JOIN Authors a ON ba.author_id = a.id
-        LEFT JOIN publisher p ON b.publisher_id = p.id
+        LEFT JOIN bookPublishers bp ON b.id = bp.book_id
+        LEFT JOIN publisher p ON bp.publisher_id = p.id
         LEFT JOIN series s ON b.series_id = s.id
     """
 
@@ -169,7 +171,6 @@ def get_books():
 
 @app.route('/addbook', methods=['POST'])
 def add_books():
-    print("ok" )
     content_type = request.headers.get('Content-Type')
     if content_type == 'application/json':
         try:
@@ -179,10 +180,11 @@ def add_books():
                 json.dump(data, f, indent=3)
             if data.get('title'): 
                 logging.info(f"Receive new book, title: {data['title']}")
+                print(f"Receive new book, title: {data['title']}")
             conn = get_db_connection()
             if conn:
                 db = BookDatabase( conn )
-                #db.insert_book( data )
+                db.insert_book( data )
                 conn.close()
             else:
                 logging.warn( f"Connection to DB not successful" )
@@ -193,6 +195,25 @@ def add_books():
     else:
         return jsonify({'error': 'Unsupported Media Type'}), 415
     return Response( status = 204 )
+
+# Modify the existing get_authors function  
+@app.route('/authors', methods=['GET'])  
+def get_authors():  
+    conn = get_db_connection()  
+    if not conn:  
+        return jsonify({"error": "Database connection failed"}), 500  
+
+    try:  
+        query = request.args.get('query', '')  
+        authors = author_handler.get_items(conn, query)  
+        return jsonify(authors)  
+
+    except Exception as e:  
+        return jsonify({"error": str(e)}), 500  
+
+    finally:  
+        if conn:  
+            conn.close()  
 
 # Modify the existing get_publishers function  
 @app.route('/publishers', methods=['GET'])  

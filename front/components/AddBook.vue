@@ -5,7 +5,7 @@
 				<v-row>
 					<v-col cols="12" sm="6">
 						<v-text-field v-model="isbn" label="ISBN" :rules="isbnRules"
-							hint="10 or 13 characters"></v-text-field>
+															  hint="10 or 13 characters"></v-text-field>
 					</v-col>
 
 					<v-col cols="12" sm="6">
@@ -13,108 +13,105 @@
 					</v-col>
 
 					<v-col cols="12" sm="6">
-						<GenreCheck v-model="genre" label="gatunek" placeholder="Select or add a series"
-							api-endpoint="/api/genres" />
+						<MultiAutocompleteField
+								v-model="author"
+								label="Autor"
+								placeholder="Wybierz lub dodaj autora (bądź autorów)"
+								api-endpoint="/api/authors"
+								/>
 					</v-col>
 
 					<v-col cols="12" sm="6">
 						<MultiAutocompleteField
-							v-model="publisher"
-							label="Publisher"
-							placeholder="Select or add a publisher"
-							api-endpoint="/api/publishers"
-						/>
+								v-model="publisher"
+								label="Publisher"
+								placeholder="Select or add a publisher"
+								api-endpoint="/api/publishers"
+								/>
 					</v-col>
 
-					<!--
+					<v-col cols="12" sm="6">
+						<GenreCheck v-model="genre" label="gatunek" placeholder="Select or add a series"
+																				  api-endpoint="/api/genres" />
+					</v-col>
 
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="author"
-              label="Autor"
-            ></v-text-field>
-          </v-col>
 
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="publishYear"
-              label="Data wydania"
-              type="number"
-              :rules="yearRules"
-           ></v-text-field>
-          </v-col>
+					<v-col cols="12" sm="6">
+						<v-text-field
+								v-model="publishYear"
+								label="Data wydania"
+								type="number"
+								:rules="yearRules"
+								></v-text-field>
+					</v-col>
 
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="firstPublishYear"
-              label="Data pierwszego wydania"
-              type="number"
-              :rules="yearRules"
-            ></v-text-field>
-          </v-col>
+					<v-col cols="12" sm="6">
+						<v-text-field
+								v-model="firstPublishYear"
+								label="Data pierwszego wydania"
+								type="number"
+								:rules="yearRules"
+								></v-text-field>
+					</v-col>
 
-          <v-col cols="12" sm="6">
-            <v-select
-              v-model="format"
-              :items="formatOptions"
-              label="Format"
-            ></v-select>
-          </v-col>
+					<v-col cols="12" sm="6">
+						<v-select
+								v-model="format"
+								:items="formatOptions"
+								label="Format"
+								></v-select>
+					</v-col>
 
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="pages"
-              label="Liczba stron"
-              type="number"
-              :rules="pagesRules"
-            ></v-text-field>
-          </v-col>
+					<v-col cols="12" sm="6">
+						<v-text-field
+								v-model="pages"
+								label="Liczba stron"
+								type="number"
+								:rules="pagesRules"
+								></v-text-field>
+					</v-col>
 
-          <v-col cols="12">
-            <v-textarea
-              v-model="description"
-              label="Opis"
-              rows="3"
-            ></v-textarea>
-          </v-col>
+					<v-col cols="12">
+						<v-textarea
+								v-model="description"
+								label="Opis"
+								rows="3"
+								></v-textarea>
+					</v-col>
 
-          <v-col cols="12">
-            <v-textarea
-              v-model="notes"
-              label="Uwagi"
-              rows="3"
-            ></v-textarea>
-          </v-col>
-		          -->
+					<v-col cols="12">
+						<v-textarea
+								v-model="notes"
+								label="Uwagi"
+								rows="3"
+								></v-textarea>
+					</v-col>
 
 					<v-col cols="12" sm="6">
 						<AutocompleteField v-model="series" label="Series" placeholder="Select or add a series"
-							api-endpoint="/api/series" />
+																							api-endpoint="/api/series" />
 					</v-col>
 
-					<!--
+					<v-col cols="12" sm="6">
+						<v-text-field
+								v-model="originalTitle"
+								label="Tytuł oryginalny"
+								></v-text-field>
+					</v-col>
 
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="originalTitle"
-              label="Tytuł oryginalny"
-            ></v-text-field>
-          </v-col>
+					<v-col cols="12" sm="6">
+						<v-text-field
+								v-model="translator"
+								label="Tłumacz"
+								></v-text-field>
+					</v-col>
 
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="translator"
-              label="Tłumacz"
-            ></v-text-field>
-          </v-col>
-
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="language"
-              label="Język"
-            ></v-text-field>
-          </v-col>
-        -->
+					<v-col cols="12" sm="6">
+						<v-text-field
+								v-model="language"
+								label="Język"
+								></v-text-field>
+					</v-col>
 				</v-row>
 
 				<v-card-actions class="pt-4">
@@ -141,7 +138,7 @@ export default {
 		valid: false,
 		isbn: '',
 		title: '',
-		author: '',
+		author: [],
 		publishYear: '',
 		firstPublishYear: '',
 		format: 'unknown',
@@ -187,23 +184,73 @@ export default {
 		async submitForm() {
 			if (this.$refs.form.validate()) {
 				const bookData = {
-					isbn: this.isbn,
+					isbn: this.isbn ? parseInt(this.isbn) : null,
 					title: this.title,
-					author: this.author,
-					publishYear: this.publishYear,
-					firstPublishYear: this.firstPublishYear,
+					publishYear: this.publishYear ? parseInt(this.publishYear) : null,
+					firstPublishYear: this.firstPublishYear ? parseInt(this.firstPublishYear) : null,
 					format: this.format,
-					pages: this.pages,
+					pages: this.pages ? parseInt(this.pages) : null,
 					description: this.description,
 					notes: this.notes,
 					originalTitle: this.originalTitle,
 					translator: this.translator,
 					language: this.language,
 				};
-				console.log("genre ", this.genre)
-				console.log("series ", this.series)
-				console.log("wydawca ", this.publisher)
-				bookData.publisher = this.publisher;
+
+				// Process genre array - handle both objects and strings
+				if (this.genre && this.genre.length > 0) {
+					bookData.genre = this.genre.map(item => {
+						// Check if the item is an object
+						if (typeof item === 'object' && item !== null) {
+							return {
+								id: item.id,
+								title: item.title,
+								isCustom: false
+							};
+						}
+						// If it's a string, create object format
+						else if (typeof item === 'string') {
+							return {
+								id: null,
+								title: item,
+								isCustom: true
+							};
+						}
+						// Fallback for any other type
+						return {
+							id: null,
+							title: String(item),
+							isCustom: true
+						};
+					});
+				}
+
+				// Process publisher array - extract IDs and titles
+				if (this.publisher && this.publisher.length > 0) {
+					bookData.publisher = this.publisher.map(pub => ({
+						id: pub.id,
+						title: pub.title,
+						isCustom: pub.isCustom
+					}));
+				}
+
+				// Process author array - extract IDs and titles
+				if (this.author && this.author.length > 0) {
+					bookData.author = this.author.map(pub => ({
+						id: pub.id,
+						title: pub.title,
+						isCustom: pub.isCustom
+					}));
+				}
+
+				// Process series object - extract ID and title
+				if (this.series) {
+					bookData.series= {
+						id: this.series.id,
+						title: this.series.title,
+						isCustom: this.series.isCustom
+					};
+				}
 				console.log('Form submitted:', bookData)
 				try {
 					const response = await fetch('/api/addbook', {
@@ -241,7 +288,11 @@ export default {
 		},
 
 		resetForm() {
-			this.$refs.form.reset()
+			this.$refs.form.reset();
+			// Reset object fields to their initial state
+			this.publisher = [];
+			this.author = [];
+			this.series = null;
 		},
 
 	}
