@@ -137,10 +137,10 @@
 		right
 	>
 		{{ snackbar.message }}
-		<template v-slot:action="{ attrs }">
+		<template v-slot:action>
 			<v-btn
+				color="white"
 				text
-				v-bind="attrs"
 				@click="snackbar.show = false"
 			>
 				Close
@@ -293,6 +293,7 @@ export default {
 						// Success case - status 204 No Content
 						console.log('Book added successfully');
 						this.showSnackbar('Book added successfully!', 'success');
+						this.resetForm();
 						return;
 					}
 
@@ -314,11 +315,25 @@ export default {
 		},
 
 		resetForm() {
+			// Reset form validation
 			this.$refs.form.reset();
-			// Reset object fields to their initial state
-			this.publisher = [];
+
+			// Manually clear all form fields
+			this.isbn = '';
+			this.title = '';
 			this.author = [];
-			this.series = null;
+			this.publishYear = '';
+			this.firstPublishYear = '';
+			this.format = 'unknown';
+			this.publisher = [];
+			this.pages = '';
+			this.description = '';
+			this.notes = '';
+			this.series = '';
+			this.originalTitle = '';
+			this.translator = '';
+			this.language = '';
+			this.genre = [];
 		},
 
 	}
