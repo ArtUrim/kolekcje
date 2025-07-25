@@ -36,6 +36,7 @@ class TestBookDatabase:
             "author": "Test Author",
             "publisher": "Test Publisher",
             "publishYear": "2023-01-01",
+            "firstPublishYear": 1234,
             "format": "papier",
             "pages": "300",
             "description": "A test book description",
@@ -263,7 +264,7 @@ class TestBookDatabase:
     def test_format_mapping_unknown_format(self, book_db, mock_connection, valid_book_data):
         """Test format mapping with unknown format"""
         mock_conn, mock_cursor = mock_connection
-        mock_cursor.fetchone.side_effect = [(1,), (2,), (3,)]
+        mock_cursor.fetchone.side_effect = [(1,), (2,), (3,), (2,)]
         mock_cursor.lastrowid = 500
         
         valid_book_data["format"] = "unknown_format"
@@ -271,10 +272,38 @@ class TestBookDatabase:
         result = book_db.insert_book(valid_book_data)
         assert result == 500
     
+    def test_first_publish_year_extraction_old(self, book_db, mock_connection, valid_book_data):
+        """Test publish year extraction from different formats"""
+        mock_conn, mock_cursor = mock_connection
+        mock_cursor.fetchone.side_effect = [(1,), (2,), (3,), (7,)]
+        mock_cursor.lastrowid = 600
+        
+        # Test with different year formats
+        test_cases = [234]
+        
+        for year_format in test_cases:
+            valid_book_data["firstPublishYear"] = year_format
+            result = book_db.insert_book(valid_book_data)
+            assert result == 600
+    
+    def test_publish_year_extraction_old(self, book_db, mock_connection, valid_book_data):
+        """Test publish year extraction from different formats"""
+        mock_conn, mock_cursor = mock_connection
+        mock_cursor.fetchone.side_effect = [(1,), (2,), (3,), (7,)]
+        mock_cursor.lastrowid = 600
+        
+        # Test with different year formats
+        test_cases = [1234]
+        
+        for year_format in test_cases:
+            valid_book_data["publishYear"] = year_format
+            result = book_db.insert_book(valid_book_data)
+            assert result == 600
+    
     def test_publish_year_extraction(self, book_db, mock_connection, valid_book_data):
         """Test publish year extraction from different formats"""
         mock_conn, mock_cursor = mock_connection
-        mock_cursor.fetchone.side_effect = [(1,), (2,), (3,)]
+        mock_cursor.fetchone.side_effect = [(1,), (2,), (3,), (7,)]
         mock_cursor.lastrowid = 600
         
         # Test with different year formats
@@ -302,7 +331,7 @@ class TestBookDatabase:
     def test_pages_conversion_to_int(self, book_db, mock_connection, valid_book_data):
         """Test pages field conversion to integer"""
         mock_conn, mock_cursor = mock_connection
-        mock_cursor.fetchone.side_effect = [(1,), (2,), (3,)]
+        mock_cursor.fetchone.side_effect = [(1,), (2,), (3,), (1,)]
         mock_cursor.lastrowid = 800
         
         valid_book_data["pages"] = "250"  # String that should convert to int
