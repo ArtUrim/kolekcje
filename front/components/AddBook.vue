@@ -137,7 +137,7 @@
 		right
 	>
 		{{ snackbar.message }}
-		<template v-slot:action>
+		<template v-slot:actions>
 			<v-btn
 				color="white"
 				text
