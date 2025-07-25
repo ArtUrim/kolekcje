@@ -1,9 +1,8 @@
--- Adminer 4.8.1 MySQL 11.6.2-MariaDB-ubu2404 dump
+-- Adminer 4.8.1 MySQL 11.5.2-MariaDB-ubu2404 dump
 
 SET NAMES utf8;
 SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
-SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
 SET NAMES utf8mb4;
 
@@ -59,8 +58,8 @@ CREATE TABLE `Books` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `isbn` varchar(13) DEFAULT NULL,
   `title` varchar(512) NOT NULL,
-  `release_date` year(4) DEFAULT NULL,
-  `first_polish_release_date` year(4) DEFAULT NULL,
+  `release_date` smallint(6) DEFAULT NULL,
+  `first_polish_release_date` smallint(6) DEFAULT NULL,
   `format` enum('unknown','hardback','paperback','ebook') NOT NULL DEFAULT 'unknown',
   `pages` int(11) DEFAULT NULL,
   `description` text DEFAULT NULL,
@@ -116,4 +115,4 @@ CREATE TABLE `series` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 
--- 2025-01-14 16:17:09
+-- 2025-07-25 16:52:36

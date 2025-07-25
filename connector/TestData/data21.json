@@ -1,0 +1,59 @@
+{
+   "isbn": 1234567890123,
+   "title": "plotki, p\u0142otki",
+   "publishYear": 2001,
+   "firstPublishYear": 1234,
+   "format": "paperback",
+   "pages": 234,
+   "description": "Fuego y pasi\u00f3n bajo la luna...\n\nNoc\u0105 rytm salsy miesza si\u0119 z szeptem palm, a gor\u0105ce powietrze dr\u017cy od d\u017awi\u0119k\u00f3w gitary. Cia\u0142a p\u0142on\u0105 w ta\u0144cu, jak p\u0142omienie na piasku. \u00a1Vamos! \u017bycie to fiesta \u2013 niech trwa do \u015bwitu!",
+   "notes": "hasta la vista",
+   "originalTitle": "qqryq qq",
+   "translator": "bia\u0142y kot",
+   "language": "en",
+   "genre": [
+      {
+         "id": 2,
+         "title": "proza",
+         "isCustom": false
+      },
+      {
+         "id": null,
+         "title": "wykwity",
+         "isCustom": true
+      }
+   ],
+   "publisher": [
+      {
+         "id": 5,
+         "title": "inne tryby",
+         "isCustom": false
+      },
+      {
+         "id": null,
+         "title": "pomponiki",
+         "isCustom": true
+      }
+   ],
+   "author": [
+      {
+         "id": 11,
+         "title": "Ewelina Ma\u0142ys",
+         "isCustom": false
+      },
+      {
+         "id": 5,
+         "title": "Nicole Szpila",
+         "isCustom": false
+      },
+      {
+         "id": null,
+         "title": "Marysia \u015arodka",
+         "isCustom": true
+      }
+   ],
+   "series": {
+      "id": 1,
+      "title": "paczki",
+      "isCustom": false
+   }
+}
