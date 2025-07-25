@@ -129,6 +129,24 @@
 			</v-form>
 		</v-card>
 	</v-container>
+	<v-snackbar
+		v-model="snackbar.show"
+		:color="snackbar.color"
+		:timeout="5000"
+		top
+		right
+	>
+		{{ snackbar.message }}
+		<template v-slot:action>
+			<v-btn
+				color="white"
+				text
+				@click="snackbar.show = false"
+			>
+				Close
+			</v-btn>
+		</template>
+	</v-snackbar>
 </template>
 
 <script>
@@ -136,6 +154,11 @@ export default {
 
 	data: () => ({
 		valid: false,
+		snackbar: {
+			show: false,
+			message: '',
+			color: 'success'
+		},
 		isbn: '',
 		title: '',
 		author: [],
@@ -176,6 +199,11 @@ export default {
 	}),
 
 	methods: {
+		showSnackbar(message, color = 'success') {
+			this.snackbar.message = message;
+			this.snackbar.color = color;
+			this.snackbar.show = true;
+		},
 
 		verifyForm() {
 			this.$refs.form.validate()
@@ -264,8 +292,8 @@ export default {
 					if (response.status === 204) {
 						// Success case - status 204 No Content
 						console.log('Book added successfully');
-						// You might want to add user feedback here, like:
-						// this.$emit('book-added') or show a success message
+						this.showSnackbar('Book added successfully!', 'success');
+						this.resetForm();
 						return;
 					}
 
@@ -281,18 +309,31 @@ export default {
 
 				} catch (err) {
 					console.error('Error adding book:', err);
-					// You might want to add user feedback here, like:  
-					// this.$emit('error', err.message) or show an error message
+					this.showSnackbar(`Error adding book: ${err.message}`, 'error');
 				}
 			}
 		},
 
 		resetForm() {
+			// Reset form validation
 			this.$refs.form.reset();
-			// Reset object fields to their initial state
-			this.publisher = [];
+
+			// Manually clear all form fields
+			this.isbn = '';
+			this.title = '';
 			this.author = [];
-			this.series = null;
+			this.publishYear = '';
+			this.firstPublishYear = '';
+			this.format = 'unknown';
+			this.publisher = [];
+			this.pages = '';
+			this.description = '';
+			this.notes = '';
+			this.series = '';
+			this.originalTitle = '';
+			this.translator = '';
+			this.language = '';
+			this.genre = [];
 		},
 
 	}
