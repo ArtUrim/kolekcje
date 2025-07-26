@@ -1,12 +1,12 @@
 <template>
   <v-card>
     <v-card-title>
-      Books Database
+		 {{ $t('books.db') }}
       <v-row>
         <v-col cols="3">
           <v-text-field
             v-model="searchParams.title"
-            label="Search Title"
+            :label="$t('books.searchTitle')"
             clearable
             @update:model-value="handleSearch"
           />
@@ -14,7 +14,7 @@
         <v-col cols="3">
           <v-text-field
             v-model="searchParams.author"
-            label="Search Author"
+            :label="$t('books.searchAuthor')"
             clearable
             @update:model-value="handleSearch"
           />
@@ -22,7 +22,7 @@
         <v-col cols="3">
           <v-text-field
             v-model="searchParams.publisher"
-            label="Search Publisher"
+            :label="$t('books.searchPublisher')"
             clearable
             @update:model-value="handleSearch"
           />
@@ -30,7 +30,7 @@
         <v-col cols="3">
           <v-text-field
             v-model="searchParams.serie"
-            label="Search Series"
+            :label="$t('books.searchSeries')"
             clearable
             @update:model-value="handleSearch"
           />
@@ -59,7 +59,7 @@
       </template>
       
       <template #no-data>
-        No books found.
+		  {{ $t('books.nobooks') }}
       </template>
     </v-data-table-server>
   </v-card>

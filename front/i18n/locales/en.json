@@ -6,5 +6,14 @@
 		"home": "Home",
 		"books": "Book",
 		"addBook": "Add"
+	},
+	"books": {
+		"db": "Books database",
+		"searchTitle": "Search title",
+		"searchAuthor": "Search author",
+		"searchPublisher": "Search publisher",
+		"searchSeries": "Search serie",
+		"nobooks": "Nie znaleziono żadnych książek"
 	}
+
 }
