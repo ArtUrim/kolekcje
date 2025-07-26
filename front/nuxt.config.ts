@@ -14,15 +14,30 @@ export default defineNuxtConfig({
     '@/assets/styles/main.css'
   ],
 
-
-
   vuetify: {
-	  moduleOptions: {
-		  /* module specific options */
-	  },
-	  vuetifyOptions: {
-		  /* vuetify options */
-	  }
+      moduleOptions: {
+          /* module specific options */
+      },
+      vuetifyOptions: {
+          /* vuetify options */
+      }
+  },
+
+  i18n: {
+	  defaultLocale: 'pl',
+	  locales: [
+		  { code: 'en', name: 'English', file: 'en.json' },
+		  { code: 'pl', name: 'Polski', file: 'pl.json' },
+		  { code: 'it', name: 'Italiano', file: 'it.json' }
+	  ],
+	 lazy: true,
+    langDir: 'i18n/locales/',
+    strategy: 'prefix_except_default',
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_redirected',
+      redirectOn: 'root'
+    }
   },
 
   // Build Configuration
@@ -32,5 +47,5 @@ export default defineNuxtConfig({
     ]
   },
 
-  modules: ['vuetify-nuxt-module']
+  modules: ['vuetify-nuxt-module', '@nuxtjs/i18n']
 })

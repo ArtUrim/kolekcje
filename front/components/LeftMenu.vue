@@ -4,18 +4,25 @@
       <h2>Kolekcje</h2>
     </div>
     <ul class="nav-links">
-      <li><NuxtLink to="/">Home</NuxtLink></li>
-      <li><NuxtLink to="/books">Książki</NuxtLink></li>
+		 <li><NuxtLink to="/">{{ $t('leftMenu.home') }}</NuxtLink></li>
+		 <li><NuxtLink to="/books">{{ $t('leftMenu.books') }}</NuxtLink></li>
 		<li v-if="showAddBook">
-        <NuxtLink to="/addbook" class="small-text indent-left">Dodaj</NuxtLink>
+        <NuxtLink to="/addbook" class="small-text indent-left">
+		  {{ $t('leftMenu.addBook') }}
+		  </NuxtLink>
       </li>
-      <li><NuxtLink to="/contact">Kontakt</NuxtLink></li>
+		<li><NuxtLink to="/contact">{{ $t('contact') }}</NuxtLink></li>
+		<li> <NuxtLink :to="switchLocalePath('pl')">Polski</NuxtLink></li>
+		<li> <NuxtLink :to="switchLocalePath('en')">English</NuxtLink></li>
+		<li> <NuxtLink :to="switchLocalePath('it')">Italiano</NuxtLink></li>
     </ul>
   </nav>
 </template>
 
 <script setup>
 const route = useRoute()
+
+const switchLocalePath = useSwitchLocalePath()
 
 const showAddBook = computed(() => {
   return ['/books', '/addbook'].includes(route.path)

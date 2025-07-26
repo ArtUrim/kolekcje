@@ -1,0 +1,10 @@
+{
+	"welcome": "Welcome on page kolekcje",
+	"shortDescription": "Webapp for books management (and disks actually also)",
+	"contact": "Contact",
+	"leftMenu": {
+		"home": "Home",
+		"books": "Book",
+		"addBook": "Add"
+	}
+}

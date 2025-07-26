@@ -1,0 +1,10 @@
+{
+	"welcome": "Witamy na stronie kolekcje",
+	"shortDescription": "Aplikacja służąca do zarządzania kolekcjami (książek, płyt, etc)",
+	"contact": "Kontakt",
+	"leftMenu": {
+		"home": "Główna",
+		"books": "Książki",
+		"addBook": "Dodaj"
+	}
+}
