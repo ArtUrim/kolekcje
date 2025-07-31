@@ -1,18 +1,53 @@
 {
-	"welcome": "Witamy na stronie kolekcje",
-	"shortDescription": "Aplikacja służąca do zarządzania kolekcjami (książek, płyt, etc)",
-	"contact": "Kontakt",
-	"leftMenu": {
-		"home": "Główna",
-		"books": "Książki",
-		"addBook": "Dodaj"
-	},
-	"books": {
-		"db": "Baza książek",
-		"searchTitle": "Szukaj po tytule",
-		"searchAuthor": "Szukaj po autorze",
-		"searchPublisher": "Szukaj po wydawcy",
-		"searchSeries": "Szukaj po serii",
-		"nobooks": "Nie znaleziono żadnych książek"
-	}
+  "welcome": "Witamy na stronie kolekcje",
+  "shortDescription": "Aplikacja służąca do zarządzania kolekcjami (książek, płyt, etc)",
+  "contact": "Kontakt",
+  "leftMenu": {
+    "home": "Główna",
+    "books": "Książki",
+    "addBook": "Dodaj"
+  },
+  "books": {
+    "db": "Baza książek",
+    "searchTitle": "Szukaj po tytule",
+    "searchAuthor": "Szukaj po autorze",
+    "searchPublisher": "Szukaj po wydawcy",
+    "searchSeries": "Szukaj po serii",
+    "nobooks": "Nie znaleziono żadnych książek"
+  },
+  "input": {
+    "clear": "wyczyść"
+  },
+  "dataFooter": {
+    "pageText": "strona {0}-{1} z {2}",
+    "itemsPerPageText": "Wierszy na stronie:",
+    "itemsPerPageAll": "Wszystkie",
+    "nextPage": "Następna strona",
+    "prevPage": "Poprzednia strona",
+    "firstPage": "Pierwsza strona",
+    "lastPage": "Ostatnia strona"
+  },
+  "$vuetify": {
+    "open": "otwórz",
+    "input": {
+      "clear": "wyczyść"
+    },
+    "pagination": {
+      "ariaLabel": {
+        "root": "Nawigacja paginacji"
+      }
+    },
+    "dataFooter": {
+      "pageText": "{0}-{1} z {2}",
+      "itemsPerPageText": "Wierszy na stronie:",
+      "itemsPerPageAll": "Wszystkie",
+      "nextPage": "Następna strona",
+      "prevPage": "Poprzednia strona",
+      "firstPage": "Pierwsza strona",
+      "lastPage": "Ostatnia strona"
+    },
+    "dataIterator": {
+      "loadingText": "Ładowanie elementów..."
+    }
+  }
 }

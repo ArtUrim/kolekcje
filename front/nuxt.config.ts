@@ -15,24 +15,58 @@ export default defineNuxtConfig({
   ],
 
   vuetify: {
-      moduleOptions: {
-          /* module specific options */
-      },
-      vuetifyOptions: {
-          /* vuetify options */
+    moduleOptions: {
+      /* module specific options */
+    },
+    vuetifyOptions: {
+      locale: {
+        locale: 'pl',
+        fallback: 'en',
+        messages: {
+          pl: {
+            $vuetify: {
+              input: {
+                clear: 'wyczyść'
+              },
+              dataFooter: {
+                pageText: '{0}-{1} z {2}',
+                itemsPerPageText: 'Wierszy na stronie:',
+                itemsPerPageAll: 'Wszystkie',
+                nextPage: 'Następna strona',
+                prevPage: 'Poprzednia strona'
+              }
+            }
+          },
+          en: {
+            $vuetify: {
+              input: {
+                clear: 'clear'
+              },
+              dataFooter: {
+                pageText: '{0}-{1} of {2}',
+                itemsPerPageText: 'Rows per page:',
+                itemsPerPageAll: 'All',
+                nextPage: 'Next page',
+                prevPage: 'Previous page'
+              }
+            }
+          }
+        }
       }
+    }
   },
 
   i18n: {
 	  defaultLocale: 'pl',
+    fallbackLocale: 'en',
 	  locales: [
 		  { code: 'en', name: 'English', file: 'en.json' },
 		  { code: 'pl', name: 'Polski', file: 'pl.json' },
 		  { code: 'it', name: 'Italiano', file: 'it.json' }
 	  ],
-	 lazy: true,
+	  // lazy: true,
     langDir: 'i18n/locales/',
-    strategy: 'prefix_except_default',
+    strategy: 'prefix_and_default',
     detectBrowserLanguage: {
       useCookie: true,
       cookieKey: 'i18n_redirected',
