@@ -4,19 +4,19 @@
 			<v-form ref="form" v-model="valid">
 				<v-row>
 					<v-col cols="12" sm="6">
-						<v-text-field v-model="isbn" label="ISBN" :rules="isbnRules"
+						<v-text-field v-model="isbn" :label="$t('addBook.isbn')" :rules="isbnRules"
 															  hint="10 or 13 characters"></v-text-field>
 					</v-col>
 
 					<v-col cols="12" sm="6">
-						<v-text-field v-model="title" label="Tytuł" :rules="titleRules" required></v-text-field>
+						<v-text-field v-model="title" :label="$t('addBook.title')" :rules="titleRules" required></v-text-field>
 					</v-col>
 
 					<v-col cols="12" sm="6">
 						<MultiAutocompleteField
 								v-model="author"
-								label="Autor"
-								placeholder="Wybierz lub dodaj autora (bądź autorów)"
+								:label="$t('addBook.author')"
+								:placeholder="$t('addBook.placeholders.author')"
 								api-endpoint="/api/authors"
 								/>
 					</v-col>
@@ -24,14 +24,14 @@
 					<v-col cols="12" sm="6">
 						<MultiAutocompleteField
 								v-model="publisher"
-								label="Publisher"
-								placeholder="Select or add a publisher"
+								:label="$t('addBook.publisher')"
+								:placeholder="$t('addBook.placeholders.publisher')"
 								api-endpoint="/api/publishers"
 								/>
 					</v-col>
 
 					<v-col cols="12" sm="6">
-						<GenreCheck v-model="genre" label="gatunek" placeholder="Select or add a series"
+						<GenreCheck v-model="genre" :label="$t('addBook.genre')" :placeholder="$t('addBook.placeholders.genre')"
 																				  api-endpoint="/api/genres" />
 					</v-col>
 
@@ -39,7 +39,7 @@
 					<v-col cols="12" sm="6">
 						<v-text-field
 								v-model="publishYear"
-								label="Data wydania"
+								:label="$t('addBook.publishYear')"
 								type="number"
 								:rules="yearRules"
 								></v-text-field>
@@ -48,7 +48,7 @@
 					<v-col cols="12" sm="6">
 						<v-text-field
 								v-model="firstPublishYear"
-								label="Data pierwszego wydania"
+								:label="$t('addBook.firstPublishYear')"
 								type="number"
 								:rules="yearRules"
 								></v-text-field>
@@ -58,14 +58,14 @@
 						<v-select
 								v-model="format"
 								:items="formatOptions"
-								label="Format"
+								:label="$t('addBook.format')"
 								></v-select>
 					</v-col>
 
 					<v-col cols="12" sm="6">
 						<v-text-field
 								v-model="pages"
-								label="Liczba stron"
+								:label="$t('addBook.pages')"
 								type="number"
 								:rules="pagesRules"
 								></v-text-field>
@@ -74,7 +74,7 @@
 					<v-col cols="12">
 						<v-textarea
 								v-model="description"
-								label="Opis"
+								:label="$t('addBook.description')"
 								rows="3"
 								></v-textarea>
 					</v-col>
@@ -82,34 +82,34 @@
 					<v-col cols="12">
 						<v-textarea
 								v-model="notes"
-								label="Uwagi"
+								:label="$t('addBook.notes')"
 								rows="3"
 								></v-textarea>
 					</v-col>
 
 					<v-col cols="12" sm="6">
-						<AutocompleteField v-model="series" label="Series" placeholder="Select or add a series"
+						<AutocompleteField v-model="series" :label="$t('addBook.series')" :placeholder="$t('addBook.placeholders.series')"
 																							api-endpoint="/api/series" />
 					</v-col>
 
 					<v-col cols="12" sm="6">
 						<v-text-field
 								v-model="originalTitle"
-								label="Tytuł oryginalny"
+								:label="$t('addBook.originalTitle')"
 								></v-text-field>
 					</v-col>
 
 					<v-col cols="12" sm="6">
 						<v-text-field
 								v-model="translator"
-								label="Tłumacz"
+								:label="$t('addBook.translator')"
 								></v-text-field>
 					</v-col>
 
 					<v-col cols="12" sm="6">
 						<v-text-field
 								v-model="language"
-								label="Język"
+								:label="$t('addBook.language')"
 								></v-text-field>
 					</v-col>
 				</v-row>
@@ -117,13 +117,13 @@
 				<v-card-actions class="pt-4">
 					<v-spacer></v-spacer>
 					<v-btn color="info" @click="verifyForm">
-						Verify
+						{{ $t('addBook.buttons.verify') }}
 					</v-btn>
 					<v-btn color="grey" text @click="resetForm">
-						Reset
+						{{ $t('addBook.buttons.reset') }}
 					</v-btn>
 					<v-btn color="primary" :disabled="!valid" @click="submitForm">
-						Submit
+						{{ $t('addBook.buttons.submit') }}
 					</v-btn>
 				</v-card-actions>
 			</v-form>
@@ -143,7 +143,7 @@
 				text
 				@click="snackbar.show = false"
 			>
-				Close
+				{{ $t('addBook.buttons.close') }}
 			</v-btn>
 		</template>
 	</v-snackbar>

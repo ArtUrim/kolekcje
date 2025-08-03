@@ -1,25 +1,54 @@
 {
-	"welcome": "Benvenuto a kolekcje pagare",
-	"shortDescription": "Webapp for books management (and disks actually also)",
-	"contact": "Contact",
-	"leftMenu": {
-		"home": "Główna",
-		"books": "Książki",
-		"addBook": "Dodaj"
-	},
-	"books": {
-		"db": "Baza książek",
-		"searchTitle": "Szukaj po tytule",
-		"searchAuthor": "Szukaj po autorze",
-		"searchPublisher": "Szukaj po wydawcy",
-		"searchSeries": "Szukaj po serii",
-		"nobooks": "Nie znaleziono żadnych książek",
-		"headers": {
-			"title": "Titolo",
-			"authors": "Autore(i)",
-			"publisher": "Editore",
-			"releaseDate": "Data di pubblicazione",
-			"seriesName": "Serie"
-		}
-	}
+  "welcome": "Benvenuto a kolekcje pagare",
+  "shortDescription": "Webapp for books management (and disks actually also)",
+  "contact": "Contact",
+  "leftMenu": {
+    "home": "Home",
+    "books": "Libri",
+    "addBook": "Aggiungi"
+  },
+  "books": {
+    "db": "Database libri",
+    "searchTitle": "Cerca titolo",
+    "searchAuthor": "Cerca autore",
+    "searchPublisher": "Cerca editore",
+    "searchSeries": "Cerca serie",
+    "nobooks": "Nessun libro trovato",
+    "headers": {
+      "title": "Titolo",
+      "authors": "Autore(i)",
+      "publisher": "Editore",
+      "releaseDate": "Data di pubblicazione",
+      "seriesName": "Serie"
+    }
+  },
+  "addBook": {
+    "isbn": "ISBN",
+    "title": "Titolo",
+    "author": "Autore",
+    "publisher": "Editore",
+    "genre": "Genere",
+    "publishYear": "Anno di pubblicazione",
+    "firstPublishYear": "Anno della prima pubblicazione",
+    "format": "Formato",
+    "pages": "Numero di pagine",
+    "description": "Descrizione",
+    "notes": "Note",
+    "series": "Serie",
+    "originalTitle": "Titolo originale",
+    "translator": "Traduttore",
+    "language": "Lingua",
+    "placeholders": {
+      "author": "Seleziona o aggiungi autore(i)",
+      "publisher": "Seleziona o aggiungi un editore",
+      "genre": "Seleziona o aggiungi un genere",
+      "series": "Seleziona o aggiungi una serie"
+    },
+    "buttons": {
+      "verify": "Verifica",
+      "reset": "Reimposta",
+      "submit": "Invia",
+      "close": "Chiudi"
+    }
+  }
 }

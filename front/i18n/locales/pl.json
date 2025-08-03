@@ -22,6 +22,35 @@
       "seriesName": "Seria"
     }
   },
+  "addBook": {
+    "isbn": "ISBN",
+    "title": "Tytuł",
+    "author": "Autor",
+    "publisher": "Wydawca",
+    "genre": "Gatunek",
+    "publishYear": "Data wydania",
+    "firstPublishYear": "Data pierwszego wydania",
+    "format": "Format",
+    "pages": "Liczba stron",
+    "description": "Opis",
+    "notes": "Uwagi",
+    "series": "Seria",
+    "originalTitle": "Tytuł oryginalny",
+    "translator": "Tłumacz",
+    "language": "Język",
+    "placeholders": {
+      "author": "Wybierz lub dodaj autora (bądź autorów)",
+      "publisher": "Wybierz lub dodaj wydawcę",
+      "genre": "Wybierz lub dodaj gatunek",
+      "series": "Wybierz lub dodaj serię"
+    },
+    "buttons": {
+      "verify": "Sprawdź",
+      "reset": "Resetuj",
+      "submit": "Wyślij",
+      "close": "Zamknij"
+    }
+  },
   "input": {
     "clear": "wyczyść"
   },
