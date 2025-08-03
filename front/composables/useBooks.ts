@@ -1,17 +1,18 @@
 export const useBooks = () => {
+  const { t } = useI18n();
   const loading = ref(false);
   const items = ref<Book[]>([]);
   const totalItems = ref(0);
   const searchParams = ref<SearchParams>({});
   
   // Options for data table
-  const headers = [
-    { title: 'Title', key: 'title', sortable: true },
-    { title: 'Author(s)', key: 'authors', sortable: true },
-    { title: 'Publisher', key: 'publisher', sortable: true },
-    { title: 'Release Date', key: 'release_date', sortable: true },
-    { title: 'Series', key: 'series_name', sortable: true },
-  ];
+  const headers = computed(() => [
+    { title: t('books.headers.title'), key: 'title', sortable: true },
+    { title: t('books.headers.authors'), key: 'authors', sortable: true },
+    { title: t('books.headers.publisher'), key: 'publisher', sortable: true },
+    { title: t('books.headers.releaseDate'), key: 'release_date', sortable: true },
+    { title: t('books.headers.seriesName'), key: 'series_name', sortable: true },
+  ]);
 
   const fetchBooks = async (options: SearchParams) => {
     loading.value = true;

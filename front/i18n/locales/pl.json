@@ -13,7 +13,14 @@
     "searchAuthor": "Szukaj po autorze",
     "searchPublisher": "Szukaj po wydawcy",
     "searchSeries": "Szukaj po serii",
-    "nobooks": "Nie znaleziono żadnych książek"
+    "nobooks": "Nie znaleziono żadnych książek",
+    "headers": {
+      "title": "Tytuł",
+      "authors": "Autor(zy)",
+      "publisher": "Wydawca",
+      "releaseDate": "Data wydania",
+      "seriesName": "Seria"
+    }
   },
   "input": {
     "clear": "wyczyść"

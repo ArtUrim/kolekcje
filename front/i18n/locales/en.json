@@ -13,7 +13,14 @@
 		"searchAuthor": "Search author",
 		"searchPublisher": "Search publisher",
 		"searchSeries": "Search serie",
-		"nobooks": "Nie znaleziono żadnych książek"
+		"nobooks": "Nie znaleziono żadnych książek",
+		"headers": {
+			"title": "Title",
+			"authors": "Author(s)",
+			"publisher": "Publisher",
+			"releaseDate": "Release Date",
+			"seriesName": "Series"
+		}
 	}
 
 }

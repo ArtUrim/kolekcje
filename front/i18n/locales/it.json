@@ -13,7 +13,13 @@
 		"searchAuthor": "Szukaj po autorze",
 		"searchPublisher": "Szukaj po wydawcy",
 		"searchSeries": "Szukaj po serii",
-		"nobooks": "Nie znaleziono żadnych książek"
+		"nobooks": "Nie znaleziono żadnych książek",
+		"headers": {
+			"title": "Titolo",
+			"authors": "Autore(i)",
+			"publisher": "Editore",
+			"releaseDate": "Data di pubblicazione",
+			"seriesName": "Serie"
+		}
 	}
-
 }
