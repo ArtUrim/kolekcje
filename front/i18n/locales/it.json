@@ -1,0 +1,64 @@
+{
+  "welcome": "Benvenuto nella pagina kolekcje",
+  "shortDescription": "Applicazione per organizzare collezioni (libri, album musicali e film).",
+  "contact": "Contatto",
+  "contactInfo": {
+    "author": "Autore",
+    "email": "Email",
+    "repository": "Repository",
+    "version": "Versione"
+  },
+  "leftMenu": {
+    "home": "Home",
+    "books": "Libri",
+    "addBook": "Aggiungi"
+  },
+  "books": {
+    "db": "Database libri",
+    "searchTitle": "Cerca titolo",
+    "searchAuthor": "Cerca autore",
+    "searchPublisher": "Cerca editore",
+    "searchSeries": "Cerca serie",
+    "nobooks": "Nessun libro trovato",
+    "headers": {
+      "title": "Titolo",
+      "authors": "Autore(i)",
+      "publisher": "Editore",
+      "releaseDate": "Data di pubblicazione",
+      "seriesName": "Serie"
+    }
+  },
+  "addBook": {
+    "isbn": "ISBN",
+    "title": "Titolo",
+    "author": "Autore",
+    "publisher": "Editore",
+    "genre": "Genere",
+    "publishYear": "Anno di pubblicazione",
+    "firstPublishYear": "Anno della prima pubblicazione",
+    "format": "Formato",
+    "pages": "Numero di pagine",
+    "description": "Descrizione",
+    "notes": "Note",
+    "series": "Serie",
+    "originalTitle": "Titolo originale",
+    "translator": "Traduttore",
+    "language": "Lingua",
+    "placeholders": {
+      "author": "Seleziona o aggiungi autore(i)",
+      "publisher": "Seleziona o aggiungi un editore",
+      "genre": "Seleziona o aggiungi un genere",
+      "series": "Seleziona o aggiungi una serie"
+    },
+    "buttons": {
+      "verify": "Verifica",
+      "reset": "Reimposta",
+      "submit": "Invia",
+      "close": "Chiudi"
+    },
+    "messages": {
+      "bookAddedSuccess": "Libro aggiunto con successo!",
+      "errorAddingBook": "Errore nell'aggiunta del libro: {message}"
+    }
+  }
+}

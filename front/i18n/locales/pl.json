@@ -1,0 +1,99 @@
+{
+  "welcome": "Witamy na stronie kolekcje",
+  "shortDescription": "Aplikacja służąca do porządkowania kolekcji (książek, płyt z muzyką i filmów).",
+  "contact": "Kontakt",
+  "leftMenu": {
+    "home": "Główna",
+    "books": "Książki",
+    "addBook": "Dodaj"
+  },
+  "books": {
+    "db": "Baza książek",
+    "searchTitle": "Szukaj po tytule",
+    "searchAuthor": "Szukaj po autorze",
+    "searchPublisher": "Szukaj po wydawcy",
+    "searchSeries": "Szukaj po serii",
+    "nobooks": "Nie znaleziono żadnych książek",
+    "headers": {
+      "title": "Tytuł",
+      "authors": "Autor(zy)",
+      "publisher": "Wydawca",
+      "releaseDate": "Data wydania",
+      "seriesName": "Seria"
+    }
+  },
+  "addBook": {
+    "isbn": "ISBN",
+    "title": "Tytuł",
+    "author": "Autor",
+    "publisher": "Wydawca",
+    "genre": "Gatunek",
+    "publishYear": "Data wydania",
+    "firstPublishYear": "Data pierwszego wydania",
+    "format": "Format",
+    "pages": "Liczba stron",
+    "description": "Opis",
+    "notes": "Uwagi",
+    "series": "Seria",
+    "originalTitle": "Tytuł oryginalny",
+    "translator": "Tłumacz",
+    "language": "Język",
+    "placeholders": {
+      "author": "Wybierz lub dodaj autora (bądź autorów)",
+      "publisher": "Wybierz lub dodaj wydawcę",
+      "genre": "Wybierz lub dodaj gatunek",
+      "series": "Wybierz lub dodaj serię"
+    },
+    "buttons": {
+      "verify": "Sprawdź",
+      "reset": "Resetuj",
+      "submit": "Wyślij",
+      "close": "Zamknij"
+    },
+    "messages": {
+      "bookAddedSuccess": "Książka została pomyślnie dodana!",
+      "errorAddingBook": "Błąd podczas dodawania książki: {message}"
+    }
+  },
+  "input": {
+    "clear": "wyczyść"
+  },
+  "dataFooter": {
+    "pageText": "strona {0}-{1} z {2}",
+    "itemsPerPageText": "Wierszy na stronie:",
+    "itemsPerPageAll": "Wszystkie",
+    "nextPage": "Następna strona",
+    "prevPage": "Poprzednia strona",
+    "firstPage": "Pierwsza strona",
+    "lastPage": "Ostatnia strona"
+  },
+  "contactInfo": {
+    "author": "Autor",
+    "email": "Email",
+    "repository": "Repozytorium",
+    "version": "Wersja"
+  },
+  "$vuetify": {
+    "open": "otwórz",
+    "input": {
+      "clear": "wyczyść"
+    },
+    "pagination": {
+      "ariaLabel": {
+        "root": "Nawigacja paginacji"
+      }
+    },
+    "dataFooter": {
+      "pageText": "{0}-{1} z {2}",
+      "itemsPerPageText": "Wierszy na stronie:",
+      "itemsPerPageAll": "Wszystkie",
+      "nextPage": "Następna strona",
+      "prevPage": "Poprzednia strona",
+      "firstPage": "Pierwsza strona",
+      "lastPage": "Ostatnia strona"
+    },
+    "dataIterator": {
+      "loadingText": "Ładowanie elementów..."
+    }
+  }
+}

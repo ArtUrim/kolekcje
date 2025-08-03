@@ -1,0 +1,64 @@
+{
+  "welcome": "Welcome on page kolekcje",
+  "shortDescription": "Application for organizing collections (books, music albums and movies).",
+  "contact": "Contact",
+  "contactInfo": {
+    "author": "Author",
+    "email": "Email",
+    "repository": "Repository",
+    "version": "Version"
+  },
+  "leftMenu": {
+    "home": "Home",
+    "books": "Book",
+    "addBook": "Add"
+  },
+  "books": {
+    "db": "Books database",
+    "searchTitle": "Search title",
+    "searchAuthor": "Search author",
+    "searchPublisher": "Search publisher",
+    "searchSeries": "Search serie",
+    "nobooks": "No books found",
+    "headers": {
+      "title": "Title",
+      "authors": "Author(s)",
+      "publisher": "Publisher",
+      "releaseDate": "Release Date",
+      "seriesName": "Series"
+    }
+  },
+  "addBook": {
+    "isbn": "ISBN",
+    "title": "Title",
+    "author": "Author",
+    "publisher": "Publisher",
+    "genre": "Genre",
+    "publishYear": "Publication Year",
+    "firstPublishYear": "First Publication Year",
+    "format": "Format",
+    "pages": "Number of Pages",
+    "description": "Description",
+    "notes": "Notes",
+    "series": "Series",
+    "originalTitle": "Original Title",
+    "translator": "Translator",
+    "language": "Language",
+    "placeholders": {
+      "author": "Select or add author(s)",
+      "publisher": "Select or add a publisher",
+      "genre": "Select or add a genre",
+      "series": "Select or add a series"
+    },
+    "buttons": {
+      "verify": "Verify",
+      "reset": "Reset",
+      "submit": "Submit",
+      "close": "Close"
+    },
+    "messages": {
+      "bookAddedSuccess": "Book added successfully!",
+      "errorAddingBook": "Error adding book: {message}"
+    }
+  }
+}
