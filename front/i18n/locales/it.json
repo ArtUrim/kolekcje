@@ -1,7 +1,7 @@
 {
-  "welcome": "Benvenuto a kolekcje pagare",
-  "shortDescription": "Webapp for books management (and disks actually also)",
-  "contact": "Contact",
+  "welcome": "Benvenuto nella pagina kolekcje",
+  "shortDescription": "Applicazione per organizzare collezioni (libri, album musicali e film).",
+  "contact": "Contatto",
   "contactInfo": {
     "author": "Autore",
     "email": "Email",

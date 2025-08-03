@@ -1,6 +1,6 @@
 {
   "welcome": "Welcome on page kolekcje",
-  "shortDescription": "Webapp for books management (and disks actually also)",
+  "shortDescription": "Application for organizing collections (books, music albums and movies).",
   "contact": "Contact",
   "contactInfo": {
     "author": "Author",
