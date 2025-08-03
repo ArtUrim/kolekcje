@@ -2,6 +2,12 @@
   "welcome": "Welcome on page kolekcje",
   "shortDescription": "Webapp for books management (and disks actually also)",
   "contact": "Contact",
+  "contactInfo": {
+    "author": "Author",
+    "email": "Email",
+    "repository": "Repository",
+    "version": "Version"
+  },
   "leftMenu": {
     "home": "Home",
     "books": "Book",
