@@ -10,6 +10,8 @@ WORKDIR /app/test-app
 
 RUN npx nuxi@latest module add vuetify-nuxt-module
 
+RUN npx nuxi@latest module add @nuxtjs/i18n
+
 EXPOSE 3000
 
 COPY app.vue ./app.vue
