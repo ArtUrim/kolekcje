@@ -49,6 +49,10 @@
       "reset": "Reset",
       "submit": "Submit",
       "close": "Close"
+    },
+    "messages": {
+      "bookAddedSuccess": "Book added successfully!",
+      "errorAddingBook": "Error adding book: {message}"
     }
   }
 }

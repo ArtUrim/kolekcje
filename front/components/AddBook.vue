@@ -292,7 +292,7 @@ export default {
 					if (response.status === 204) {
 						// Success case - status 204 No Content
 						console.log('Book added successfully');
-						this.showSnackbar('Book added successfully!', 'success');
+						this.showSnackbar(this.$t('addBook.messages.bookAddedSuccess'), 'success');
 						this.resetForm();
 						return;
 					}
@@ -309,7 +309,7 @@ export default {
 
 				} catch (err) {
 					console.error('Error adding book:', err);
-					this.showSnackbar(`Error adding book: ${err.message}`, 'error');
+					this.showSnackbar(this.$t('addBook.messages.errorAddingBook', { message: err.message }), 'error');
 				}
 			}
 		},

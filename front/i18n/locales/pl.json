@@ -49,6 +49,10 @@
       "reset": "Resetuj",
       "submit": "Wyślij",
       "close": "Zamknij"
+    },
+    "messages": {
+      "bookAddedSuccess": "Książka została pomyślnie dodana!",
+      "errorAddingBook": "Błąd podczas dodawania książki: {message}"
     }
   },
   "input": {
@@ -62,6 +66,12 @@
     "prevPage": "Poprzednia strona",
     "firstPage": "Pierwsza strona",
     "lastPage": "Ostatnia strona"
+  },
+  "contactInfo": {
+    "author": "Autor",
+    "email": "Email",
+    "repository": "Repozytorium",
+    "version": "Wersja"
   },
   "$vuetify": {
     "open": "otwórz",

@@ -49,6 +49,10 @@
       "reset": "Reimposta",
       "submit": "Invia",
       "close": "Chiudi"
+    },
+    "messages": {
+      "bookAddedSuccess": "Libro aggiunto con successo!",
+      "errorAddingBook": "Errore nell'aggiunta del libro: {message}"
     }
   }
 }
