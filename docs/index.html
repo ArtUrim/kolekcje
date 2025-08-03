@@ -268,6 +268,12 @@ mobile devices</li>
 </ul>
 <h3 id="current-version">Current Version</h3>
 <p><strong>Version</strong>: 0.9.2</p>
+<h2 id="architecture">Architecture</h2>
+<figure>
+<img src="architecture.jpeg" alt="Overall architecture" />
+<figcaption aria-hidden="true">Overall architecture</figcaption>
+</figure>
+<p>Currently, the <em>in-memory cache</em> (<strong>Redis</strong>) is planned to be added in future for enhanced performance.</p>
 <h2 id="technology-stack">Technology Stack</h2>
 <h3 id="frontend">Frontend</h3>
 <ul>
@@ -284,6 +290,12 @@ load balancing</li>
 <li><strong>Architecture</strong>: RESTful API design with nginx routing
 requests between frontend and backend services</li>
 </ul>
+<h2 id="database">Database</h2>
+<p>The structure of the database is designed to efficiently store and manage data related to books, music albums, and movies, with tables for users, collections, and items, ensuring data integrity and scalability.</p>
+<figure>
+<img src="database.jpeg" alt="Database structure" />
+<figcaption aria-hidden="true">Database structure</figcaption>
+</figure>
 <h2 id="setup">Setup</h2>
 <p>Make sure to install dependencies:</p>
 <div class="sourceCode" id="cb1"><pre
