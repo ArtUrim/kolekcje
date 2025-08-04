@@ -49,7 +49,7 @@ Currently, the _in-memory cache_ (**Redis**) is planend to be added in future fo
 
 The structure of the database is designed to efficiently store and manage data related to books, music albums, and movies, with tables for users, collections, and items, ensuring data integrity and scalability.
 
-![Database structure](docs/database.jpeg)
+![Database structure](docs/katalog.png)
 
 ## Setup
 
