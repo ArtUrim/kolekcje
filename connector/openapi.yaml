@@ -1,0 +1,497 @@
+openapi: 3.0.3
+info:
+  title: Book Collection API
+  description: API for managing a book collection database with authors, publishers, series, genres, and labels
+  version: 1.0.0
+  contact:
+    name: Book Collection API Support
+
+servers:
+  - url: http://localhost:5000
+    description: Development server
+
+paths:
+  /book:
+    get:
+      summary: Get books with filtering, sorting, and pagination
+      description: Retrieve books from the collection with optional filtering by author, title, publisher, or series, plus sorting and pagination support
+      parameters:
+        - name: author
+          in: query
+          description: Filter books by author name (partial match)
+          required: false
+          schema:
+            type: string
+        - name: title
+          in: query
+          description: Filter books by title (partial match)
+          required: false
+          schema:
+            type: string
+        - name: publisher
+          in: query
+          description: Filter books by publisher name (partial match)
+          required: false
+          schema:
+            type: string
+        - name: serie
+          in: query
+          description: Filter books by series name (partial match)
+          required: false
+          schema:
+            type: string
+        - name: sortBy
+          in: query
+          description: Field to sort by
+          required: false
+          schema:
+            type: string
+            enum: [title, author, publisher, release, serie]
+        - name: orderDesc
+          in: query
+          description: Sort order (desc for descending, otherwise ascending)
+          required: false
+          schema:
+            type: string
+            enum: [desc]
+        - name: itemsPerPage
+          in: query
+          description: Number of items per page for pagination
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - name: page
+          in: query
+          description: Page number for pagination (starts from 1)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Successfully retrieved books
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  count:
+                    type: integer
+                    description: Total number of books matching the criteria
+                  books:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Book'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /addbook:
+    post:
+      summary: Add a new book to the collection
+      description: Add a new book with all its associated metadata
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewBook'
+      responses:
+        '204':
+          description: Book successfully added
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /authors:
+    get:
+      summary: Get authors
+      description: Retrieve authors with optional search query
+      parameters:
+        - name: query
+          in: query
+          description: Search query to filter authors
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved authors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Author'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /publishers:
+    get:
+      summary: Get publishers
+      description: Retrieve publishers with optional search query
+      parameters:
+        - name: query
+          in: query
+          description: Search query to filter publishers
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved publishers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Publisher'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /publisher/add:
+    post:
+      summary: Add a new publisher
+      description: Add a new publisher to the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPublisher'
+      responses:
+        '201':
+          description: Publisher successfully added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Publisher added successfully
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /series:
+    get:
+      summary: Get series
+      description: Retrieve series with optional search query
+      parameters:
+        - name: query
+          in: query
+          description: Search query to filter series
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved series
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Series'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /series/add:
+    post:
+      summary: Add a new series
+      description: Add a new series to the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewSeries'
+      responses:
+        '201':
+          description: Series successfully added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Series added successfully
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /genres:
+    get:
+      summary: Get genres
+      description: Retrieve genres with optional search query
+      parameters:
+        - name: query
+          in: query
+          description: Search query to filter genres
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved genres
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Genre'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /labels:
+    get:
+      summary: Get labels
+      description: Retrieve labels with optional search query
+      parameters:
+        - name: query
+          in: query
+          description: Search query to filter labels
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved labels
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Label'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Book title
+        authors:
+          type: string
+          description: Comma-separated list of author names
+        publisher:
+          type: string
+          description: Publisher name
+        release_date:
+          type: string
+          format: date
+          description: Book release date
+        series_name:
+          type: string
+          description: Series name
+          nullable: true
+      example:
+        title: "The Great Gatsby"
+        authors: "F. Scott Fitzgerald"
+        publisher: "Scribner"
+        release_date: "1925-04-10"
+        series_name: null
+
+    NewBook:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          description: Book title
+        authors:
+          type: array
+          items:
+            type: string
+          description: List of author names
+        publisher:
+          type: string
+          description: Publisher name
+        release_date:
+          type: string
+          format: date
+          description: Book release date
+        series:
+          type: string
+          description: Series name
+        genres:
+          type: array
+          items:
+            type: string
+          description: List of genre names
+        labels:
+          type: array
+          items:
+            type: string
+          description: List of label names
+      example:
+        title: "The Great Gatsby"
+        authors: ["F. Scott Fitzgerald"]
+        publisher: "Scribner"
+        release_date: "1925-04-10"
+        series: "Classic Literature"
+        genres: ["Fiction", "Classic"]
+        labels: ["American Literature", "Jazz Age"]
+
+    Author:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Author ID
+        name:
+          type: string
+          description: Author name
+      example:
+        id: 1
+        name: "F. Scott Fitzgerald"
+
+    Publisher:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Publisher ID
+        name:
+          type: string
+          description: Publisher name
+      example:
+        id: 1
+        name: "Scribner"
+
+    NewPublisher:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Publisher name
+      example:
+        name: "Penguin Random House"
+
+    Series:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Series ID
+        name:
+          type: string
+          description: Series name
+      example:
+        id: 1
+        name: "Harry Potter"
+
+    NewSeries:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Series name
+      example:
+        name: "The Lord of the Rings"
+
+    Genre:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Genre ID
+        name:
+          type: string
+          description: Genre name
+      example:
+        id: 1
+        name: "Fantasy"
+
+    Label:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Label ID
+        name:
+          type: string
+          description: Label name
+      example:
+        id: 1
+        name: "Award Winner"
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+      example:
+        error: "Database connection failed"
+
+  responses:
+    DatabaseError:
+      description: Database connection or query error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Database connection failed"
+
+    ValidationError:
+      description: Validation error in request data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Invalid input data"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Not found"
+
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Internal server error"
+
+tags:
+  - name: Books
+    description: Operations related to books
+  - name: Authors
+    description: Operations related to authors
+  - name: Publishers
+    description: Operations related to publishers
+  - name: Series
+    description: Operations related to book series
+  - name: Genres
+    description: Operations related to genres
+  - name: Labels
+    description: Operations related to labels
