@@ -15,6 +15,7 @@ publisher_handler = TableHandler('publisher')
 author_handler = TableHandler('Authors')
 series_handler = TableHandler('series')
 genres_handler = TableHandler('genres')
+labels_handler = TableHandler('labels')
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -271,6 +272,26 @@ def get_genres():
     finally:  
         if conn:  
             conn.close()  
+
+# Add new labels endpoints  
+@app.route('/labels', methods=['GET'])  
+def get_labels():  
+    conn = get_db_connection()  
+    if not conn:  
+        return jsonify({"error": "Database connection failed"}), 500  
+
+    try:  
+        query = request.args.get('query', '')  
+        labels = labels_handler.get_items(conn, query)  
+        return jsonify(labels)  
+
+    except Exception as e:  
+        return jsonify({"error": str(e)}), 500  
+
+    finally:  
+        if conn:  
+            conn.close()  
+
 
 @app.route('/series/add', methods=['POST'])  
 def add_series():  

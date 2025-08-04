@@ -121,6 +121,25 @@ class BookDatabase:
         finally:
             cursor.close()
 
+    def _get_or_create_label(self, label_name: str) -> Optional[int]:
+        """Get label ID or create new label"""
+        if not label_name or not label_name.strip():
+            return None
+            
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute("SELECT id FROM labels WHERE name = ?", (label_name,))
+            result = cursor.fetchone()
+
+            if result:
+                return result[0]
+
+            cursor.execute("INSERT INTO labels (name) VALUES (?)", (label_name,))
+            self.connection.commit()
+            return cursor.lastrowid
+        finally:
+            cursor.close()
+
     def _get_or_create_genre(self, genre_name: str) -> Optional[int]:
         """Get genre ID or create new genre"""
         if not genre_name or not genre_name.strip():
@@ -283,13 +302,16 @@ class BookDatabase:
             
             language_id = self._get_default_language(book_data.get('language'))
 
+            size = book_data.get('size')
+            size = str(size).strip() if size and str(size).strip() else None
+
             # Insert book
             query = """
                 INSERT INTO Books (
                     title, original_title, release_date, format, note,
                     pages, description, series_id, translator,
-                    language_id, first_polish_release_date, isbn
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    language_id, first_polish_release_date, isbn, size
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
 
             values = (
@@ -304,11 +326,13 @@ class BookDatabase:
                 translator,
                 language_id,
                 firstPublYear,
-                isbn
+                isbn,
+                size
             )
 
             cursor.execute(query, values)
             book_id = cursor.lastrowid
+
 
             # Insert author relationships
             for author_item in authors:
@@ -317,6 +341,16 @@ class BookDatabase:
                     "INSERT INTO bookAuthors (book_id, author_id) VALUES (?, ?)",
                     (book_id, author_id)
                 )
+
+            # Process labels (optional)
+            labels = self._process_array_field(book_data.get('label'))
+            for label_name in labels:
+                label_id = self._get_or_create_label(label_name)
+                if label_id:
+                    cursor.execute(
+                        "INSERT INTO bookLabel (book_id, label_id) VALUES (?, ?)",
+                        (book_id, label_id)
+                    )
 
             # Process genres (optional)
             genres = self._process_array_field(book_data.get('genre'))
