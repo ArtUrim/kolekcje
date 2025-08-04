@@ -63,19 +63,15 @@ export default {
     watch: {
         selectedValueLocal: {
             handler(newValue) {
-                console.log( "handleChange",newValue)
                 if (!newValue) return
-                console.log( "handleChange2",newValue)
 
                 const uniqueValues = Array.from(new Set(
                     newValue.filter(item => item && typeof item === 'string')
                 ))
-                console.log( "handleChange3",uniqueValues)
 
                 if (JSON.stringify(uniqueValues) !== JSON.stringify(newValue)) {
                     this.selectedValueLocal = uniqueValues
                 }
-                console.log( "handleChange4",this.selectedValueLocal)
                 this.selectedValueLocal = null
 
                 this.$emit('input', uniqueValues)
@@ -96,7 +92,7 @@ export default {
         async fetchGenres() {
             try {
                 this.loading = true
-                const response = await fetch("/api/genres")
+                const response = await fetch(this.apiEndpoint)
                 const data = await response.json()
                 this.items = data
             } catch (error) {
