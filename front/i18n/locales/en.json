@@ -49,9 +49,9 @@
       "publisher": "Select or add a publisher",
       "genre": "Select or add a genre",
       "series": "Select or add a series",
-      "label": "Select or add labels..."
+      "etykieta": "Select or add labels..."
     },
-    "label": "Label",
+    "etykieta": "Label",
     "buttons": {
       "verify": "Verify",
       "reset": "Reset",

@@ -36,7 +36,7 @@
 					</v-col>
 
 					<v-col cols="12" sm="6">
-						<GenreCheck v-model="label" :label="$t('addBook.label')" :placeholder="$t('addBook.placeholders.label')"
+						<GenreCheck v-model="label" :label="$t('addBook.etykieta')" :placeholder="$t('addBook.placeholders.etykieta')"
 																				  api-endpoint="/api/labels" />
 					</v-col>
 

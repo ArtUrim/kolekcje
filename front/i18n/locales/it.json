@@ -45,10 +45,10 @@
     "originalTitle": "Titolo originale",
     "translator": "Traduttore",
     "language": "Lingua",
-    "label": "Etichetta",
+    "etykieta": "Etichetta",
     "placeholders": {
       "author": "Seleziona o aggiungi autore(i)",
-      "label": "Seleziona o aggiungi etichette...",
+      "etykieta": "Seleziona o aggiungi etichette...",
       "publisher": "Seleziona o aggiungi un editore",
       "genre": "Seleziona o aggiungi un genere",
       "series": "Seleziona o aggiungi una serie"

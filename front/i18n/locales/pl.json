@@ -43,8 +43,10 @@
       "author": "Wybierz lub dodaj autora (bądź autorów)",
       "publisher": "Wybierz lub dodaj wydawcę",
       "genre": "Wybierz lub dodaj gatunek",
-      "series": "Wybierz lub dodaj serię"
+      "series": "Wybierz lub dodaj serię",
+      "etykieta": "Wybierz lub dodaj etykiety"
     },
+    "etykieta": "Etykieta",
     "buttons": {
       "verify": "Sprawdź",
       "reset": "Resetuj",
