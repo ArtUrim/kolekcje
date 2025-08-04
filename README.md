@@ -49,7 +49,14 @@ Currently, the _in-memory cache_ (**Redis**) is planend to be added in future fo
 
 The structure of the database is designed to efficiently store and manage data related to books, music albums, and movies, with tables for users, collections, and items, ensuring data integrity and scalability.
 
-![Database structure](docs/database.jpeg)
+![Database structure](docs/katalog.png)
+
+## API Documentation
+
+The complete API description in OpenAPI format is available in the [API Documentation](api-docs.html) file. This documentation provides detailed information about all available endpoints, request/response schemas, and authentication requirements.
+
+- **Format**: OpenAPI 3.0
+- **File**: [api-docs.html](api-docs.html)
 
 ## Setup
 

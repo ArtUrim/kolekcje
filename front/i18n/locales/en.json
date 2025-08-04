@@ -48,8 +48,10 @@
       "author": "Select or add author(s)",
       "publisher": "Select or add a publisher",
       "genre": "Select or add a genre",
-      "series": "Select or add a series"
+      "series": "Select or add a series",
+      "etykieta": "Select or add labels..."
     },
+    "etykieta": "Label",
     "buttons": {
       "verify": "Verify",
       "reset": "Reset",

@@ -44,6 +44,16 @@ CREATE TABLE `bookGenres` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 
+CREATE TABLE `bookLabel` (
+  `book_id` int(11) NOT NULL,
+  `label_id` int(11) NOT NULL,
+  PRIMARY KEY (`book_id`,`label_id`),
+  KEY `label_id` (`label_id`),
+  CONSTRAINT `bookLabel_ibfk_1` FOREIGN KEY (`book_id`) REFERENCES `Books` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `bookLabel_ibfk_2` FOREIGN KEY (`label_id`) REFERENCES `labels` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+
 CREATE TABLE `bookPublishers` (
   `book_id` int(11) NOT NULL,
   `publisher_id` int(11) NOT NULL,
@@ -68,6 +78,7 @@ CREATE TABLE `Books` (
   `original_title` varchar(512) DEFAULT NULL,
   `translator` varchar(512) DEFAULT NULL,
   `language_id` char(3) NOT NULL,
+  `size` enum('none','mini','normal','scientific','comics','huge') DEFAULT NULL,
   PRIMARY KEY (`id`,`language_id`),
   KEY `language_id` (`language_id`),
   KEY `series_id` (`series_id`),
@@ -77,6 +88,14 @@ CREATE TABLE `Books` (
 
 
 CREATE TABLE `genres` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+
+CREATE TABLE `labels` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -115,4 +134,4 @@ CREATE TABLE `series` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 
--- 2025-07-25 16:52:36
+-- 2025-08-04 16:50:49

@@ -35,6 +35,11 @@
 																				  api-endpoint="/api/genres" />
 					</v-col>
 
+					<v-col cols="12" sm="6">
+						<GenreCheck v-model="label" :label="$t('addBook.etykieta')" :placeholder="$t('addBook.placeholders.etykieta')"
+																				  api-endpoint="/api/labels" />
+					</v-col>
+
 
 					<v-col cols="12" sm="6">
 						<v-text-field
@@ -69,6 +74,14 @@
 								type="number"
 								:rules="pagesRules"
 								></v-text-field>
+					</v-col>
+
+					<v-col cols="12" sm="6">
+						<v-select
+								v-model="booksize"
+								:items="sizeOptions"
+								:label="$t('addBook.size')"
+								></v-select>
 					</v-col>
 
 					<v-col cols="12">
@@ -165,6 +178,7 @@ export default {
 		publishYear: '',
 		firstPublishYear: '',
 		format: 'unknown',
+		booksize: 'none',
 		publisher: [],
 		pages: '',
 		description: '',
@@ -174,6 +188,7 @@ export default {
 		translator: '',
 		language: '',
 		genre: [],
+		label: [],
 		genreProp: ['proza', 'poezja'],
 
 		formatOptions: [
@@ -181,6 +196,15 @@ export default {
 			'hardback',
 			'paperback',
 			'ebook'
+		],
+
+		sizeOptions: [
+			'none',
+			'mini',
+			'normal',
+			'scientific',
+			'comics',
+			'huge'
 		],
 
 		isbnRules: [
@@ -217,6 +241,7 @@ export default {
 					publishYear: this.publishYear ? parseInt(this.publishYear) : null,
 					firstPublishYear: this.firstPublishYear ? parseInt(this.firstPublishYear) : null,
 					format: this.format,
+					size: this.booksize,
 					pages: this.pages ? parseInt(this.pages) : null,
 					description: this.description,
 					notes: this.notes,
@@ -279,6 +304,30 @@ export default {
 						isCustom: this.series.isCustom
 					};
 				}
+
+				if (this.label && this.label.length > 0) {
+					bookData.label = this.label.map(item => {
+						if (typeof item === 'object' && item !== null) {
+							return {
+								id: item.id,
+								title: item.title,
+								isCustom: false
+							};
+						}
+						else if (typeof item === 'string') {
+							return {
+								id: null,
+								title: item,
+								isCustom: true
+							};
+						}
+						return {
+							id: null,
+							title: String(item),
+							isCustom: true
+						};
+					});
+				}
 				console.log('Form submitted:', bookData)
 				try {
 					const response = await fetch('/api/addbook', {
@@ -334,6 +383,7 @@ export default {
 			this.translator = '';
 			this.language = '';
 			this.genre = [];
+			this.label = [];
 		},
 
 	}
