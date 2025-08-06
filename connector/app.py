@@ -7,6 +7,7 @@ import json
 from typing import List, Dict
 
 from addBook import BookDatabase
+from bookinfo_handler import BookInfoHandler
 # Add to imports at the top
 from table_handler import TableHandler
 
@@ -84,6 +85,7 @@ def build_query(params: Dict[str, Any]) -> tuple[str, list]:
     """
     base_query = """
         SELECT SQL_CALC_FOUND_ROWS DISTINCT
+            b.id,
             b.title,
             GROUP_CONCAT(DISTINCT a.name) as authors,
             p.name as publisher,
@@ -145,7 +147,7 @@ def get_books():
         cur.execute(query, parameters)
 
         # Fetch results
-        columns = ['title', 'authors', 'publisher', 'release_date', 'series_name']
+        columns = ['id', 'title', 'authors', 'publisher', 'release_date', 'series_name']
         results = []
 
         for row in cur:
@@ -332,6 +334,80 @@ def add_publisher():
 
     finally:  
         if conn:  
+            conn.close()
+
+@app.route('/bookinfo', methods=['GET', 'POST'])
+def book_info():
+    """Handle book information retrieval and updates"""
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        book_handler = BookInfoHandler(conn)
+
+        if request.method == 'GET':
+            # Get book information by ID
+            book_id = request.args.get('id')
+            if not book_id:
+                return jsonify({"error": "Book ID parameter is required"}), 400
+
+            try:
+                book_id = int(book_id)
+            except ValueError:
+                return jsonify({"error": "Invalid book ID format"}), 400
+
+            book_info = book_handler.get_book_info(book_id)
+            if not book_info:
+                return jsonify({"error": "Book not found"}), 404
+
+            return jsonify({
+                "status": "success",
+                "book": book_info
+            })
+
+        # TODO
+        elif request.method == 'POST':
+            # Update book information
+            book_id = request.args.get('id')
+            if not book_id:
+                return jsonify({"error": "Book ID parameter is required"}), 400
+
+            try:
+                book_id = int(book_id)
+            except ValueError:
+                return jsonify({"error": "Invalid book ID format"}), 400
+
+            # Get JSON data from request
+            if request.headers.get('Content-Type') != 'application/json':
+                return jsonify({'error': 'Content-Type must be application/json'}), 415
+
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "No JSON data provided"}), 400
+
+            # Log the update operation
+            logging.info(f"Updating book ID: {book_id}")
+
+            # Update book information
+            success = book_handler.update_book_info(book_id, data)
+
+            if success:
+                return jsonify({
+                    "status": "success",
+                    "message": "Book updated successfully"
+                })
+            else:
+                return jsonify({"error": "Failed to update book"}), 500
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        logging.error(f"Error in book_info endpoint: {e}")
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+
+    finally:
+        if conn:
             conn.close()
 
 @app.errorhandler(404)
