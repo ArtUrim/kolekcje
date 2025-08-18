@@ -76,7 +76,10 @@
 
                 <!-- Book details using ExpandableContainer -->
                 <div v-else-if="bookDetails[item.id]">
-                  <ExpandableContainer :cards="bookDetails[item.id].cards" />
+                  <ExpandableContainer
+                    :cards="bookDetails[item.id].cards"
+                    :long-cards="bookDetails[item.id].longCards"
+                    />
                 </div>
 
                 <!-- Error state -->
@@ -155,8 +158,8 @@ const transformBookDataToCards = (bookData: any) => {
   return [
     // Row 1: Title, Author, Publisher
     {
-      title: t('book.title'),
-      headerColor: 'blue',
+      title: t('addBook.title'),
+      headerColor: 'blue-grey-darken-2',
       icon: 'mdi-book',
       shortText: book.title || 'N/A',
       expandedText: '',
@@ -165,8 +168,8 @@ const transformBookDataToCards = (bookData: any) => {
       expanded: false
     },
     {
-      title: t('book.author'),
-      headerColor: 'blue',
+      title: t('addBook.author'),
+      headerColor: 'blue-grey-darken-2',
       icon: 'mdi-book',
       shortText: book.authors || 'N/A',
       expandedText: '',
@@ -176,7 +179,7 @@ const transformBookDataToCards = (bookData: any) => {
     },
     {
       title: t('addBook.publisher'), // Use t() function
-      headerColor: 'purple',
+      headerColor: 'blue-grey-darken-2',
       icon: 'mdi-domain',
       shortText: book.publishers || 'N/A',
       expandedText: book.publishers_details?.map(pub => 
@@ -188,7 +191,7 @@ const transformBookDataToCards = (bookData: any) => {
     },
     {
       title: t('addBook.series'), // Use t() function
-      headerColor: 'orange',
+      headerColor: 'blue-grey-darken-2',
       icon: 'mdi-book-multiple',
       shortText: book.series_name || 'N/A',
       expandedText: '',
@@ -198,7 +201,7 @@ const transformBookDataToCards = (bookData: any) => {
     },
     {
       title: t('addBook.genre'), // Use t() function
-      headerColor: 'teal',
+      headerColor: 'blue-grey-darken-1',
       icon: 'mdi-tag-multiple',
       shortText: book.genres || 'N/A',
       expandedText: book.genres_details?.map(genre => genre.name).join(', ') || '',
@@ -208,7 +211,7 @@ const transformBookDataToCards = (bookData: any) => {
     },
     {
       title: t('addBook.etykieta'), // Use t() function
-      headerColor: 'pink',
+      headerColor: 'blue-grey-darken-1',
       icon: 'mdi-label',
       shortText: book.labels || 'N/A',
       expandedText: book.labels_details?.map(label => label.name).join(', ') || '',
@@ -217,18 +220,48 @@ const transformBookDataToCards = (bookData: any) => {
       expanded: false
     },
     {
-      title: t('addBook.language'), // Use t() function
-      headerColor: 'indigo',
-      icon: 'mdi-translate',
-      shortText: book.language_name || 'N/A',
-      expandedText: `Kod języka: ${book.language_id || 'N/A'}`,
-      tags: book.language_id ? [book.language_id] : [],
+      title: t('addBook.format'), // Use t() function
+      headerColor: 'blue-grey-darken-1',
+      icon: 'mdi-book-variant',
+      shortText: book.format || 'N/A',
+      expandedText: '',
+      tags: [book.format].filter(Boolean),
       progress: 100,
       expanded: false
     },
     {
+      title: t('addBook.size'), // Add this to i18n if needed
+      headerColor: 'blue-grey-darken-1',
+      icon: 'mdi-ruler',
+      shortText: book.size || 'N/A',
+      expandedText: '',
+      tags: [],
+      progress: 100,
+      expanded: false
+    },
+    {
+      title: 'ISBN', // This one doesn't need translation
+      headerColor: 'blue-grey',
+      icon: 'mdi-barcode',
+      shortText: book.isbn || 'N/A',
+      expandedText: '',
+      tags: [],
+      progress: 100,
+      expanded: false
+    },
+    {
+      title: t('addBook.pages'), // Use t() function
+      headerColor: 'blue-grey',
+      icon: 'mdi-file-document',
+      shortText: book.pages?.toString() || 'N/A',
+      expandedText: '',
+      tags: [],
+      progress: book.pages ? Math.min((book.pages / 500) * 100, 100) : 0,
+      expanded: false
+    },
+    {
       title: t('addBook.publishYear'), // Use t() function
-      headerColor: 'brown',
+      headerColor: 'blue-grey',
       icon: 'mdi-calendar',
       shortText: book.release_date?.toString() || 'N/A',
       expandedText: '',
@@ -238,7 +271,7 @@ const transformBookDataToCards = (bookData: any) => {
     },
     {
       title: t('addBook.firstPublishYear'), // Use t() function
-      headerColor: 'deep-orange',
+      headerColor: 'blue-grey',
       icon: 'mdi-calendar-star',
       shortText: book.first_polish_release_date?.toString() || 'N/A',
       expandedText: 'Pierwsze polskie wydanie',
@@ -247,38 +280,18 @@ const transformBookDataToCards = (bookData: any) => {
       expanded: false
     },
     {
-      title: 'ISBN', // This one doesn't need translation
-      headerColor: 'cyan',
-      icon: 'mdi-barcode',
-      shortText: book.isbn || 'N/A',
-      expandedText: '',
-      tags: [],
+      title: t('addBook.language'), // Use t() function
+      headerColor: 'blue-grey-lighten-1',
+      icon: 'mdi-translate',
+      shortText: book.language_name || 'N/A',
+      expandedText: `Kod języka: ${book.language_id || 'N/A'}`,
+      tags: book.language_id ? [book.language_id] : [],
       progress: 100,
-      expanded: false
-    },
-    {
-      title: t('addBook.format'), // Use t() function
-      headerColor: 'lime',
-      icon: 'mdi-book-variant',
-      shortText: book.format || 'N/A',
-      expandedText: '',
-      tags: [book.format].filter(Boolean),
-      progress: 100,
-      expanded: false
-    },
-    {
-      title: t('addBook.pages'), // Use t() function
-      headerColor: 'amber',
-      icon: 'mdi-file-document',
-      shortText: book.pages?.toString() || 'N/A',
-      expandedText: '',
-      tags: [],
-      progress: book.pages ? Math.min((book.pages / 500) * 100, 100) : 0,
       expanded: false
     },
     {
       title: t('addBook.originalTitle'), // Use t() function
-      headerColor: 'deep-purple',
+      headerColor: 'blue-grey-lighten-1',
       icon: 'mdi-book-open-variant',
       shortText: book.original_title || 'N/A',
       expandedText: '',
@@ -288,27 +301,25 @@ const transformBookDataToCards = (bookData: any) => {
     },
     {
       title: t('addBook.translator'), // Use t() function
-      headerColor: 'red',
+      headerColor: 'blue-grey-lighten-1',
       icon: 'mdi-account-convert',
       shortText: book.translator || 'N/A',
       expandedText: '',
       tags: [],
       progress: 100,
       expanded: false
-    },
-    {
-      title: 'Wymiar', // Add this to i18n if needed
-      headerColor: 'blue-grey',
-      icon: 'mdi-ruler',
-      shortText: book.size || 'N/A',
-      expandedText: '',
-      tags: [],
-      progress: 100,
-      expanded: false
-    },
+    }
+  ];
+};
+
+
+const transformBookDataToBigCards = (bookData: any) => {
+  const book = bookData.book;
+
+  return [
     {
       title: t('addBook.description'), // Use t() function
-      headerColor: 'grey',
+      headerColor: 'grey-darken-1',
       icon: 'mdi-text-long',
       shortText: book.description ? 
         (book.description.length > 100 ? book.description.substring(0, 100) + '...' : book.description) : 
@@ -320,7 +331,7 @@ const transformBookDataToCards = (bookData: any) => {
     },
     {
       title: t('addBook.notes'), // Use t() function
-      headerColor: 'yellow',
+      headerColor: 'grey',
       icon: 'mdi-note-text',
       shortText: book.note ? 
         (book.note.length > 100 ? book.note.substring(0, 100) + '...' : book.note) : 
@@ -348,9 +359,11 @@ const fetchBookDetails = async (bookId: number) => {
     }
 
     const transformedCards = transformBookDataToCards(data.value);
+    const transformedBigCards = transformBookDataToBigCards(data.value);
     bookDetails.value[bookId] = {
       originalData: data.value,
-      cards: transformedCards
+      cards: transformedCards,
+      longCards: transformedBigCards
     };
   } catch (error) {
     console.error('Failed to fetch book details:', error);

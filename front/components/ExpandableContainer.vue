@@ -11,28 +11,32 @@
     -->
 
     <!-- Custom Card Components with Transitions -->
-    <v-row class="mb-8">
-      <v-col cols="12">
-        <!--
-        <h2 class="text-h4 mb-4">
-          <v-icon left color="success">mdi-card-multiple</v-icon>
-          Custom Cards with Advanced Transitions
-        </h2>
-      -->
-        <v-row>
-          <v-col
-            v-for="(card, index) in processedCards"
-            :key="index"
-            cols="12"
-            md="6"
-            lg="4"
-          >
-            <expandable-text
-              :card="card"
-              @toggle-expanded="handleToggleExpanded"
-            />
-          </v-col>
-        </v-row>
+    <v-row class="mb-2">
+      <v-col
+        v-for="(card, index) in processedCards"
+        :key="index"
+        cols="12"
+        md="6"
+        lg="3"
+      >
+        <expandable-text
+          :card="card"
+          @toggle-expanded="handleToggleExpanded"
+        />
+      </v-col>
+    </v-row>
+    <v-row class="mb-2">
+      <v-col
+        v-for="(card, index) in longCards"
+        :key="index"
+        cols="12"
+        md="6"
+        lg="9"
+      >
+        <expandable-text
+          :card="card"
+          @toggle-expanded="handleToggleExpanded"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -43,6 +47,10 @@
 export default {
   props: {
     cards: {
+      type: Array,
+      required: true
+    },
+    longCards: {
       type: Array,
       required: true
     }

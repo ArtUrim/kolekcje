@@ -8,16 +8,16 @@
         rounded="xl"
         class="transition-swing mb-4"
       >
-      <v-card-title 
+      <v-card-title
         :class="`bg-${card.headerColor}`"
-        class="white--text rounded-t-xl"
+        class="white--text rounded-t-xl py-2"
       >
-        <v-icon left color="white">{{ card.icon }}</v-icon>
-        {{ card.title }}
+        <v-icon left color="white" x-small>{{ card.icon }}</v-icon>
+        <span class="text-subtitle-2 font-weight-small">{{ card.title }}</span>
       </v-card-title>
 
       <v-card-text class="pa-4">
-        <p class="mb-3">{{ card.shortText }}</p>
+        <p class="mb-3 text-h6">{{ card.shortText }}</p>
 
         <!-- Progress indicator if applicable
         <v-progress-linear
