@@ -1,7 +1,22 @@
 <template>
   <v-card>
-    <v-card-title>
-		 {{ $t('books.db') }}
+    <v-card-title class="d-flex justify-space-between align-center">
+      <v-row>
+        <v-col cols="9" sm="6" md="4">
+      <span>{{ $t('books.db') }}</span>
+      </v-col>
+        <v-col cols="3" sm="6" md="4">
+      <v-btn
+        color="primary"
+        variant="elevated"
+        prepend-icon="mdi-plus"
+        @click="showAddBookDialog = true"
+      >
+        {{ $t('books.new') }}
+      </v-btn>
+      </v-col>
+    </v-row>
+    </v-card-title>
       <v-row>
         <v-col cols="3">
           <v-text-field
@@ -36,7 +51,6 @@
           />
         </v-col>
       </v-row>
-    </v-card-title>
 
     <v-data-table-server
       v-model:items-per-page="itemsPerPage"
@@ -111,6 +125,26 @@
 		  {{ $t('books.nobooks') }}
       </template>
     </v-data-table-server>
+    <v-dialog
+      v-model="showAddBookDialog"
+      max-width="1200px"
+      persistent
+      scrollable
+    >
+      <v-card>
+        <v-card-title class="d-flex justify-space-between align-center">
+          <span>{{ $t('addBook.title') || 'Add New Book' }}</span>
+          <v-btn
+            icon="mdi-close"
+            variant="text"
+            @click="closeAddBookDialog"
+          />
+        </v-card-title>
+        <v-card-text class="pa-0">
+          <AddBook @book-added="handleBookAdded" />
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -130,7 +164,23 @@ const {
   searchParams,
 } = useBooks();
 
+const showAddBookDialog = ref(false);
 const page = ref(1);
+
+const closeAddBookDialog = () => {
+  showAddBookDialog.value = false;
+};
+
+const handleBookAdded = () => {
+  showAddBookDialog.value = false;
+  fetchBooks({
+    ...searchParams.value,
+    page: page.value,
+    itemsPerPage: itemsPerPage.value,
+    sortBy: sortBy.value,
+    sortDesc: sortDesc.value,
+  });
+};
 const itemsPerPage = ref(10);
 const sortBy = ref<string[]>([]);
 const sortDesc = ref<boolean[]>([]);

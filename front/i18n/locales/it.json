@@ -15,6 +15,7 @@
   },
   "books": {
     "db": "Database libri",
+    "new": "Nuova",
     "searchTitle": "Cerca titolo",
     "searchAuthor": "Cerca autore",
     "searchPublisher": "Cerca editore",

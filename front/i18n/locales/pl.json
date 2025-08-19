@@ -9,6 +9,7 @@
   },
   "books": {
     "db": "Baza książek",
+    "new": "Nowa",
     "searchTitle": "Szukaj po tytule",
     "searchAuthor": "Szukaj po autorze",
     "searchPublisher": "Szukaj po wydawcy",
