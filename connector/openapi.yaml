@@ -278,6 +278,89 @@ paths:
         '500':
           $ref: '#/components/responses/DatabaseError'
 
+  /bookinfo:
+    get:
+      summary: Get detailed book information
+      description: Retrieve detailed information for a specific book by ID
+      parameters:
+        - name: id
+          in: query
+          description: Book ID to retrieve information for
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Successfully retrieved book information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  book:
+                    $ref: '#/components/schemas/BookInfo'
+        '400':
+          description: Invalid book ID parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Book ID parameter is required"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    post:
+      summary: Update book information
+      description: Update detailed information for a specific book by ID
+      parameters:
+        - name: id
+          in: query
+          description: Book ID to update information for
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookInfoUpdate'
+      responses:
+        '200':
+          description: Book successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Book updated successfully
+        '400':
+          description: Invalid request data or book ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
 components:
   schemas:
     Book:
@@ -435,6 +518,91 @@ components:
       example:
         id: 1
         name: "Award Winner"
+
+    BookInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Book ID
+        title:
+          type: string
+          description: Book title
+        authors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Author'
+          description: List of book authors
+        publisher:
+          $ref: '#/components/schemas/Publisher'
+          description: Book publisher
+        release_date:
+          type: string
+          format: date
+          description: Book release date
+        series:
+          $ref: '#/components/schemas/Series'
+          description: Book series
+          nullable: true
+        genres:
+          type: array
+          items:
+            $ref: '#/components/schemas/Genre'
+          description: List of book genres
+        labels:
+          type: array
+          items:
+            $ref: '#/components/schemas/Label'
+          description: List of book labels
+      example:
+        id: 1
+        title: "The Great Gatsby"
+        authors: [{"id": 1, "name": "F. Scott Fitzgerald"}]
+        publisher: {"id": 1, "name": "Scribner"}
+        release_date: "1925-04-10"
+        series: null
+        genres: [{"id": 1, "name": "Fiction"}]
+        labels: [{"id": 1, "name": "Classic Literature"}]
+
+    BookInfoUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Book title
+        authors:
+          type: array
+          items:
+            type: string
+          description: List of author names
+        publisher:
+          type: string
+          description: Publisher name
+        release_date:
+          type: string
+          format: date
+          description: Book release date
+        series:
+          type: string
+          description: Series name
+        genres:
+          type: array
+          items:
+            type: string
+          description: List of genre names
+        labels:
+          type: array
+          items:
+            type: string
+          description: List of label names
+      example:
+        title: "The Great Gatsby - Updated Edition"
+        authors: ["F. Scott Fitzgerald"]
+        publisher: "Scribner"
+        release_date: "1925-04-10"
+        series: "Classic Literature Series"
+        genres: ["Fiction", "Classic"]
+        labels: ["American Literature", "Jazz Age", "Award Winner"]
 
     Error:
       type: object
