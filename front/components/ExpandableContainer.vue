@@ -33,7 +33,7 @@
 						class="edit-button"
 						@click="openEditDialog"
 						>
-						Edytuj
+						{{ $t('books.edit') }}
 				</v-btn>
 		</v-row>
 
@@ -46,7 +46,7 @@
 				>
       <v-card>
         <v-card-title class="d-flex justify-space-between align-center">
-          <span>{{ $t('addBook.title') || 'Edit' }}</span>
+          <span>{{ $t('books.edit') }}</span>
           <v-btn
             icon="mdi-close"
             variant="text"
@@ -69,6 +69,9 @@
 <script>
 
 export default {
+
+  emits: ['book-updated', 'edit-cancelled'],
+ 
   props: {
     cards: {
       type: Array,
@@ -107,6 +110,11 @@ export default {
   methods: {
     handleToggleExpanded(card) {
       card.expanded = !card.expanded
+    },
+
+    closeAddBookDialog() {
+      console.log('Closing the Add Book Dialog');
+      this.showEditDialog = false;
     },
     
     extractBookDataFromCards() {
@@ -241,6 +249,7 @@ export default {
     
     openEditDialog() {
       this.extractedBookData = this.extractBookDataFromCards()
+      console.log( 'ExtractBookData', this.extractedBookData)
       this.showEditDialog = true
     },
     

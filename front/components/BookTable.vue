@@ -93,6 +93,7 @@
                   <ExpandableContainer
                     :cards="bookDetails[item.id].cards"
                     :long-cards="bookDetails[item.id].longCards"
+                    :book-id="String(item.id)"
                     />
                 </div>
 
@@ -133,7 +134,7 @@
     >
       <v-card>
         <v-card-title class="d-flex justify-space-between align-center">
-          <span>{{ $t('addBook.title') || 'Add New Book' }}</span>
+          <span>{{ $t('books.edit') }}</span>
           <v-btn
             icon="mdi-close"
             variant="text"
@@ -149,6 +150,11 @@
 </template>
 
 <script setup lang="ts">
+const emit = defineEmits<{
+  'book-updated': (bookData: any) => void;
+  'edit-cancelled': () => void;
+}>();
+
 import { ref, watch } from 'vue';
 import debounce from 'lodash/debounce';
 import { useBooks } from '~/composables/useBooks';
@@ -232,7 +238,7 @@ const transformBookDataToCards = (bookData: any) => {
       headerColor: 'blue-grey-darken-2',
       icon: 'mdi-domain',
       shortText: book.publishers || 'N/A',
-      expandedText: book.publishers_details?.map(pub => 
+      expandedText: book.publishers_details?.map(pub =>
         `${pub.name}${pub.webpage ? ` (${pub.webpage})` : ''}`
       ).join(', ') || '',
       tags: [],
@@ -371,8 +377,8 @@ const transformBookDataToBigCards = (bookData: any) => {
       title: t('addBook.description'), // Use t() function
       headerColor: 'grey-darken-1',
       icon: 'mdi-text-long',
-      shortText: book.description ? 
-        (book.description.length > 100 ? book.description.substring(0, 100) + '...' : book.description) : 
+      shortText: book.description ?
+        (book.description.length > 100 ? book.description.substring(0, 100) + '...' : book.description) :
         'Brak opisu',
       expandedText: book.description || 'Brak szczegółowego opisu książki.',
       tags: [],
@@ -383,8 +389,8 @@ const transformBookDataToBigCards = (bookData: any) => {
       title: t('addBook.notes'), // Use t() function
       headerColor: 'grey',
       icon: 'mdi-note-text',
-      shortText: book.note ? 
-        (book.note.length > 100 ? book.note.substring(0, 100) + '...' : book.note) : 
+      shortText: book.note ?
+        (book.note.length > 100 ? book.note.substring(0, 100) + '...' : book.note) :
         'Brak notatek',
       expandedText: book.note || 'Brak dodatkowych notatek.',
       tags: [],
@@ -438,7 +444,7 @@ const handleOptionsUpdate = (options: any) => {
   itemsPerPage.value = options.itemsPerPage;
   sortBy.value = options.sortBy;
   sortDesc.value = options.sortDesc;
-  
+
   fetchBooks({
     ...searchParams.value,
     page: page.value,

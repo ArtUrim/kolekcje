@@ -164,6 +164,8 @@
 
 <script>
 export default {
+	emits: ['book-added', 'book-updated', 'cancel-edit'],
+
 	props: {
 		bookId: {
 			type: String,
@@ -244,6 +246,10 @@ export default {
 		}
 	},
 
+	async mounted() {
+		await this.initializeComponent();
+	},
+
 	methods: {
 		showSnackbar(message, color = 'success') {
 			this.snackbar.message = message;
@@ -253,10 +259,6 @@ export default {
 
 		verifyForm() {
 			this.$refs.form.validate()
-		},
-
-		async mounted() {
-			await this.initializeComponent();
 		},
 
 		async initializeComponent() {
@@ -346,7 +348,91 @@ export default {
 		},
 
 		async submitForm() {
+
 			if (!this.$refs.form.validate()) return;
+
+			if (this.isEditMode && !this.hasChanges) {
+				this.showSnackbar(this.$t('book.messages.noChanges'), 'info');
+				return;
+			}
+
+			this.isSubmitting = true;
+
+			try {
+				const bookData = this.buildBookData();
+				console.log( 'bookId', this.bookId );
+				const url = this.isEditMode ? `/api/books/${this.bookId}` : '/api/addbook';
+				const method = this.isEditMode ? 'PUT' : 'POST';
+
+				const response = await fetch(url, {
+					method,
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(bookData)
+				});
+
+				if (response.status === 204 || response.ok) {
+					const successMessage = this.isEditMode
+						? this.$t('book.messages.bookUpdatedSuccess')
+						: this.$t('addBook.messages.bookAddedSuccess');
+
+					this.showSnackbar(successMessage, 'success');
+
+					if (this.isEditMode) {
+						this.originalData = { ...this.form };
+						this.$emit('book-updated', bookData);
+					} else {
+						this.resetForm();
+						this.$emit('book-added', bookData);
+					}
+					return;
+				}
+
+				// For non-204 responses, try to parse response body
+				const data = await response.json();
+				if (!response.ok) {
+					throw new Error(data.message || `Error ${this.isEditMode ? 'updating' : 'adding'} book (Status: ${response.status})`);
+				}
+			} catch (err) {
+				console.error(`Error ${this.isEditMode ? 'updating' : 'adding'} book:`, err);
+				this.showSnackbar(
+					this.$t(`book.messages.error${this.isEditMode ? 'Updating' : 'Adding'}Book`, { message: err.message }),
+					'error'
+				);
+			} finally {
+				this.isSubmitting = false;
+			}
+		},
+
+		resetForm() {
+			// Reset form validation
+			this.$refs.form.reset();
+
+			if( this.isEditMode && this.originalData ) {
+				this.populateForm(this.originalData);
+			} else {
+				// Manually clear all form fields
+				this.isbn = '';
+				this.title = '';
+				this.author = [];
+				this.publishYear = '';
+				this.firstPublishYear = '';
+				this.format = 'unknown';
+				this.publisher = [];
+				this.pages = '';
+				this.description = '';
+				this.notes = '';
+				this.series = '';
+				this.originalTitle = '';
+				this.translator = '';
+				this.language = '';
+				this.genre = [];
+				this.label = [];
+			}
+		},
+
+		buildBookData() {
 			const bookData = {
 				isbn: this.isbn ? parseInt(this.isbn) : null,
 				title: this.title,
@@ -440,85 +526,10 @@ export default {
 					};
 				});
 			}
-			console.log('Form submitted:', bookData)
-			if (!this.$refs.form.validate()) return;
 
-			if (this.isEditMode && !this.hasChanges) {
-				this.showSnackbar(this.$t('book.messages.noChanges'), 'info');
-				return;
-			}
+			return bookData;
+		}
 
-			this.isSubmitting = true;
-
-			try {
-				const bookData = this.buildBookData();
-				const url = this.isEditMode ? `/api/books/${this.bookId}` : '/api/addbook';
-				const method = this.isEditMode ? 'PUT' : 'POST';
-
-				const response = await fetch(url, {
-					method,
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(bookData)
-				});
-
-				if (response.status === 204 || response.ok) {
-					const successMessage = this.isEditMode
-						? this.$t('book.messages.bookUpdatedSuccess')
-						: this.$t('addBook.messages.bookAddedSuccess');
-
-					this.showSnackbar(successMessage, 'success');
-
-					if (this.isEditMode) {
-						this.originalData = { ...this.form };
-						this.$emit('book-updated', bookData);
-					} else {
-						this.resetForm();
-						this.$emit('book-added', bookData);
-					}
-					return;
-				}
-
-				// For non-204 responses, try to parse response body
-				const data = await response.json();
-				if (!response.ok) {
-					throw new Error(data.message || `Error ${this.isEditMode ? 'updating' : 'adding'} book (Status: ${response.status})`);
-				}
-			} catch (err) {
-				console.error(`Error ${this.isEditMode ? 'updating' : 'adding'} book:`, err);
-				this.showSnackbar(
-					this.$t(`book.messages.error${this.isEditMode ? 'Updating' : 'Adding'}Book`, { message: err.message }),
-					'error'
-				);
-			} finally {
-				this.isSubmitting = false;
-			}
-		},
-
-		resetForm() {
-			// Reset form validation
-			this.$refs.form.reset();
-
-			// Manually clear all form fields
-			this.isbn = '';
-			this.title = '';
-			this.author = [];
-			this.publishYear = '';
-			this.firstPublishYear = '';
-			this.format = 'unknown';
-			this.publisher = [];
-			this.pages = '';
-			this.description = '';
-			this.notes = '';
-			this.series = '';
-			this.originalTitle = '';
-			this.translator = '';
-			this.language = '';
-			this.genre = [];
-			this.label = [];
-		},
-
-	}
+	},
 }
 </script>

@@ -27,7 +27,8 @@
       "publisher": "Editore",
       "releaseDate": "Data di pubblicazione",
       "seriesName": "Serie"
-    }
+    },
+    "edit": "Modifica"
   },
   "addBook": {
     "isbn": "ISBN",
