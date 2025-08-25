@@ -410,6 +410,57 @@ def book_info():
         if conn:
             conn.close()
 
+@app.route('/books/<int:book_id>', methods=['PUT'])
+def update_book(book_id):
+    """Handle book updates via PUT method"""
+    content_type = request.headers.get('Content-Type')
+    if content_type != 'application/json':
+        return jsonify({'error': 'Content-Type must be application/json'}), 415
+
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON data provided"}), 400
+
+        # Log the update operation
+        logging.info(f"Updating book ID: {book_id} via PUT method")
+        print(f"Updating book ID: {book_id} via PUT method")
+
+        # Save received JSON to file for debugging
+        with open(f'update_book_{book_id}.json', 'w') as f:
+            json.dump(data, f, indent=3)
+
+        return Response(status=204)  # No Content - successful update
+
+    except Exception as e:
+        logging.error(f"Error processing PUT request for book {book_id}: {e}")
+        return jsonify({'error': f'Internal server error: {str(e)}'}), 500
+
+
+@app.route('/api/books/<int:book_id>', methods=['GET'])
+def get_single_book(book_id):
+    """Get single book information by ID"""
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        book_handler = BookInfoHandler(conn)
+        book_info = book_handler.get_book_info(book_id)
+
+        if not book_info:
+            return jsonify({"error": "Book not found"}), 404
+
+        return jsonify(book_info)
+
+    except Exception as e:
+        logging.error(f"Error fetching book {book_id}: {e}")
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+
+    finally:
+        if conn:
+            conn.close()
+
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({"error": "Not found"}), 404
