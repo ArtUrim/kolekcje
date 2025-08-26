@@ -63,7 +63,8 @@
     },
     "messages": {
       "bookAddedSuccess": "Book added successfully!",
-      "errorAddingBook": "Error adding book: {message}"
+      "errorAddingBook": "Error adding book: {message}",
+		"bookUpdatedSuccess": "Book updated successfully!"
     }
   }
 }

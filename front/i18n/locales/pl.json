@@ -57,7 +57,8 @@
     },
     "messages": {
       "bookAddedSuccess": "Książka została pomyślnie dodana!",
-      "errorAddingBook": "Błąd podczas dodawania książki: {message}"
+      "errorAddingBook": "Błąd podczas dodawania książki: {message}",
+		"bookUpdatedSuccess": "Książka została pomyślnie uaktualniona!"
     }
   },
   "input": {

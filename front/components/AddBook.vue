@@ -374,7 +374,7 @@ export default {
 
 				if (response.status === 204 || response.ok) {
 					const successMessage = this.isEditMode
-						? this.$t('book.messages.bookUpdatedSuccess')
+						? this.$t('addBook.messages.bookUpdatedSuccess')
 						: this.$t('addBook.messages.bookAddedSuccess');
 
 					this.showSnackbar(successMessage, 'success');
@@ -432,7 +432,103 @@ export default {
 			}
 		},
 
+		patchDataInEditMode() {
+			const bookData = {};
+			const currentData = this.getFormData();
+			
+			// Compare each field and only include if changed
+			Object.keys(currentData).forEach(key => {
+					const currentValue = currentData[key];
+					const originalValue = this.originalData[key];
+					
+					// Deep comparison for arrays and objects
+					if (JSON.stringify(currentValue) !== JSON.stringify(originalValue)) {
+						bookData[key] = currentValue;
+					}
+			});
+			
+			// Process arrays with proper object structure for changed fields only
+			if (bookData.genre) {
+					bookData.genre = this.genre.map(item => {
+						if (typeof item === 'object' && item !== null) {
+							return {
+									id: item.id,
+									title: item.title,
+									isCustom: false
+							};
+						} else if (typeof item === 'string') {
+							return {
+									id: null,
+									title: item,
+									isCustom: true
+							};
+						}
+						return {
+							id: null,
+							title: String(item),
+							isCustom: true
+						};
+					});
+			}
+			
+			if (bookData.publisher) {
+					bookData.publisher = this.publisher.map(pub => ({
+						id: pub.id,
+						title: pub.title,
+						isCustom: pub.isCustom
+					}));
+			}
+			
+			if (bookData.author) {
+					bookData.author = this.author.map(pub => ({
+						id: pub.id,
+						title: pub.title,
+						isCustom: pub.isCustom
+					}));
+			}
+			
+			if (bookData.series) {
+					bookData.series = {
+						id: this.series.id,
+						title: this.series.title,
+						isCustom: this.series.isCustom
+					};
+			}
+			
+			if (bookData.label) {
+					bookData.label = this.label.map(item => {
+						if (typeof item === 'object' && item !== null) {
+							return {
+									id: item.id,
+									title: item.title,
+									isCustom: false
+							};
+						} else if (typeof item === 'string') {
+							return {
+									id: null,
+									title: item,
+									isCustom: true
+							};
+						}
+						return {
+							id: null,
+							title: String(item),
+							isCustom: true
+						};
+					});
+			}
+			
+			return bookData;
+		},
+
+
 		buildBookData() {
+			// In edit mode, only include changed fields
+			if (this.isEditMode && this.originalData) {
+				return this.patchDataInEditMode();
+			}
+			
+			// For new books (not edit mode), include all data as before
 			const bookData = {
 				isbn: this.isbn ? parseInt(this.isbn) : null,
 				title: this.title,
@@ -451,84 +547,80 @@ export default {
 			// Process genre array - handle both objects and strings
 			if (this.genre && this.genre.length > 0) {
 				bookData.genre = this.genre.map(item => {
-					// Check if the item is an object
-					if (typeof item === 'object' && item !== null) {
-						return {
-							id: item.id,
-							title: item.title,
-							isCustom: false
-						};
-					}
-					// If it's a string, create object format
-					else if (typeof item === 'string') {
+						if (typeof item === 'object' && item !== null) {
+							return {
+								id: item.id,
+								title: item.title,
+								isCustom: false
+							};
+						} else if (typeof item === 'string') {
+							return {
+								id: null,
+								title: item,
+								isCustom: true
+							};
+						}
 						return {
 							id: null,
-							title: item,
+							title: String(item),
 							isCustom: true
 						};
-					}
-					// Fallback for any other type
-					return {
-						id: null,
-						title: String(item),
-						isCustom: true
-					};
 				});
 			}
 
 			// Process publisher array - extract IDs and titles
 			if (this.publisher && this.publisher.length > 0) {
 				bookData.publisher = this.publisher.map(pub => ({
-					id: pub.id,
-					title: pub.title,
-					isCustom: pub.isCustom
+						id: pub.id,
+						title: pub.title,
+						isCustom: pub.isCustom
 				}));
 			}
 
 			// Process author array - extract IDs and titles
 			if (this.author && this.author.length > 0) {
 				bookData.author = this.author.map(pub => ({
-					id: pub.id,
-					title: pub.title,
-					isCustom: pub.isCustom
+						id: pub.id,
+						title: pub.title,
+						isCustom: pub.isCustom
 				}));
 			}
 
 			// Process series object - extract ID and title
 			if (this.series) {
-				bookData.series= {
-					id: this.series.id,
-					title: this.series.title,
-					isCustom: this.series.isCustom
+				bookData.series = {
+						id: this.series.id,
+						title: this.series.title,
+						isCustom: this.series.isCustom
 				};
 			}
 
 			if (this.label && this.label.length > 0) {
 				bookData.label = this.label.map(item => {
-					if (typeof item === 'object' && item !== null) {
-						return {
-							id: item.id,
-							title: item.title,
-							isCustom: false
-						};
-					}
-					else if (typeof item === 'string') {
+						if (typeof item === 'object' && item !== null) {
+							return {
+								id: item.id,
+								title: item.title,
+								isCustom: false
+							};
+						} else if (typeof item === 'string') {
+							return {
+								id: null,
+								title: item,
+								isCustom: true
+							};
+						}
 						return {
 							id: null,
-							title: item,
+							title: String(item),
 							isCustom: true
 						};
-					}
-					return {
-						id: null,
-						title: String(item),
-						isCustom: true
-					};
 				});
 			}
 
 			return bookData;
 		}
+
 
 	},
 }
