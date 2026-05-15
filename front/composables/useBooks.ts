@@ -30,15 +30,11 @@ export const useBooks = () => {
 	   if (options.sortBy !== undefined && options.sortBy.length) queryParams.append('sortBy', options.sortBy[0]['key'] );
 	   if (options.sortBy !== undefined && options.sortBy.length) queryParams.append('sortDesc', options.sortBy[0]['order'] );
       
-      const { data, error } = await useAPI( `/book?${queryParams.toString()}` )
+      const data = await useAPI<{ books: Book[]; count: number }>(`/book?${queryParams.toString()}`)
 
-      if (error.value) {
-        throw new Error(error.value.message);
-      }
-
-      if (data.value) {
-        items.value = data.value.books;
-        totalItems.value = data.value.count;
+      if (data) {
+        items.value = data.books;
+        totalItems.value = data.count;
       }
     } catch (err) {
       console.error('Error fetching books:', err);

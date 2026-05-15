@@ -81,5 +81,11 @@ export default defineNuxtConfig({
     ]
   },
 
-  modules: ['vuetify-nuxt-module', '@nuxtjs/i18n']
+  modules: ['vuetify-nuxt-module', '@nuxtjs/i18n'],
+
+  nitro: {
+    devProxy: {
+      '/api': 'http://connector:5000'
+    }
+  }
 })

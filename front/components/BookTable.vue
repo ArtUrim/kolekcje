@@ -222,13 +222,11 @@ const fetchBookDetails = async (bookId: number) => {
   detailsErrors.value[bookId] = false;
 
   try {
-    const { data, error } = await useAPI(`/bookinfo?id=${bookId}`);
-    if (error.value) {
-      throw new Error('Error fetching book details');
-    }
+    const data = await useAPI(`/bookinfo?id=${bookId}`);
+    const bookPayload = data?.book || data;
 
     // Create deep copy of the data and transform it using bookFormat composable
-    const bookDataCopy = JSON.parse(JSON.stringify(data.value));
+    const bookDataCopy = JSON.parse(JSON.stringify(bookPayload));
     const transformedCards = transformBookDataToCards(bookDataCopy);
     const transformedBigCards = transformBookDataToBigCards(bookDataCopy);
     
@@ -279,13 +277,6 @@ const handleEditCancelled = () => {
   emit('edit-cancelled');
 };
 
-// Initial fetch
-onMounted(() => {
-  fetchBooks({
-     page: page.value,
-     itemsPerPage: itemsPerPage.value,
-  });
-});
 </script>
 
 <style scoped>

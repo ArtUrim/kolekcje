@@ -57,8 +57,6 @@
 </template>
 
 <script>
-import { useBookFormat } from '~/composables/bookFormat';
-
 export default {
   emits: ['book-updated', 'edit-cancelled'],
  
@@ -76,7 +74,7 @@ export default {
   data() {
     return {
       showEditDialog: false,
-      extractedBookData: {},
+      extractedBookData: null,
       cards: [],
       longCards: []
     }
@@ -110,9 +108,7 @@ export default {
     },
     
     openEditDialog() {
-      const { extractBookDataFromFields } = useBookFormat();
-      this.extractedBookData = extractBookDataFromFields(this.fields);
-      console.log('ExtractBookData', this.extractedBookData);
+      this.extractedBookData = null;
       this.showEditDialog = true;
     },
     
