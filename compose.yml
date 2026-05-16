@@ -18,9 +18,11 @@ services:
     container_name: front
     image: node:lts-bookworm  
     restart: always
+    tty: true
+    stdin_open: true
 
     working_dir: /front
-    entrypoint: ["npm", "run", "dev", "--", "-o", "--host", "0.0.0.0"]
+    entrypoint: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
     #  mount the volumes so we can change code and hot reload
     volumes:
       - './front:/front'
