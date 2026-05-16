@@ -33,7 +33,15 @@ export const useBooks = () => {
       const data = await useAPI<{ books: Book[]; count: number }>(`/book?${queryParams.toString()}`)
 
       if (data) {
-        items.value = data.books;
+        const uniqueBooks = data.books.filter((book, index, source) => {
+          if (book?.id === undefined || book?.id === null) {
+            return true;
+          }
+
+          return source.findIndex((candidate) => candidate?.id === book.id) === index;
+        });
+
+        items.value = uniqueBooks;
         totalItems.value = data.count;
       }
     } catch (err) {

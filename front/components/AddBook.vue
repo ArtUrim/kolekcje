@@ -360,7 +360,6 @@ export default {
 
 			try {
 				const bookData = this.buildBookData();
-				console.log( 'bookId', this.bookId );
 				const url = this.isEditMode ? `/api/books/${this.bookId}` : '/api/addbook';
 				const method = this.isEditMode ? 'PUT' : 'POST';
 
@@ -380,8 +379,11 @@ export default {
 					this.showSnackbar(successMessage, 'success');
 
 					if (this.isEditMode) {
-						this.originalData = { ...this.form };
-						this.$emit('book-updated', bookData);
+						this.originalData = this.getFormData();
+						this.$emit('book-updated', {
+							bookId: Number(this.bookId),
+							bookData: this.originalData
+						});
 					} else {
 						this.resetForm();
 						this.$emit('book-added', bookData);

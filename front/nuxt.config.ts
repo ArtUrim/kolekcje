@@ -25,6 +25,7 @@ export default defineNuxtConfig({
         messages: {
           pl: {
             $vuetify: {
+              close: 'zamknij',
               input: {
                 clear: 'wyczyść'
               },
@@ -39,6 +40,7 @@ export default defineNuxtConfig({
           },
           en: {
             $vuetify: {
+              close: 'close',
               input: {
                 clear: 'clear'
               },

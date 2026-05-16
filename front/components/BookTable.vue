@@ -270,6 +270,27 @@ const handleOptionsUpdate = (options: any) => {
 };
 
 const handleBookUpdated = (updatedBookData: any) => {
+  const bookId = Number(updatedBookData?.bookId);
+  const payload = updatedBookData?.bookData;
+
+  if (
+    Number.isFinite(bookId)
+    && bookDetails.value[bookId]
+    && payload
+    && Object.prototype.hasOwnProperty.call(payload, 'description')
+  ) {
+    const originalData = {
+      ...bookDetails.value[bookId].originalData,
+      description: payload.description,
+    };
+
+    bookDetails.value[bookId] = {
+      ...bookDetails.value[bookId],
+      originalData,
+      longCards: transformBookDataToBigCards(originalData),
+    };
+  }
+
   emit('book-updated', updatedBookData);
 };
 

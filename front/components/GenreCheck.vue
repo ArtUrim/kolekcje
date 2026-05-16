@@ -93,6 +93,9 @@ export default {
             try {
                 this.loading = true
                 const response = await fetch(this.apiEndpoint)
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch genres: ${response.status}`)
+                }
                 const data = await response.json()
                 this.items = data
             } catch (error) {
