@@ -7,8 +7,8 @@ import json
 from typing import List, Dict
 
 from addBook import BookDatabase
+from updateBook import BookUpdateDatabase
 from bookinfo_handler import BookInfoHandler
-# Add to imports at the top
 from table_handler import TableHandler
 
 # Create handlers after app initialization
@@ -439,22 +439,38 @@ def update_book(book_id):
     if content_type != 'application/json':
         return jsonify({'error': 'Content-Type must be application/json'}), 415
 
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database connection failed"}), 500
+
     try:
         data = request.get_json()
         if not data:
             return jsonify({"error": "No JSON data provided"}), 400
 
         logging.info(f"Updating book ID: {book_id} via PUT method")
-        print(f"Updating book ID: {book_id} via PUT method")
+        db = BookUpdateDatabase(conn)
+        result = db.update_book(book_id, data)
 
-        with open(f'update_book_{book_id}.json', 'w') as f:
-            json.dump(data, f, indent=3)
+        if result.get("not_found"):
+            return jsonify({"error": "Book not found"}), 404
 
-        return Response(status=204)
+        return jsonify({
+            "status": "success",
+            "book_id": book_id
+        }), 200
 
+    except ValueError as e:
+        logging.error(f"Validation error processing PUT request for book {book_id}: {e}")
+        return jsonify({"error": str(e)}), 400
+    except mariadb.Error as e:
+        logging.error(f"Database error processing PUT request for book {book_id}: {e}")
+        return jsonify({"error": f"Database error: {str(e)}"}), 500
     except Exception as e:
         logging.error(f"Error processing PUT request for book {book_id}: {e}")
         return jsonify({'error': f'Internal server error: {str(e)}'}), 500
+    finally:
+        conn.close()
 
 
 @app.route('/api/books/<int:book_id>', methods=['GET'])
