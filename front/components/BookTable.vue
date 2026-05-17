@@ -213,8 +213,8 @@ const bookDetails = ref<Record<number, any>>({});
 const loadingDetails = ref<Record<number, boolean>>({});
 const detailsErrors = ref<Record<number, boolean>>({});
 
-const fetchBookDetails = async (bookId: number) => {
-  if (bookDetails.value[bookId]) {
+const fetchBookDetails = async (bookId: number, forceRefresh = false) => {
+  if (bookDetails.value[bookId] && !forceRefresh) {
     return; // Already loaded
   }
 
@@ -269,26 +269,20 @@ const handleOptionsUpdate = (options: any) => {
   });
 };
 
-const handleBookUpdated = (updatedBookData: any) => {
+const handleBookUpdated = async (updatedBookData: any) => {
   const bookId = Number(updatedBookData?.bookId);
-  const payload = updatedBookData?.bookData;
 
-  if (
-    Number.isFinite(bookId)
-    && bookDetails.value[bookId]
-    && payload
-    && Object.prototype.hasOwnProperty.call(payload, 'description')
-  ) {
-    const originalData = {
-      ...bookDetails.value[bookId].originalData,
-      description: payload.description,
-    };
-
-    bookDetails.value[bookId] = {
-      ...bookDetails.value[bookId],
-      originalData,
-      longCards: transformBookDataToBigCards(originalData),
-    };
+  if (Number.isFinite(bookId)) {
+    await Promise.allSettled([
+      fetchBookDetails(bookId, true),
+      fetchBooks({
+        ...searchParams.value,
+        page: page.value,
+        itemsPerPage: itemsPerPage.value,
+        sortBy: sortBy.value,
+        sortDesc: sortDesc.value,
+      }),
+    ]);
   }
 
   emit('book-updated', updatedBookData);
