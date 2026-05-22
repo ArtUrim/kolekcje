@@ -30,15 +30,19 @@ export const useBooks = () => {
 	   if (options.sortBy !== undefined && options.sortBy.length) queryParams.append('sortBy', options.sortBy[0]['key'] );
 	   if (options.sortBy !== undefined && options.sortBy.length) queryParams.append('sortDesc', options.sortBy[0]['order'] );
       
-      const { data, error } = await useAPI( `/book?${queryParams.toString()}` )
+      const data = await useAPI<{ books: Book[]; count: number }>(`/book?${queryParams.toString()}`)
 
-      if (error.value) {
-        throw new Error(error.value.message);
-      }
+      if (data) {
+        const uniqueBooks = data.books.filter((book, index, source) => {
+          if (book?.id === undefined || book?.id === null) {
+            return true;
+          }
 
-      if (data.value) {
-        items.value = data.value.books;
-        totalItems.value = data.value.count;
+          return source.findIndex((candidate) => candidate?.id === book.id) === index;
+        });
+
+        items.value = uniqueBooks;
+        totalItems.value = data.count;
       }
     } catch (err) {
       console.error('Error fetching books:', err);

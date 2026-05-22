@@ -9,6 +9,7 @@
   },
   "books": {
     "db": "Baza książek",
+    "new": "Nowa",
     "searchTitle": "Szukaj po tytule",
     "searchAuthor": "Szukaj po autorze",
     "searchPublisher": "Szukaj po wydawcy",
@@ -20,7 +21,8 @@
       "publisher": "Wydawca",
       "releaseDate": "Data wydania",
       "seriesName": "Seria"
-    }
+    },
+    "edit": "Edytuj"
   },
   "addBook": {
     "isbn": "ISBN",
@@ -55,7 +57,8 @@
     },
     "messages": {
       "bookAddedSuccess": "Książka została pomyślnie dodana!",
-      "errorAddingBook": "Błąd podczas dodawania książki: {message}"
+      "errorAddingBook": "Błąd podczas dodawania książki: {message}",
+		"bookUpdatedSuccess": "Książka została pomyślnie uaktualniona!"
     }
   },
   "input": {

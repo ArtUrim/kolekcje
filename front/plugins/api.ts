@@ -1,8 +1,12 @@
 export default defineNuxtPlugin((nuxtApp) => {
   // const { session } = useUserSession()
 
+  const clientApiBaseURL = process.client
+    ? '/api'
+    : 'http://connector:5000'
+
   const api = $fetch.create({
-    baseURL: process.client ? `http://${window.location.host}/api` : 'http://connector:5000',
+    baseURL: clientApiBaseURL,
     onRequest({ request, options, error }) {
       // if (session.value?.token) {
       //   // note that this relies on ofetch >= 1.4.0 - you may need to refresh your lockfile

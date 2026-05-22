@@ -15,6 +15,7 @@
   },
   "books": {
     "db": "Database libri",
+    "new": "Nuova",
     "searchTitle": "Cerca titolo",
     "searchAuthor": "Cerca autore",
     "searchPublisher": "Cerca editore",
@@ -26,7 +27,8 @@
       "publisher": "Editore",
       "releaseDate": "Data di pubblicazione",
       "seriesName": "Serie"
-    }
+    },
+    "edit": "Modifica"
   },
   "addBook": {
     "isbn": "ISBN",

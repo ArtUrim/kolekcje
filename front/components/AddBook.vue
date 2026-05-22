@@ -1,7 +1,7 @@
 <template>
 	<v-container>
 		<v-card class="pa-4">
-			<v-form ref="form" v-model="valid">
+			<v-form ref="form" v-model="valid" @submit.prevent>
 				<v-row>
 					<v-col cols="12" sm="6">
 						<v-text-field v-model="isbn" :label="$t('addBook.isbn')" :rules="isbnRules"
@@ -164,9 +164,23 @@
 
 <script>
 export default {
+	emits: ['book-added', 'book-updated', 'cancel-edit'],
+
+	props: {
+		bookId: {
+			type: String,
+			default: null
+		},
+		initialBookData: {
+			type: Object,
+			default: () => null
+		}
+	},
 
 	data: () => ({
+		originalData: null,
 		valid: false,
+		isLoading: false,
 		snackbar: {
 			show: false,
 			message: '',
@@ -222,6 +236,20 @@ export default {
 		]
 	}),
 
+	computed: {
+		isEditMode() {
+			return !!(this.bookId || this.initialBookData);
+		},
+		hasChanges() {
+			if (!this.isEditMode || !this.originalData) return true;
+			return JSON.stringify(this.form) !== JSON.stringify(this.originalData);
+		}
+	},
+
+	async mounted() {
+		await this.initializeComponent();
+	},
+
 	methods: {
 		showSnackbar(message, color = 'success') {
 			this.snackbar.message = message;
@@ -233,133 +261,149 @@ export default {
 			this.$refs.form.validate()
 		},
 
-		async submitForm() {
-			if (this.$refs.form.validate()) {
-				const bookData = {
-					isbn: this.isbn ? parseInt(this.isbn) : null,
-					title: this.title,
-					publishYear: this.publishYear ? parseInt(this.publishYear) : null,
-					firstPublishYear: this.firstPublishYear ? parseInt(this.firstPublishYear) : null,
-					format: this.format,
-					size: this.booksize,
-					pages: this.pages ? parseInt(this.pages) : null,
-					description: this.description,
-					notes: this.notes,
-					originalTitle: this.originalTitle,
-					translator: this.translator,
-					language: this.language,
-				};
-
-				// Process genre array - handle both objects and strings
-				if (this.genre && this.genre.length > 0) {
-					bookData.genre = this.genre.map(item => {
-						// Check if the item is an object
-						if (typeof item === 'object' && item !== null) {
-							return {
-								id: item.id,
-								title: item.title,
-								isCustom: false
-							};
-						}
-						// If it's a string, create object format
-						else if (typeof item === 'string') {
-							return {
-								id: null,
-								title: item,
-								isCustom: true
-							};
-						}
-						// Fallback for any other type
-						return {
-							id: null,
-							title: String(item),
-							isCustom: true
-						};
-					});
-				}
-
-				// Process publisher array - extract IDs and titles
-				if (this.publisher && this.publisher.length > 0) {
-					bookData.publisher = this.publisher.map(pub => ({
-						id: pub.id,
-						title: pub.title,
-						isCustom: pub.isCustom
-					}));
-				}
-
-				// Process author array - extract IDs and titles
-				if (this.author && this.author.length > 0) {
-					bookData.author = this.author.map(pub => ({
-						id: pub.id,
-						title: pub.title,
-						isCustom: pub.isCustom
-					}));
-				}
-
-				// Process series object - extract ID and title
-				if (this.series) {
-					bookData.series= {
-						id: this.series.id,
-						title: this.series.title,
-						isCustom: this.series.isCustom
-					};
-				}
-
-				if (this.label && this.label.length > 0) {
-					bookData.label = this.label.map(item => {
-						if (typeof item === 'object' && item !== null) {
-							return {
-								id: item.id,
-								title: item.title,
-								isCustom: false
-							};
-						}
-						else if (typeof item === 'string') {
-							return {
-								id: null,
-								title: item,
-								isCustom: true
-							};
-						}
-						return {
-							id: null,
-							title: String(item),
-							isCustom: true
-						};
-					});
-				}
-				console.log('Form submitted:', bookData)
+		async initializeComponent() {
+			if (this.isEditMode) {
+				this.isLoading = true;
 				try {
-					const response = await fetch('/api/addbook', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify(bookData)
-					});
-
-					if (response.status === 204) {
-						// Success case - status 204 No Content
-						console.log('Book added successfully');
-						this.showSnackbar(this.$t('addBook.messages.bookAddedSuccess'), 'success');
-						this.resetForm();
-						return;
+					if (this.initialBookData) {
+						this.populateForm(this.initialBookData);
+					} else if (this.bookId) {
+						await this.fetchBookData();
 					}
-
-					// For non-204 responses, try to parse response body
-					const data = await response.json();
-
-					if (!response.ok) {
-						throw new Error(data.message || `Error adding book (Status: ${response.status})`);
-					}
-
-					// Handle other successful responses (if any)
-					console.log('Book added with response:', data);
-
-				} catch (err) {
-					console.error('Error adding book:', err);
-					this.showSnackbar(this.$t('addBook.messages.errorAddingBook', { message: err.message }), 'error');
+				} catch (error) {
+					console.error('Error initializing component:', error);
+					this.showSnackbar(this.$t('book.messages.errorLoadingBook'), 'error');
+				} finally {
+					this.isLoading = false;
 				}
+			}
+		},
+
+		cancelEdit() {
+			if (this.hasChanges) {
+				if (confirm(this.$t('addBook.messages.confirmCancel'))) {
+					this.$emit('cancel-edit');
+					if (this.originalData) {
+						this.populateForm(this.originalData);
+					}
+				}
+			} else {
+				this.$emit('cancel-edit');
+			}
+		},
+		async fetchBookData() {
+			try {
+				const response = await fetch(`/api/books/${this.bookId}`);
+				if (!response.ok) throw new Error('Failed to fetch book data');
+				const bookData = await response.json();
+				this.populateForm(bookData);
+			} catch (err) {
+				console.error('Error fetching book data:', err);
+				this.showSnackbar(this.$t('addBook.messages.errorFetchingBook'), 'error');
+			}
+		},
+
+		populateForm(bookData) {
+			this.isbn = bookData.isbn?.toString() || '';
+			this.title = bookData.title || '';
+			this.author = bookData.author || [];
+			this.publishYear = bookData.publishYear?.toString() || '';
+			this.firstPublishYear = bookData.firstPublishYear?.toString() || '';
+			this.format = bookData.format || 'unknown';
+			this.booksize = bookData.size || 'none';
+			this.publisher = bookData.publisher || [];
+			this.pages = bookData.pages?.toString() || '';
+			this.description = bookData.description || '';
+			this.notes = bookData.notes || '';
+			this.series = bookData.series || '';
+			this.originalTitle = bookData.originalTitle || '';
+			this.translator = bookData.translator || '';
+			this.language = bookData.language || '';
+			this.genre = bookData.genre || [];
+			this.label = bookData.label || [];
+
+			this.originalData = this.getFormData();
+		},
+
+		getFormData() {
+			return {
+				isbn: this.isbn ? parseInt(this.isbn) : null,
+				title: this.title,
+				publishYear: this.publishYear ? parseInt(this.publishYear) : null,
+				firstPublishYear: this.firstPublishYear ? parseInt(this.firstPublishYear) : null,
+				format: this.format,
+				size: this.booksize,
+				pages: this.pages ? parseInt(this.pages) : null,
+				description: this.description,
+				notes: this.notes,
+				originalTitle: this.originalTitle,
+				translator: this.translator,
+				language: this.language,
+				author: this.author,
+				publisher: this.publisher,
+				series: this.series,
+				genre: this.genre,
+				label: this.label
+			};
+		},
+
+		async submitForm() {
+
+			if (!this.$refs.form.validate()) return;
+
+			if (this.isEditMode && !this.hasChanges) {
+				this.showSnackbar(this.$t('book.messages.noChanges'), 'info');
+				return;
+			}
+
+			this.isSubmitting = true;
+
+			try {
+				const bookData = this.buildBookData();
+				const url = this.isEditMode ? `/api/books/${this.bookId}` : '/api/addbook';
+				const method = this.isEditMode ? 'PUT' : 'POST';
+
+				const response = await fetch(url, {
+					method,
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(bookData)
+				});
+
+				if (response.status === 204 || response.ok) {
+					const successMessage = this.isEditMode
+						? this.$t('addBook.messages.bookUpdatedSuccess')
+						: this.$t('addBook.messages.bookAddedSuccess');
+
+					this.showSnackbar(successMessage, 'success');
+
+					if (this.isEditMode) {
+						this.originalData = this.getFormData();
+						this.$emit('book-updated', {
+							bookId: Number(this.bookId),
+							bookData: this.originalData
+						});
+					} else {
+						this.resetForm();
+						this.$emit('book-added', bookData);
+					}
+					return;
+				}
+
+				// For non-204 responses, try to parse response body
+				const data = await response.json();
+				if (!response.ok) {
+					throw new Error(data.message || `Error ${this.isEditMode ? 'updating' : 'adding'} book (Status: ${response.status})`);
+				}
+			} catch (err) {
+				console.error(`Error ${this.isEditMode ? 'updating' : 'adding'} book:`, err);
+				this.showSnackbar(
+					this.$t(`book.messages.error${this.isEditMode ? 'Updating' : 'Adding'}Book`, { message: err.message }),
+					'error'
+				);
+			} finally {
+				this.isSubmitting = false;
 			}
 		},
 
@@ -367,25 +411,219 @@ export default {
 			// Reset form validation
 			this.$refs.form.reset();
 
-			// Manually clear all form fields
-			this.isbn = '';
-			this.title = '';
-			this.author = [];
-			this.publishYear = '';
-			this.firstPublishYear = '';
-			this.format = 'unknown';
-			this.publisher = [];
-			this.pages = '';
-			this.description = '';
-			this.notes = '';
-			this.series = '';
-			this.originalTitle = '';
-			this.translator = '';
-			this.language = '';
-			this.genre = [];
-			this.label = [];
+			if( this.isEditMode && this.originalData ) {
+				this.populateForm(this.originalData);
+			} else {
+				// Manually clear all form fields
+				this.isbn = '';
+				this.title = '';
+				this.author = [];
+				this.publishYear = '';
+				this.firstPublishYear = '';
+				this.format = 'unknown';
+				this.publisher = [];
+				this.pages = '';
+				this.description = '';
+				this.notes = '';
+				this.series = '';
+				this.originalTitle = '';
+				this.translator = '';
+				this.language = '';
+				this.genre = [];
+				this.label = [];
+			}
 		},
 
-	}
+		patchDataInEditMode() {
+			const bookData = {};
+			const currentData = this.getFormData();
+			
+			// Compare each field and only include if changed
+			Object.keys(currentData).forEach(key => {
+					const currentValue = currentData[key];
+					const originalValue = this.originalData[key];
+					
+					// Deep comparison for arrays and objects
+					if (JSON.stringify(currentValue) !== JSON.stringify(originalValue)) {
+						bookData[key] = currentValue;
+					}
+			});
+			
+			// Process arrays with proper object structure for changed fields only
+			if (bookData.genre) {
+					bookData.genre = this.genre.map(item => {
+						if (typeof item === 'object' && item !== null) {
+							return {
+									id: item.id,
+									title: item.title,
+									isCustom: false
+							};
+						} else if (typeof item === 'string') {
+							return {
+									id: null,
+									title: item,
+									isCustom: true
+							};
+						}
+						return {
+							id: null,
+							title: String(item),
+							isCustom: true
+						};
+					});
+			}
+			
+			if (bookData.publisher) {
+					bookData.publisher = this.publisher.map(pub => ({
+						id: pub.id,
+						title: pub.title,
+						isCustom: pub.isCustom
+					}));
+			}
+			
+			if (bookData.author) {
+					bookData.author = this.author.map(pub => ({
+						id: pub.id,
+						title: pub.title,
+						isCustom: pub.isCustom
+					}));
+			}
+			
+			if (bookData.series) {
+					bookData.series = {
+						id: this.series.id,
+						title: this.series.title,
+						isCustom: this.series.isCustom
+					};
+			}
+			
+			if (bookData.label) {
+					bookData.label = this.label.map(item => {
+						if (typeof item === 'object' && item !== null) {
+							return {
+									id: item.id,
+									title: item.title,
+									isCustom: false
+							};
+						} else if (typeof item === 'string') {
+							return {
+									id: null,
+									title: item,
+									isCustom: true
+							};
+						}
+						return {
+							id: null,
+							title: String(item),
+							isCustom: true
+						};
+					});
+			}
+			
+			return bookData;
+		},
+
+
+		buildBookData() {
+			// In edit mode, only include changed fields
+			if (this.isEditMode && this.originalData) {
+				return this.patchDataInEditMode();
+			}
+			
+			// For new books (not edit mode), include all data as before
+			const bookData = {
+				isbn: this.isbn ? parseInt(this.isbn) : null,
+				title: this.title,
+				publishYear: this.publishYear ? parseInt(this.publishYear) : null,
+				firstPublishYear: this.firstPublishYear ? parseInt(this.firstPublishYear) : null,
+				format: this.format,
+				size: this.booksize,
+				pages: this.pages ? parseInt(this.pages) : null,
+				description: this.description,
+				notes: this.notes,
+				originalTitle: this.originalTitle,
+				translator: this.translator,
+				language: this.language,
+			};
+
+			// Process genre array - handle both objects and strings
+			if (this.genre && this.genre.length > 0) {
+				bookData.genre = this.genre.map(item => {
+						if (typeof item === 'object' && item !== null) {
+							return {
+								id: item.id,
+								title: item.title,
+								isCustom: false
+							};
+						} else if (typeof item === 'string') {
+							return {
+								id: null,
+								title: item,
+								isCustom: true
+							};
+						}
+						return {
+							id: null,
+							title: String(item),
+							isCustom: true
+						};
+				});
+			}
+
+			// Process publisher array - extract IDs and titles
+			if (this.publisher && this.publisher.length > 0) {
+				bookData.publisher = this.publisher.map(pub => ({
+						id: pub.id,
+						title: pub.title,
+						isCustom: pub.isCustom
+				}));
+			}
+
+			// Process author array - extract IDs and titles
+			if (this.author && this.author.length > 0) {
+				bookData.author = this.author.map(pub => ({
+						id: pub.id,
+						title: pub.title,
+						isCustom: pub.isCustom
+				}));
+			}
+
+			// Process series object - extract ID and title
+			if (this.series) {
+				bookData.series = {
+						id: this.series.id,
+						title: this.series.title,
+						isCustom: this.series.isCustom
+				};
+			}
+
+			if (this.label && this.label.length > 0) {
+				bookData.label = this.label.map(item => {
+						if (typeof item === 'object' && item !== null) {
+							return {
+								id: item.id,
+								title: item.title,
+								isCustom: false
+							};
+						} else if (typeof item === 'string') {
+							return {
+								id: null,
+								title: item,
+								isCustom: true
+							};
+						}
+						return {
+							id: null,
+							title: String(item),
+							isCustom: true
+						};
+				});
+			}
+
+			return bookData;
+		}
+
+
+	},
 }
 </script>

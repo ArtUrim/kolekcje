@@ -15,6 +15,7 @@
   },
   "books": {
     "db": "Books database",
+    "new": "New",
     "searchTitle": "Search title",
     "searchAuthor": "Search author",
     "searchPublisher": "Search publisher",
@@ -26,7 +27,8 @@
       "publisher": "Publisher",
       "releaseDate": "Release Date",
       "seriesName": "Series"
-    }
+    },
+    "edit": "Edit"
   },
   "addBook": {
     "isbn": "ISBN",
@@ -61,7 +63,8 @@
     },
     "messages": {
       "bookAddedSuccess": "Book added successfully!",
-      "errorAddingBook": "Error adding book: {message}"
+      "errorAddingBook": "Error adding book: {message}",
+		"bookUpdatedSuccess": "Book updated successfully!"
     }
   }
 }

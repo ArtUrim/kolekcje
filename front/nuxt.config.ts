@@ -25,6 +25,7 @@ export default defineNuxtConfig({
         messages: {
           pl: {
             $vuetify: {
+              close: 'zamknij',
               input: {
                 clear: 'wyczyść'
               },
@@ -39,6 +40,7 @@ export default defineNuxtConfig({
           },
           en: {
             $vuetify: {
+              close: 'close',
               input: {
                 clear: 'clear'
               },
@@ -81,5 +83,11 @@ export default defineNuxtConfig({
     ]
   },
 
-  modules: ['vuetify-nuxt-module', '@nuxtjs/i18n']
+  modules: ['vuetify-nuxt-module', '@nuxtjs/i18n'],
+
+  nitro: {
+    devProxy: {
+      '/api': 'http://connector:5000'
+    }
+  }
 })
