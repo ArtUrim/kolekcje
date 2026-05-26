@@ -20,9 +20,17 @@
       "authors": "Autor(zy)",
       "publisher": "Wydawca",
       "releaseDate": "Data wydania",
-      "seriesName": "Seria"
+      "seriesName": "Seria",
+      "actions": "Akcje"
     },
-    "edit": "Edytuj"
+    "edit": "Edytuj",
+    "delete": "Usuń",
+    "deleteConfirmTitle": "Usuń książkę",
+    "deleteConfirmText": "Usunąć książkę '{title}'?",
+    "deleteSuccess": "Książka została pomyślnie usunięta!",
+    "deleteError": "Błąd podczas usuwania książki: {message}",
+    "cancel": "Anuluj",
+    "confirm": "Potwierdź"
   },
   "addBook": {
     "isbn": "ISBN",
