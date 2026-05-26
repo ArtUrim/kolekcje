@@ -178,6 +178,27 @@ class BookUpdateDatabase:
                 return True, payload[key]
         return False, None
 
+    def delete_book(self, book_id: int) -> Dict[str, Any]:
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute("SELECT 1 FROM Books WHERE id = ?", (book_id,))
+            if cursor.fetchone() is None:
+                return {"not_found": True}
+
+            cursor.execute("DELETE FROM bookAuthors WHERE book_id = ?", (book_id,))
+            cursor.execute("DELETE FROM bookPublishers WHERE book_id = ?", (book_id,))
+            cursor.execute("DELETE FROM bookGenres WHERE book_id = ?", (book_id,))
+            cursor.execute("DELETE FROM bookLabel WHERE book_id = ?", (book_id,))
+            cursor.execute("DELETE FROM Books WHERE id = ?", (book_id,))
+
+            self.connection.commit()
+            return {"deleted": True, "book_id": book_id}
+        except Exception:
+            self.connection.rollback()
+            raise
+        finally:
+            cursor.close()
+
     def update_book(self, book_id: int, book_data: Dict[str, Any]) -> Dict[str, Any]:
         if not isinstance(book_data, dict):
             raise ValueError("JSON payload must be an object")
