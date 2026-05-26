@@ -26,9 +26,17 @@
       "authors": "Author(s)",
       "publisher": "Publisher",
       "releaseDate": "Release Date",
-      "seriesName": "Series"
+      "seriesName": "Series",
+      "actions": "Actions"
     },
-    "edit": "Edit"
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirmTitle": "Delete book",
+    "deleteConfirmText": "Delete book '{title}'?",
+    "deleteSuccess": "Book deleted successfully!",
+    "deleteError": "Error deleting book: {message}",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
   },
   "addBook": {
     "isbn": "ISBN",

@@ -410,7 +410,7 @@ def book_info():
         if conn:
             conn.close()
 
-@app.route('/books/<int:book_id>', methods=['GET', 'PUT'])
+@app.route('/books/<int:book_id>', methods=['GET', 'PUT', 'DELETE'])
 def update_book(book_id):
     """Handle book retrieval and updates by ID"""
     if request.method == 'GET':
@@ -435,21 +435,34 @@ def update_book(book_id):
             if conn:
                 conn.close()
 
-    content_type = request.headers.get('Content-Type')
-    if content_type != 'application/json':
-        return jsonify({'error': 'Content-Type must be application/json'}), 415
-
     conn = get_db_connection()
     if not conn:
         return jsonify({"error": "Database connection failed"}), 500
 
     try:
+        db = BookUpdateDatabase(conn)
+
+        if request.method == 'DELETE':
+            logging.info(f"Deleting book ID: {book_id}")
+            result = db.delete_book(book_id)
+
+            if result.get("not_found"):
+                return jsonify({"error": "Book not found"}), 404
+
+            return jsonify({
+                "status": "success",
+                "book_id": book_id
+            }), 200
+
+        content_type = request.headers.get('Content-Type')
+        if content_type != 'application/json':
+            return jsonify({'error': 'Content-Type must be application/json'}), 415
+
         data = request.get_json()
         if not data:
             return jsonify({"error": "No JSON data provided"}), 400
 
         logging.info(f"Updating book ID: {book_id} via PUT method")
-        db = BookUpdateDatabase(conn)
         result = db.update_book(book_id, data)
 
         if result.get("not_found"):
@@ -461,13 +474,13 @@ def update_book(book_id):
         }), 200
 
     except ValueError as e:
-        logging.error(f"Validation error processing PUT request for book {book_id}: {e}")
+        logging.error(f"Validation error processing {request.method} request for book {book_id}: {e}")
         return jsonify({"error": str(e)}), 400
     except mariadb.Error as e:
-        logging.error(f"Database error processing PUT request for book {book_id}: {e}")
+        logging.error(f"Database error processing {request.method} request for book {book_id}: {e}")
         return jsonify({"error": f"Database error: {str(e)}"}), 500
     except Exception as e:
-        logging.error(f"Error processing PUT request for book {book_id}: {e}")
+        logging.error(f"Error processing {request.method} request for book {book_id}: {e}")
         return jsonify({'error': f'Internal server error: {str(e)}'}), 500
     finally:
         conn.close()

@@ -67,7 +67,7 @@ export default defineNuxtConfig({
 		  { code: 'it', name: 'Italiano', file: 'it.json' }
 	  ],
 	  // lazy: true,
-    langDir: 'i18n/locales/',
+    langDir: 'locales/',
     strategy: 'prefix_and_default',
     detectBrowserLanguage: {
       useCookie: true,

@@ -304,23 +304,46 @@ export default {
 		},
 
 		populateForm(bookData) {
+			const toEntityOptions = (items = []) => {
+				if (!Array.isArray(items)) return [];
+				return items
+					.filter(item => item && (item.title || item.name || item.value || item.text))
+					.map(item => ({
+						id: item.id ?? null,
+						title: item.title || item.name || item.value || item.text,
+						isCustom: item.isCustom ?? false
+					}));
+			};
+
 			this.isbn = bookData.isbn?.toString() || '';
 			this.title = bookData.title || '';
-			this.author = bookData.author || [];
-			this.publishYear = bookData.publishYear?.toString() || '';
-			this.firstPublishYear = bookData.firstPublishYear?.toString() || '';
+			this.author = (Array.isArray(bookData.author) && bookData.author.length > 0)
+				? toEntityOptions(bookData.author)
+				: toEntityOptions(bookData.authors_details);
+			this.publishYear = (bookData.publishYear ?? bookData.release_date)?.toString() || '';
+			this.firstPublishYear = (bookData.firstPublishYear ?? bookData.first_polish_release_date)?.toString() || '';
 			this.format = bookData.format || 'unknown';
 			this.booksize = bookData.size || 'none';
-			this.publisher = bookData.publisher || [];
+			this.publisher = (Array.isArray(bookData.publisher) && bookData.publisher.length > 0)
+				? toEntityOptions(bookData.publisher)
+				: toEntityOptions(bookData.publishers_details);
 			this.pages = bookData.pages?.toString() || '';
 			this.description = bookData.description || '';
-			this.notes = bookData.notes || '';
-			this.series = bookData.series || '';
-			this.originalTitle = bookData.originalTitle || '';
+			this.notes = bookData.notes || bookData.note || '';
+			this.series = bookData.series || (bookData.series_name ? {
+				id: bookData.series_id ?? null,
+				title: bookData.series_name,
+				isCustom: false
+			} : '');
+			this.originalTitle = bookData.originalTitle || bookData.original_title || '';
 			this.translator = bookData.translator || '';
-			this.language = bookData.language || '';
-			this.genre = bookData.genre || [];
-			this.label = bookData.label || [];
+			this.language = bookData.language || bookData.language_name || '';
+			this.genre = (Array.isArray(bookData.genre) && bookData.genre.length > 0)
+				? toEntityOptions(bookData.genre)
+				: toEntityOptions(bookData.genres_details);
+			this.label = (Array.isArray(bookData.label) && bookData.label.length > 0)
+				? toEntityOptions(bookData.label)
+				: toEntityOptions(bookData.labels_details);
 
 			this.originalData = this.getFormData();
 		},
