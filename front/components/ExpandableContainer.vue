@@ -1,6 +1,6 @@
 <template>
 	<v-container fluid class="pa-6">
-		<BookInfo :book="bookInfoData" />
+		<BookInfo :book="bookInfoData" @delete-requested="openDeleteDialog" />
 		<!-- Custom Card Components with Transitions -->
 
 		<!-- Edit Button positioned in bottom right -->
@@ -38,6 +38,35 @@
 								@cancel-edit="onCancelEdit"
 								/>
 					</v-card-text>
+				</v-card>
+		</v-dialog>
+		<v-dialog
+				v-model="showDeleteDialog"
+				max-width="520px"
+				>
+				<v-card>
+					<v-card-title>{{ $t('books.deleteConfirmTitle') }}</v-card-title>
+					<v-card-text>
+						{{ $t('books.deleteConfirmText', { title: bookInfoData.title || '' }) }}
+					</v-card-text>
+					<v-card-actions class="justify-end">
+						<v-btn
+								variant="text"
+								:disabled="deletingBook"
+								@click="closeDeleteDialog"
+								>
+								{{ $t('books.cancel') }}
+						</v-btn>
+						<v-btn
+								color="error"
+								variant="elevated"
+								:loading="deletingBook"
+								:disabled="deletingBook"
+								@click="confirmDeleteBook"
+								>
+								{{ $t('books.confirm') }}
+						</v-btn>
+					</v-card-actions>
 				</v-card>
 		</v-dialog>
 	</v-container>
@@ -79,7 +108,7 @@ export default {
   components: {
     BookInfo
   },
-  emits: ['book-updated', 'edit-cancelled'],
+  emits: ['book-updated', 'edit-cancelled', 'book-deleted'],
  
   props: {
     fields: {
@@ -95,6 +124,8 @@ export default {
   data() {
     return {
       showEditDialog: false,
+      showDeleteDialog: false,
+      deletingBook: false,
       extractedBookData: null,
       cards: [],
       longCards: []
@@ -181,6 +212,36 @@ export default {
       this.showEditDialog = true;
     },
     
+    openDeleteDialog() {
+      this.showDeleteDialog = true;
+    },
+
+    closeDeleteDialog() {
+      this.showDeleteDialog = false;
+    },
+
+    async confirmDeleteBook() {
+      if (!this.bookId) {
+        return;
+      }
+
+      this.deletingBook = true;
+
+      try {
+        await useAPI(`/books/${this.bookId}`, {
+          method: 'DELETE'
+        });
+        this.showDeleteDialog = false;
+        this.$emit('book-deleted', {
+          bookId: Number(this.bookId)
+        });
+      } catch (error) {
+        console.error('Failed to delete book:', error);
+      } finally {
+        this.deletingBook = false;
+      }
+    },
+
     onBookUpdated(updatedBookData) {
       this.showEditDialog = false;
       this.$emit('book-updated', updatedBookData);

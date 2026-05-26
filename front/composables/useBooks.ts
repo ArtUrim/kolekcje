@@ -12,7 +12,6 @@ export const useBooks = () => {
     { title: t('books.headers.publisher'), key: 'publisher', sortable: true },
     { title: t('books.headers.releaseDate'), key: 'release_date', sortable: true },
     { title: t('books.headers.seriesName'), key: 'series_name', sortable: true },
-    { title: t('books.headers.actions'), key: 'actions', sortable: false },
   ]);
 
   const fetchBooks = async (options: SearchParams) => {

@@ -1,7 +1,18 @@
 <template>
   <v-card elevation="1" class="pa-6 mb-4" rounded="lg">
-    <div class="book-title">{{ book.title || 'N/A' }}</div>
-    <div v-if="book.originalTitle" class="original-title">{{book.originalTitle}}</div>
+    <div class="d-flex justify-space-between align-start">
+      <div>
+        <div class="book-title">{{ book.title || 'N/A' }}</div>
+        <div v-if="book.originalTitle" class="original-title">{{book.originalTitle}}</div>
+      </div>
+      <v-btn
+        icon="mdi-delete"
+        color="error"
+        variant="text"
+        :aria-label="$t('books.delete')"
+        @click="openDeleteDialog"
+      />
+    </div>
 
     <div class="mt-4">
       <v-chip v-for="author in displayAuthors" :key="author" color="primary" variant="flat" class="mr-2 mb-2">
@@ -115,6 +126,14 @@ const props = withDefaults(
     book: () => ({}),
   }
 );
+
+const emit = defineEmits<{
+  'delete-requested': [];
+}>();
+
+const openDeleteDialog = () => {
+  emit('delete-requested');
+};
 
 const normalizedBook = computed<BookInfoData>(() => ({
   title: props.book.title ?? '',

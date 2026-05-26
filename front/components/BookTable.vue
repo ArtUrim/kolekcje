@@ -94,6 +94,7 @@
 											:fields="bookDetails[item.id]"
 											:book-id="String(item.id)"
 											@book-updated="handleBookUpdated"
+											@book-deleted="handleBookDeleted"
 											@edit-cancelled="handleEditCancelled"
 											/>
 								</div>
@@ -123,16 +124,6 @@
 				{{ item.series_name || 'N/A' }}
 			</template>
 
-			<template #item.actions="{ item }">
-				<v-btn
-						icon="mdi-delete"
-						color="error"
-						variant="text"
-						:aria-label="$t('books.delete')"
-						@click="openDeleteDialog(item)"
-						/>
-			</template>
-
 			<template #no-data>
 				{{ $t('books.nobooks') }}
 			</template>
@@ -155,35 +146,6 @@
 					<v-card-text class="pa-0">
 						<AddBook @book-added="handleBookAdded" />
 					</v-card-text>
-				</v-card>
-		</v-dialog>
-		<v-dialog
-				v-model="showDeleteDialog"
-				max-width="520px"
-				>
-				<v-card>
-					<v-card-title>{{ $t('books.deleteConfirmTitle') }}</v-card-title>
-					<v-card-text>
-						{{ t('books.deleteConfirmText', { title: deleteCandidateTitle }) }}
-					</v-card-text>
-					<v-card-actions class="justify-end">
-						<v-btn
-								variant="text"
-								:disabled="deletingBook"
-								@click="closeDeleteDialog"
-								>
-								{{ $t('books.cancel') }}
-						</v-btn>
-						<v-btn
-								color="error"
-								variant="elevated"
-								:loading="deletingBook"
-								:disabled="deletingBook"
-								@click="confirmDeleteBook"
-								>
-								{{ $t('books.confirm') }}
-						</v-btn>
-					</v-card-actions>
 				</v-card>
 		</v-dialog>
 	</v-card>
@@ -214,10 +176,6 @@ const {
 const { transformBookDataToCards, transformBookDataToBigCards } = useBookFormat();
 
 const showAddBookDialog = ref(false);
-const showDeleteDialog = ref(false);
-const deletingBook = ref(false);
-const deleteCandidateId = ref<number | null>(null);
-const deleteCandidateTitle = ref('');
 const page = ref(1);
 
 const closeAddBookDialog = () => {
@@ -240,56 +198,6 @@ const sortBy = ref<string[]>([]);
 const sortDesc = ref<boolean[]>([]);
 
 // Debounced search function
-const openDeleteDialog = (item: any) => {
-  const candidateId = Number(item?.id);
-  if (!Number.isFinite(candidateId)) {
-	 return;
-  }
-
-  deleteCandidateId.value = candidateId;
-  deleteCandidateTitle.value = String(item?.title || '');
-  showDeleteDialog.value = true;
-};
-
-const closeDeleteDialog = () => {
-  showDeleteDialog.value = false;
-  deleteCandidateId.value = null;
-  deleteCandidateTitle.value = '';
-};
-
-const confirmDeleteBook = async () => {
-  const candidateId = deleteCandidateId.value;
-  if (candidateId === null) {
-	 return;
-  }
-
-  deletingBook.value = true;
-
-  try {
-	 await useAPI(`/books/${candidateId}`, {
-		method: 'DELETE'
-	 });
-
-	 delete bookDetails.value[candidateId];
-	 delete loadingDetails.value[candidateId];
-	 delete detailsErrors.value[candidateId];
-
-	 await fetchBooks({
-		...searchParams.value,
-		page: page.value,
-		itemsPerPage: itemsPerPage.value,
-		sortBy: sortBy.value,
-		sortDesc: sortDesc.value,
-	 });
-
-	 closeDeleteDialog();
-  } catch (error) {
-	 console.error('Failed to delete book:', error);
-  } finally {
-	 deletingBook.value = false;
-  }
-};
-
 const handleSearch = debounce(() => {
   page.value = 1; // Reset to first page on new search
   fetchBooks({
@@ -379,6 +287,24 @@ const handleBookUpdated = async (updatedBookData: any) => {
   }
 
   emit('book-updated', updatedBookData);
+};
+
+const handleBookDeleted = async (payload: any) => {
+  const bookId = Number(payload?.bookId);
+
+  if (Number.isFinite(bookId)) {
+	 delete bookDetails.value[bookId];
+	 delete loadingDetails.value[bookId];
+	 delete detailsErrors.value[bookId];
+  }
+
+  await fetchBooks({
+	 ...searchParams.value,
+	 page: page.value,
+	 itemsPerPage: itemsPerPage.value,
+	 sortBy: sortBy.value,
+	 sortDesc: sortDesc.value,
+  });
 };
 
 const handleEditCancelled = () => {
