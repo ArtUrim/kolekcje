@@ -1,17 +1,17 @@
 <template>
   <v-card elevation="1" class="pa-6 mb-4" rounded="lg">
     <div class="book-title">{{ book.title || 'N/A' }}</div>
-    <div class="original-title">{{ book.originalTitle || 'N/A' }}</div>
+    <div v-if="book.originalTitle" class="original-title">{{book.originalTitle}}</div>
 
     <div class="mt-4">
-      <v-chip v-for="author in book.authors" :key="author" color="primary" variant="flat" class="mr-2 mb-2">
+      <v-chip v-for="author in displayAuthors" :key="author" color="primary" variant="flat" class="mr-2 mb-2">
         <v-icon start size="small">mdi-account</v-icon>
         {{ author }}
       </v-chip>
     </div>
 
     <div class="mt-2">
-      <v-chip v-for="publisher in book.publishers" :key="publisher" color="secondary" variant="flat" class="mr-2 mb-2">
+      <v-chip v-for="publisher in displayPublishers" :key="publisher" color="secondary" variant="flat" class="mr-2 mb-2">
         <v-icon start size="small">mdi-office-building</v-icon>
         {{ publisher }}
       </v-chip>
@@ -137,6 +137,9 @@ const normalizedBook = computed<BookInfoData>(() => ({
 }));
 
 const book = normalizedBook;
+
+const displayAuthors = computed(() => (book.value.authors.length ? book.value.authors : null));
+const displayPublishers = computed(() => (book.value.publishers.length ?  book.value.publishers : null));
 </script>
 
 <style scoped>
