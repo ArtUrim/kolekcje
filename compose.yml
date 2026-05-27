@@ -16,19 +16,10 @@ services:
 
   front:
     container_name: front
-    image: node:lts-bookworm  
+    build:
+      context: ./front
+      dockerfile: Dockerfile
     restart: always
-    tty: true
-    stdin_open: true
-
-    working_dir: /front
-    entrypoint: ["node", ".output/server/index.mjs"]
-    # entrypoint: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
-    #  mount the volumes so we can change code and hot reload
-    volumes:
-      - './front:/front'
-    #  port allows the host machine to link to container
-    #  8000 for vue ui, 5000 for our vue app
     ports:
       - "3000:3000"
     depends_on:
