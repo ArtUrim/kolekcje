@@ -22,8 +22,7 @@ services:
     stdin_open: true
 
     working_dir: /front
-    entrypoint: ["node", ".output/server/index.mjs"]
-    # entrypoint: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+    entrypoint: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
     #  mount the volumes so we can change code and hot reload
     volumes:
       - './front:/front'
@@ -48,8 +47,7 @@ services:
     working_dir: /pg
     volumes:
       - ./connector:/pg
-    entrypoint: ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5000", "app:app"]
-    # entrypoint: ["flask", "run", "--debug", "--host=0.0.0.0"]
+    entrypoint: ["flask", "run", "--debug", "--host=0.0.0.0"]
     ports:
       - "5000:5000"
 
