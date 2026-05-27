@@ -61,9 +61,9 @@ def sortPagination_query(params: Dict[str, Any]) -> tuple[str, list]:
             otype = 'authors'
         elif sort_by == 'publisher':
             otype = 'p.name'
-        elif sort_by == 'release':
+        elif sort_by in ('release', 'release_date'):
             otype = 'b.release_date'
-        elif sort_by in ('serie', 'series'):
+        elif sort_by in ('serie', 'series', 'series_name'):
             otype = 's.name'
 
         if otype:
