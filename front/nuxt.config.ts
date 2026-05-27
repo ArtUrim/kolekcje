@@ -67,7 +67,7 @@ export default defineNuxtConfig({
 		  { code: 'it', name: 'Italiano', file: 'it.json' }
 	  ],
 	  // lazy: true,
-    langDir: 'locales/',
+    langDir: 'i18n/locales/',
     strategy: 'prefix_and_default',
     detectBrowserLanguage: {
       useCookie: true,
@@ -88,6 +88,9 @@ export default defineNuxtConfig({
   nitro: {
     devProxy: {
       '/api': 'http://connector:5000'
+    },
+    routeRules: {
+      '/api/**': { proxy: 'http://connector:5000/**' }
     }
   }
 })
