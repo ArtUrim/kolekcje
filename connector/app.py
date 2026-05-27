@@ -49,18 +49,21 @@ def sortPagination_query(params: Dict[str, Any]) -> tuple[str, list]:
 
     if params.get('sortBy'):
         order = 'ASC'
-        if params.get('orderDesc') and params['orderDesc'] == 'desc':
+        sort_order = params.get('sortDesc') or params.get('orderDesc')
+        if sort_order and sort_order.lower() == 'desc':
             order = 'DESC'
+
+        sort_by = params['sortBy'].lower()
         otype = None
-        if params['sortBy'] == 'title':
+        if sort_by == 'title':
             otype = 'b.title'
-        elif params['sortBy'] == 'author':
+        elif sort_by in ('author', 'authors'):
             otype = 'authors'
-        elif params['sortBy'] == 'publisher':
+        elif sort_by == 'publisher':
             otype = 'p.name'
-        elif params['sortBy'] == 'release':
+        elif sort_by == 'release':
             otype = 'b.release_date'
-        elif params['sortBy'] == 'serie':
+        elif sort_by in ('serie', 'series'):
             otype = 's.name'
 
         if otype:
