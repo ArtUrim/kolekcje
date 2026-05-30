@@ -6,7 +6,7 @@ SET foreign_key_checks = 0;
 
 SET NAMES utf8mb4;
 
-CREATE DATABASE `katalog` IF NOT EXISTS `katalog`
+CREATE DATABASE IF NOT EXISTS `katalog`;
 USE `katalog`;
 
 CREATE TABLE `Authors` (

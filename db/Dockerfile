@@ -12,7 +12,5 @@ RUN echo "[mysqld]" > /etc/mysql/conf.d/optimize.cnf && \
     echo "innodb_read_io_threads = 8" >> /etc/mysql/conf.d/optimize.cnf && \
     echo "innodb_write_io_threads = 8" >> /etc/mysql/conf.d/optimize.cnf
 
-# Ensure permissions are correct
 USER root
 RUN chmod 644 /docker-entrypoint-initdb.d/01_schema.sql /etc/mysql/conf.d/optimize.cnf
-USER mysql
