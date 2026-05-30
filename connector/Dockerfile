@@ -6,4 +6,8 @@ ADD requirements.txt .
 
 RUN pip install -r requirements.txt
 
+WORKDIR /pg
+
+COPY *.py ./
+
 ENTRYPOINT ["ipython3"]

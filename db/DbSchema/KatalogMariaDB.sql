@@ -6,7 +6,7 @@ SET foreign_key_checks = 0;
 
 SET NAMES utf8mb4;
 
-CREATE DATABASE `katalog` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci */;
+CREATE DATABASE IF NOT EXISTS `katalog`;
 USE `katalog`;
 
 CREATE TABLE `Authors` (

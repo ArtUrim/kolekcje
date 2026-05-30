@@ -103,6 +103,8 @@ class BookDatabase:
         else:
             raise ValueError("Invalid author data format")
 
+        self._ensure_language_exists('pl_')
+
         cursor = self.connection.cursor()
         try:
             cursor.execute("SELECT id FROM Authors WHERE name = ?", (author_name,))
@@ -241,20 +243,42 @@ class BookDatabase:
         
         return format_mapping.get(format_str, 'unknown')
 
+    def _ensure_language_exists(self, language_id: str) -> str:
+        """Ensure language exists in database; create placeholder when missing"""
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute("SELECT 1 FROM language WHERE id = ?", (language_id,))
+            if cursor.fetchone():
+                return language_id
+            cursor.execute("INSERT INTO language (id, name) VALUES (?, ?)", (language_id, language_id))
+            self.connection.commit()
+            return language_id
+        finally:
+            cursor.close()
+
     def _get_default_language(self, language_data: Any) -> str:
         """Get language code with validation"""
         if not language_data or not str(language_data).strip():
-            return 'pl_'  # Default to Polish
-        
-        lang_str = str(language_data).strip()
-        
-        # Basic validation for language code format (e.g., 'en_', 'pl_')
-        if len(lang_str) >= 3:
-            return lang_str
-        elif len(lang_str) == 2:
+            return 'pl_'
+
+        lang_str = str(language_data).strip().lower()
+
+        language_mapping = {
+            'polski': 'pl_',
+            'polish': 'pl_',
+            'angielski': 'en_',
+            'english': 'en_'
+        }
+        if lang_str in language_mapping:
+            return language_mapping[lang_str]
+
+        if len(lang_str) == 2:
             return lang_str + '_'
-        
-        return 'pl_'  # Default fallback
+
+        if len(lang_str) == 3:
+            return lang_str
+
+        return 'pl_'
 
     def insert_book(self, book_data: Dict[str, Any]) -> int:
         """Insert book data into database with improved error handling and data processing"""
@@ -301,6 +325,7 @@ class BookDatabase:
             translator = str(translator).strip() if translator else None
             
             language_id = self._get_default_language(book_data.get('language'))
+            self._ensure_language_exists(language_id)
 
             size = book_data.get('size')
             size = str(size).strip() if size and str(size).strip() else None
