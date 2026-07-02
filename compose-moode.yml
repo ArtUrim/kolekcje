@@ -1,0 +1,37 @@
+services:
+
+  db:
+    image: arturim13/katalog-db:latest
+    container_name: mariadb
+    restart: always
+    environment:
+      - MARIADB_ROOT_PASSWORD=example
+      - MYSQL_USER=example
+      - MYSQL_PASSWORD=example
+      - MYSQL_DATABASE=katalog
+    volumes:
+      - /mnt/netdisk/db-data:/var/lib/mysql
+    ports:
+      - 3306:3306
+
+  front:
+    container_name: front
+    image: arturim13/katalog-front:latest
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - connector
+
+  connector:
+    container_name: connector
+    image: arturim13/katalog-connector:latest
+    restart: always
+    working_dir: /pg
+    tty: true
+    stdin_open: true
+    entrypoint: ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5000", "app:app"]
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db

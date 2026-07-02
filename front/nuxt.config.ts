@@ -5,7 +5,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: 'http://connector:3000'
+      apiBase: '/kolekcje/api'
     }
   },
 
