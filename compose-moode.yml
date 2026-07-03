@@ -1,22 +1,24 @@
 services:
-
   db:
-    image: arturim13/katalog-db:latest
+    image: arturim13/katalog-db:raspi
     container_name: mariadb
     restart: always
+    security_opt: 
+      - seccomp:unconfined
     environment:
       - MARIADB_ROOT_PASSWORD=example
       - MYSQL_USER=example
       - MYSQL_PASSWORD=example
       - MYSQL_DATABASE=katalog
     volumes:
-      - /mnt/netdisk/db-data:/var/lib/mysql
+      #- /mnt/netdisk/db-data:/var/lib/mysql
+      - db-data:/var/lib/mysql
     ports:
       - 3306:3306
 
   front:
     container_name: front
-    image: arturim13/katalog-front:latest
+    image: arturim13/katalog-front:raspi
     restart: always
     ports:
       - "3000:3000"
@@ -25,7 +27,7 @@ services:
 
   connector:
     container_name: connector
-    image: arturim13/katalog-connector:latest
+    image: arturim13/katalog-connector:raspi
     restart: always
     working_dir: /pg
     tty: true
@@ -35,3 +37,6 @@ services:
       - "5000:5000"
     depends_on:
       - db
+
+volumes:
+  db-data:
