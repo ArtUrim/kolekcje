@@ -27,3 +27,8 @@ logs
 **/*~
 **/.*.swp
 **/__pycache__
+
+/*.md
+/references/**
+/.abacus
+/.abacusai

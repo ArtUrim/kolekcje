@@ -43,17 +43,7 @@ bun run dev
 Build the application for production:
 
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+npx nuxt build --prerender
 ```
 
 Locally preview production build:

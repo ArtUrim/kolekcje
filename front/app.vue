@@ -8,5 +8,10 @@
 
 <script setup>
 	const { $api } = useNuxtApp()
+	const { startHeartbeat } = useHeartbeat()
+
+onMounted(() => {
+  startHeartbeat()
+})
 </script>
 

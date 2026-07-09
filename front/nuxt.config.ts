@@ -1,23 +1,29 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
-  devtools: { enabled: true },
+
+  ssr: true,
+
+  devtools: {
+    enabled: true
+  },
 
   runtimeConfig: {
     public: {
-      apiBase: 'http://connector:3000'
+      apiBase: '/api'
     }
   },
 
-  // Global CSS
   css: [
     '@/assets/styles/main.css'
   ],
 
+  modules: [
+    'vuetify-nuxt-module',
+    '@nuxtjs/i18n'
+  ],
+
   vuetify: {
-    moduleOptions: {
-      /* module specific options */
-    },
+    moduleOptions: {},
     vuetifyOptions: {
       locale: {
         locale: 'pl',
@@ -59,16 +65,20 @@ export default defineNuxtConfig({
   },
 
   i18n: {
-	  defaultLocale: 'pl',
+    defaultLocale: 'pl',
+
     fallbackLocale: 'en',
-	  locales: [
-		  { code: 'en', name: 'English', file: 'en.json' },
-		  { code: 'pl', name: 'Polski', file: 'pl.json' },
-		  { code: 'it', name: 'Italiano', file: 'it.json' }
-	  ],
-	  // lazy: true,
+
+    locales: [
+      { code: 'pl', name: 'Polski', file: 'pl.json' },
+      { code: 'en', name: 'English', file: 'en.json' },
+      { code: 'it', name: 'Italiano', file: 'it.json' }
+    ],
+
     langDir: 'locales/',
+
     strategy: 'prefix_and_default',
+
     detectBrowserLanguage: {
       useCookie: true,
       cookieKey: 'i18n_redirected',
@@ -76,21 +86,16 @@ export default defineNuxtConfig({
     }
   },
 
-  // Build Configuration
-  build: {
-    transpile: [
-      // Add any packages that need transpilation
-    ]
-  },
-
-  modules: ['vuetify-nuxt-module', '@nuxtjs/i18n'],
-
   nitro: {
+    preset: 'static',
+
+    prerender: {
+      crawlLinks: true,
+      routes: ['/']
+    },
+
     devProxy: {
       '/api': 'http://connector:5000'
-    },
-    routeRules: {
-      '/api/**': { proxy: 'http://connector:5000/**' }
     }
   }
 })
