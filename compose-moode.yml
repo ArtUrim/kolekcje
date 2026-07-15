@@ -13,13 +13,8 @@ services:
       - MYSQL_DATABASE=katalog
     volumes:
       - db-data:/var/lib/mysql
-    ports:
-      - "3306:3306"
     networks:
       - katalog-net
-    # THE KEY FIX: a real readiness probe. The container is only "healthy"
-    # once MariaDB is actually accepting connections. Other services can
-    # then wait on this condition instead of racing the DB's startup.
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       # Fallback for older images that lack healthcheck.sh:
@@ -36,13 +31,17 @@ services:
     working_dir: /pg
     tty: true
     stdin_open: true
-    entrypoint: ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5000", "app:app"]
+    entrypoint: ["gunicorn", "--workers", "2", "--worker-class", "sync", "--bind", "0.0.0.0:5000", "--timeout", "120", "--log-level", "info", "--access-logfile", "-", "app:app"]
     ports:
       - "5000:5000"
     networks:
       - katalog-net
-    # Long-form depends_on: wait until the DB reports HEALTHY, not just started.
-    # This is what removes the dependency on adminer being up.
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/book?page=1&itemsPerPage=1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     depends_on:
       db:
         condition: service_healthy
