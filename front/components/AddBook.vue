@@ -174,6 +174,10 @@ export default {
 		initialBookData: {
 			type: Object,
 			default: () => null
+		},
+		forceAddMode: {
+			type: Boolean,
+			default: false
 		}
 	},
 
@@ -238,6 +242,9 @@ export default {
 
 	computed: {
 		isEditMode() {
+			return !this.forceAddMode && !!(this.bookId || this.initialBookData);
+		},
+		hasInitialData() {
 			return !!(this.bookId || this.initialBookData);
 		},
 		hasChanges() {
@@ -262,7 +269,7 @@ export default {
 		},
 
 		async initializeComponent() {
-			if (this.isEditMode) {
+			if (this.hasInitialData) {
 				this.isLoading = true;
 				try {
 					if (this.initialBookData) {

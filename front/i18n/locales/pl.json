@@ -25,6 +25,7 @@
       "actions": "Akcje"
     },
     "edit": "Edytuj",
+    "clone": "Klonuj",
     "delete": "Usuń",
     "deleteConfirmTitle": "Usuń książkę",
     "deleteConfirmText": "Usunąć książkę '{title}'?",

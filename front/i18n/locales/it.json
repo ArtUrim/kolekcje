@@ -31,6 +31,7 @@
       "actions": "Azioni"
     },
     "edit": "Modifica",
+    "clone": "Duplica",
     "delete": "Elimina",
     "deleteConfirmTitle": "Elimina libro",
     "deleteConfirmText": "Eliminare il libro '{title}'?",

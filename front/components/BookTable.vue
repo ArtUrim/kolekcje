@@ -108,6 +108,7 @@
 											@book-updated="handleBookUpdated"
 											@book-deleted="handleBookDeleted"
 											@edit-cancelled="handleEditCancelled"
+											@book-added="handleBookAdded"
 											/>
 								</div>
 
