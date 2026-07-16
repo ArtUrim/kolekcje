@@ -1,5 +1,17 @@
 <template>
-	<v-card>
+	<v-card style="position: relative;">
+		<v-overlay
+				:model-value="isRetrying"
+				contained
+				persistent
+				scrim="background"
+				content-class="d-flex align-center justify-center w-100 h-100"
+				>
+				<div class="text-center">
+					<span class="hourglass-icon" aria-hidden="true">⏳</span>
+					<p class="mt-2">{{ $t('books.retrying') }}</p>
+				</div>
+		</v-overlay>
 		<v-card-title class="d-flex justify-space-between align-center">
 			<v-row>
 				<v-col cols="9" sm="6" md="4">
@@ -171,6 +183,7 @@ const {
   headers,
   fetchBooks,
   searchParams,
+  isRetrying,
 } = useBooks();
 
 const { transformBookDataToCards, transformBookDataToBigCards } = useBookFormat();
@@ -327,5 +340,19 @@ const handleEditCancelled = () => {
 .book-details .v-card-text {
 	padding-top: 8px;
 	font-size: 0.9rem;
+}
+
+.hourglass-icon {
+	display: inline-block;
+	font-size: 64px;
+	line-height: 1;
+	animation: hourglass-flip 2s ease-in-out infinite;
+}
+
+@keyframes hourglass-flip {
+	0% { transform: rotate(0deg); }
+	45% { transform: rotate(180deg); }
+	55% { transform: rotate(180deg); }
+	100% { transform: rotate(360deg); }
 }
 </style>

@@ -21,6 +21,7 @@
     "searchPublisher": "Search publisher",
     "searchSeries": "Search serie",
     "nobooks": "No books found",
+    "retrying": "Connection lost. Retrying...",
     "headers": {
       "title": "Title",
       "authors": "Author(s)",

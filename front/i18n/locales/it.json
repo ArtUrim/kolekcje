@@ -21,6 +21,7 @@
     "searchPublisher": "Cerca editore",
     "searchSeries": "Cerca serie",
     "nobooks": "Nessun libro trovato",
+    "retrying": "Connessione persa. Nuovo tentativo in corso...",
     "headers": {
       "title": "Titolo",
       "authors": "Autore(i)",

@@ -1,9 +1,54 @@
+// How often to retry a failed /book request.
+const RETRY_INTERVAL_MS = 5000;
+// Maximum time to keep retrying before giving up.
+const MAX_RETRY_DURATION_MS = 10 * 60 * 1000;
+
 export const useBooks = () => {
   const { t } = useI18n();
   const loading = ref(false);
   const items = ref<Book[]>([]);
   const totalItems = ref(0);
   const searchParams = ref<SearchParams>({});
+  const isRetrying = ref(false);
+
+  let retryTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  let retryStartedAt = 0;
+
+  const stopRetrying = () => {
+    if (retryTimeoutId) {
+      clearTimeout(retryTimeoutId);
+      retryTimeoutId = null;
+    }
+    retryStartedAt = 0;
+    isRetrying.value = false;
+  };
+
+  const scheduleRetry = (options: SearchParams) => {
+    // Only retry in the browser: during SSR/prerender there is no user
+    // waiting, and retrying would block the build/render for up to
+    // MAX_RETRY_DURATION_MS if the API is unreachable.
+    if (!import.meta.client) {
+      return;
+    }
+
+    if (!retryStartedAt) {
+      retryStartedAt = Date.now();
+    }
+
+    if (Date.now() - retryStartedAt >= MAX_RETRY_DURATION_MS) {
+      stopRetrying();
+      return;
+    }
+
+    isRetrying.value = true;
+    retryTimeoutId = setTimeout(() => {
+      fetchBooks(options);
+    }, RETRY_INTERVAL_MS);
+  };
+
+  onUnmounted(() => {
+    stopRetrying();
+  });
   
   // Options for data table
   const headers = computed(() => [
@@ -44,9 +89,11 @@ export const useBooks = () => {
         items.value = uniqueBooks;
         totalItems.value = data.count;
       }
+
+      stopRetrying();
     } catch (err) {
       console.error('Error fetching books:', err);
-      // Handle error appropriately
+      scheduleRetry(options);
     } finally {
       loading.value = false;
     }
@@ -59,6 +106,6 @@ export const useBooks = () => {
     headers,
     fetchBooks,
     searchParams,
+    isRetrying,
   };
 };
-
