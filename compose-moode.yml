@@ -5,7 +5,7 @@ services:
     container_name: mariadb
     restart: always
     security_opt:
-      seccomp: unconfined
+      - seccomp:unconfined
     environment:
       - MARIADB_ROOT_PASSWORD=example
       - MYSQL_USER=example
