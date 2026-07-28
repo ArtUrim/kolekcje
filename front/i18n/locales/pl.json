@@ -70,7 +70,21 @@
       "bookAddedSuccess": "Książka została pomyślnie dodana!",
       "errorAddingBook": "Błąd podczas dodawania książki: {message}",
 		"bookUpdatedSuccess": "Książka została pomyślnie uaktualniona!"
-    }
+    },
+	 "formats": {
+		 "unknown":   "Nieznany",
+		 "hardback":  "Twarda oprawa",
+		 "paperback": "Miękka oprawa",
+		 "ebook":     "E-book"
+	 },
+	 "sizes": {
+		 "none": "żaden",
+		 "mini": "mały",
+		 "normal": "normalny",
+		 "scientific": "naukowy",
+		 "comics": "komiks",
+		 "huge": "duży"
+	 }
   },
   "input": {
     "clear": "wyczyść"
@@ -92,6 +106,7 @@
   },
   "$vuetify": {
     "open": "otwórz",
+	 "close": "zamknij",
     "input": {
       "clear": "wyczyść"
     },

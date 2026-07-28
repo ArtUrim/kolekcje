@@ -75,6 +75,44 @@
     "messages": {
       "bookAddedSuccess": "Libro aggiunto con successo!",
       "errorAddingBook": "Errore nell'aggiunta del libro: {message}"
+    },
+	 "formats": {
+		 "unknown":   "Nieznany",
+		 "hardback":  "Coperta rigida",
+		 "paperback": "Tascabile",
+		 "ebook":     "E-book"
+	 },
+	 "sizes": {
+		 "none": "nessun",
+		 "mini": "piccolo",
+		 "normal": "normale",
+		 "scientific": "scienzato",
+		 "comics": "fumetto",
+		 "huge": "enorme"
+	 }
+  },
+  "$vuetify": {
+    "open": "apre",
+	 "close": "chiude",
+    "input": {
+      "clear": "pulire"
+    },
+    "pagination": {
+      "ariaLabel": {
+        "root": "Navigazione di pagine"
+      }
+    },
+    "dataFooter": {
+      "pageText": "{0}-{1} con {2}",
+      "itemsPerPageText": "Per pagina:",
+      "itemsPerPageAll": "Tutto",
+      "nextPage": "Prossima pagina",
+      "prevPage": "Antecedende",
+      "firstPage": "Prima pagina",
+      "lastPage": "Ultima pagina"
+    },
+    "dataIterator": {
+      "loadingText": "Caricatore di elementi..."
     }
   }
 }

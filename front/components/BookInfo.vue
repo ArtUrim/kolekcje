@@ -48,11 +48,11 @@
       </div>
       <div class="meta-item">
         <div class="meta-label">Format</div>
-        <div class="meta-value">{{ book.format || 'N/A' }}</div>
+		  <div class="meta-value">{{ book.format ? $t('addBook.formats.' + book.format) : 'N/A' }}</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">Rozmiar</div>
-        <div class="meta-value">{{ book.size || 'N/A' }}</div>
+        <div class="meta-value">{{ book.size ? $('addBook.size.' + book.size) : 'N/A' }}</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">Język</div>
