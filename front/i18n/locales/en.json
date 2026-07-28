@@ -81,7 +81,9 @@
 		 "unknown":   "Unknown",
 		 "hardback":  "Hardback",
 		 "paperback": "Paperback",
-		 "ebook":     "E-book"
+		 "ebook":     "E-book",
+		 "jacket":    "Dust jacket",
+		 "notebook":  "Notebook"
 	 },
 	 "sizes": {
 		 "none": "none",
@@ -89,7 +91,9 @@
 		 "normal": "normal",
 		 "scientific": "scientific",
 		 "comics": "comics",
-		 "huge": "huge"
+		 "huge": "huge",
+		 "small": "small",
+		 "unusual": "unusual"
 	 }
   }
 }

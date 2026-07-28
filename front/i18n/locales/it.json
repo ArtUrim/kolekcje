@@ -77,18 +77,22 @@
       "errorAddingBook": "Errore nell'aggiunta del libro: {message}"
     },
 	 "formats": {
-		 "unknown":   "Nieznany",
+		 "unknown":   "Sconosciuto",
 		 "hardback":  "Coperta rigida",
 		 "paperback": "Tascabile",
-		 "ebook":     "E-book"
+		 "ebook":     "E-book",
+		 "jacket":    "con Copertura",
+		 "notebook":  "Quaderno"
 	 },
 	 "sizes": {
 		 "none": "nessun",
-		 "mini": "piccolo",
+		 "mini": "miniatura",
 		 "normal": "normale",
 		 "scientific": "scienzato",
 		 "comics": "fumetto",
-		 "huge": "enorme"
+		 "huge": "enorme",
+		 "small": "piccolo",
+		 "unusual": "insolito"
 	 }
   },
   "$vuetify": {
