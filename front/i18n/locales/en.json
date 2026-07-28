@@ -73,6 +73,20 @@
       "bookAddedSuccess": "Book added successfully!",
       "errorAddingBook": "Error adding book: {message}",
 		"bookUpdatedSuccess": "Book updated successfully!"
-    }
+    },
+	 "formats": {
+		 "unknown":   "Unknown",
+		 "hardback":  "Hardback",
+		 "paperback": "Paperback",
+		 "ebook":     "E-book"
+	 },
+	 "sizes": {
+		 "none": "none",
+		 "mini": "mini",
+		 "normal": "normal",
+		 "scientific": "scientific",
+		 "comics": "comics",
+		 "huge": "huge"
+	 }
   }
 }
