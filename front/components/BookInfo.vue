@@ -52,7 +52,7 @@
       </div>
       <div class="meta-item">
         <div class="meta-label">Rozmiar</div>
-        <div class="meta-value">{{ book.size ? $('addBook.size.' + book.size) : 'N/A' }}</div>
+		  <div class="meta-value">{{ book.size ? $t('addBook.sizes.' + book.size) : 'N/A' }}</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">Język</div>

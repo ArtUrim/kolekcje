@@ -238,7 +238,9 @@ class BookDatabase:
             'hardcover': 'hardback',
             'ebook': 'ebook',
             'e-book': 'ebook',
-            'unknown': 'unknown'
+            'unknown': 'unknown',
+            'notebook': 'notebook',
+            'jacket': 'jacket'
         }
         
         return format_mapping.get(format_str, 'unknown')

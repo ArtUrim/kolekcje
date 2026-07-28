@@ -46,7 +46,10 @@ class BookUpdateDatabase:
             "hardback": "hardback",
             "ebook": "ebook",
             "e-book": "ebook",
-            "unknown": "unknown"
+            "unknown": "unknown",
+            'notebook': 'notebook',
+            'jacket': 'jacket'
+
         }
         normalized = str(value).strip().lower()
         if not normalized:
@@ -61,7 +64,7 @@ class BookUpdateDatabase:
         normalized = str(value).strip().lower()
         if not normalized:
             return None
-        allowed = {"none", "mini", "normal", "scientific", "comics", "huge"}
+        allowed = {"none", "mini", "normal", "scientific", "comics", "huge", "small", "unusual"}
         if normalized not in allowed:
             raise ValueError(f"Invalid size value: {value}")
         return normalized
