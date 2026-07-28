@@ -47,6 +47,7 @@ services:
     working_dir: /pg
     volumes:
       - ./connector:/pg
+      - ./shared:/app/shared
     # entrypoint: ["flask", "run", "--debug", "--host=0.0.0.0"]
     entrypoint: ["bash"]
     ports:

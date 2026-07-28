@@ -189,6 +189,8 @@ const {
 
 const { transformBookDataToCards, transformBookDataToBigCards } = useBookFormat();
 
+const { userRole } =  useNetworkAdmin();
+
 const showAddBookDialog = ref(false);
 const page = ref(1);
 

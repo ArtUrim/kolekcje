@@ -5,7 +5,8 @@
   "leftMenu": {
     "home": "Główna",
     "books": "Książki",
-    "addBook": "Dodaj"
+    "addBook": "Dodaj",
+	 "shutdown": "Wyłącz"
   },
   "books": {
     "db": "Baza książek",

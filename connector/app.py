@@ -5,6 +5,9 @@ import sys
 import logging
 import json
 from typing import List, Dict
+import os
+import uuid
+from functools import wraps
 
 from addBook import BookDatabase
 from updateBook import BookUpdateDatabase
@@ -29,6 +32,8 @@ DB_CONFIG = {
         "port": 3306,
         "database": "katalog"
 }
+
+SHARED_DIR = '/app/shared'
 
 def get_db_connection():
     try:
@@ -517,6 +522,38 @@ def get_single_book(book_id):
     finally:
         if conn:
             conn.close()
+
+# Custom decorator to check Nginx injected headers
+def require_role(allowed_role):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            user_role = request.headers.get('X-App-Role', 'standard')
+            if user_role != allowed_role:
+                return jsonify({
+                    "error": "Unauthorized: Subnet access restricted",
+                    "your_role": user_role
+                }), 403
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+@app.route('/restart-router', methods=['POST'])
+@require_role('admin')
+def restart_router():
+    # Ensure the directory exists inside the container just in case
+    os.makedirs(SHARED_DIR, exist_ok=True)
+
+    trigger_filename = f"task_{uuid.uuid4().hex}.trigger"
+    trigger_filepath = os.path.join(SHARED_DIR, trigger_filename)
+
+    try:
+        with open(trigger_filepath, 'w') as f:
+            f.write("run")
+        return jsonify({"status": "success", "message": f"Created {trigger_filename}"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 @app.errorhandler(404)
 def not_found(error):

@@ -11,7 +11,8 @@
   "leftMenu": {
     "home": "Home",
     "books": "Libri",
-    "addBook": "Aggiungi"
+    "addBook": "Aggiungi",
+	 "shutdown": "Spegnere"
   },
   "books": {
     "db": "Database libri",

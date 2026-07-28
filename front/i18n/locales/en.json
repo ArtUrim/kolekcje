@@ -11,7 +11,8 @@
   "leftMenu": {
     "home": "Home",
     "books": "Book",
-    "addBook": "Add"
+    "addBook": "Add",
+	 "shutdown": "shutdown"
   },
   "books": {
     "db": "Books database",
