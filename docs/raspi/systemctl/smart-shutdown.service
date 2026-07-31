@@ -1,0 +1,12 @@
+[Unit]
+Description=Smart Shutdown on Audio and HTTP Inactivity
+After=network.target nginx.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/local/bin/smart_shutdown.py
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target

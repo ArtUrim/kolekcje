@@ -1,0 +1,16 @@
+Only in New/etc/nginx: kolekcje-locations.conf
+diff -r New/etc/nginx/nginx.conf Old/etc/nginx/nginx.conf
+33,34c33,34
+< 	# access_log off;
+< 	access_log /var/log/nginx/access.log;
+---
+> 	access_log off;
+> 	#access_log /var/log/nginx/access.log;
+Only in New/etc/nginx/sites-available: kolekcje-http.conf
+Only in New/etc/nginx/sites-available: kolekcje-https.conf
+diff -r New/etc/nginx/sites-available/moode-http.conf Old/etc/nginx/sites-available/moode-http.conf
+7c7
+< 	server_name moode.lan moode.local;
+---
+> 	server_name _; # Matches any hostname
+Only in New/etc/nginx/sites-enabled: kolekcje-http.conf
