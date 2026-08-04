@@ -96,6 +96,23 @@
 		 "unusual": "insolito"
 	 }
   },
+	"bookinfo": {
+		"details": "Dettagli",
+		"collapse": "Nascondere",
+		"releaseDate": "Data di pubblicazione",
+		"firstPolishRelease": "Anno della prima pubblicazione",
+		"pages": "Pagine",
+		"isbn": "ISBN",
+		"format": "Formato",
+		"size": "Grandezza",
+		"language": "Lingua",
+		"translator": "Traduttore",
+		"serie": "Serie",
+		"genres": "Genere",
+		"labels": "Etichetta",
+      "description": "Descrizione",
+		"note": "Note"
+	},
   "$vuetify": {
     "open": "apre",
 	 "close": "chiude",

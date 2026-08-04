@@ -28,54 +28,54 @@
       </v-chip>
     </div>
 
-    <div class="section-title">Szczegóły</div>
+    <div class="section-title">{{ $t('bookinfo.details') }}</div>
     <div class="meta-grid">
       <div class="meta-item">
-        <div class="meta-label">Rok wydania</div>
+        <div class="meta-label">{{ $t('bookinfo.releaseDate') }}</div>
         <div class="meta-value">{{ book.releaseDate || 'N/A' }}</div>
       </div>
       <div class="meta-item">
-        <div class="meta-label">Pierwsze wydanie</div>
+        <div class="meta-label">{{ $t('bookinfo.firstPolishRelease') }}</div>
         <div class="meta-value">{{ book.firstPolishRelease || 'N/A' }}</div>
       </div>
       <div class="meta-item">
-        <div class="meta-label">Strony</div>
+        <div class="meta-label">{{ $t('bookinfo.pages') }}</div>
         <div class="meta-value">{{ book.pages || 'N/A' }}</div>
       </div>
       <div class="meta-item">
-        <div class="meta-label">ISBN</div>
+        <div class="meta-label">{{ $t('bookinfo.isbn') }}</div>
         <div class="meta-value">{{ book.isbn || 'N/A' }}</div>
       </div>
       <div class="meta-item">
-        <div class="meta-label">Format</div>
-		  <div class="meta-value">{{ book.format ? $t('addBook.formats.' + book.format) : 'N/A' }}</div>
+        <div class="meta-label">{{ $t('bookinfo.format') }}</div>
+        <div class="meta-value">{{ book.format ? $t('addBook.formats.' + book.format) : 'N/A' }}</div>
       </div>
       <div class="meta-item">
-        <div class="meta-label">Rozmiar</div>
-		  <div class="meta-value">{{ book.size ? $t('addBook.sizes.' + book.size) : 'N/A' }}</div>
+        <div class="meta-label">{{ $t('bookinfo.size') }}</div>
+        <div class="meta-value">{{ book.size ? $t('addBook.sizes.' + book.size) : 'N/A' }}</div>
       </div>
       <div class="meta-item">
-        <div class="meta-label">Język</div>
+        <div class="meta-label">{{ $t('bookinfo.language') }}</div>
         <div class="meta-value">{{ book.language || 'N/A' }}</div>
       </div>
       <div class="meta-item">
-        <div class="meta-label">Tłumacz</div>
+        <div class="meta-label">{{ $t('bookinfo.translator') }}</div>
         <div class="meta-value">{{ book.translator || 'N/A' }}</div>
       </div>
       <div class="meta-item">
-        <div class="meta-label">Seria</div>
+        <div class="meta-label">{{ $t('bookinfo.serie') }}</div>
         <div class="meta-value">{{ book.serie || 'N/A' }}</div>
       </div>
     </div>
 
-    <div class="section-title">Gatunki</div>
+    <div class="section-title">{{ $t('bookinfo.genres') }}</div>
     <div>
       <v-chip v-for="genre in book.genres" :key="genre" size="small" variant="outlined" color="teal" class="mr-2 mb-1">
         {{ genre }}
       </v-chip>
     </div>
 
-    <div class="section-title">Etykiety</div>
+    <div class="section-title">{{ $t('bookinfo.labels') }}</div>
     <div>
       <v-chip v-for="label in book.labels" :key="label" size="small" variant="tonal" color="purple" class="mr-2 mb-1">
         <v-icon start size="x-small">mdi-tag</v-icon>
@@ -83,10 +83,10 @@
       </v-chip>
     </div>
 
-    <div class="section-title">Opis</div>
+    <div class="section-title">{{ $t('bookinfo.description') }}</div>
     <p class="description-text">{{ book.description || 'N/A' }}</p>
 
-    <div class="section-title">Notatka</div>
+    <div class="section-title">{{ $t('bookinfo.note') }}</div>
     <v-alert type="info" variant="tonal" density="compact" icon="mdi-note-text">
       {{ book.note || 'N/A' }}
     </v-alert>

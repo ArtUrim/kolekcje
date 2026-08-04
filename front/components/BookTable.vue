@@ -80,7 +80,7 @@
 				<template #item.data-table-expand="{ internalItem, isExpanded, toggleExpand }">
 					<v-btn
 							:append-icon="isExpanded(internalItem) ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-							:text="isExpanded(internalItem) ? 'Collapse' : 'Details'"
+							:text="isExpanded(internalItem) ? $t('bookinfo.collapse') : $t('bookinfo.details')"
 							class="text-none"
 							color="primary"
 							size="small"

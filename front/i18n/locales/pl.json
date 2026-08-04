@@ -91,6 +91,23 @@
 		 "unusual": "nietypowy"
 	 }
   },
+	"bookinfo": {
+		"details": "Szczegóły",
+		"collapse": "Schowaj",
+		"releaseDate": "Rok wydania",
+		"firstPolishRelease": "Pierwsze wydanie",
+		"pages": "Strony",
+		"isbn": "ISBN",
+		"format": "Format",
+		"size": "Rozmiar",
+		"language": "Język",
+		"translator": "Tłumacz",
+		"serie": "Seria",
+		"genres": "Gatunki",
+		"labels": "Etykiety",
+		"description": "Opis",
+		"note": "Notatka"
+	},
   "input": {
     "clear": "wyczyść"
   },

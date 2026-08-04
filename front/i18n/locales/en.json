@@ -96,5 +96,22 @@
 		 "small": "small",
 		 "unusual": "unusual"
 	 }
-  }
+  },
+	"bookinfo": {
+		"details": "Details",
+		"collapse": "Collapse",
+		"releaseDate": "Release year",
+		"firstPolishRelease": "First release",
+		"pages": "Pages",
+		"isbn": "ISBN",
+		"format": "Format",
+		"size": "Size",
+		"language": "Language",
+		"translator": "Tłumacz",
+		"serie": "Serie",
+		"genres": "Genres",
+		"labels": "Labels",
+		"description": "Description",
+		"note": "Notes"
+	}
 }
