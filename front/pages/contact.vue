@@ -30,7 +30,7 @@
 
         <div class="contact-item">
           <strong>{{ $t('contactInfo.version') }}:</strong>
-          <span class="version">0.9.2</span>
+          <span class="version">0.9.4</span>
         </div>
       </div>
     </div>

@@ -12,16 +12,14 @@
 		  </NuxtLink>
       </li>
 		<li><NuxtLink to="/contact">{{ $t('contact') }}</NuxtLink></li>
-
-		<li v-if="userRole === 'admin'" >
-			<button @click="triggerRestart" class="btn-danger">
-				{{ $t('leftMenu.shutdown') }}
-			</button>
-		</li>
 	
 		<li> <NuxtLink :to="switchLocalePath('pl')">Polski</NuxtLink></li>
 		<li> <NuxtLink :to="switchLocalePath('en')">English</NuxtLink></li>
 		<li> <NuxtLink :to="switchLocalePath('it')">Italiano</NuxtLink></li>
+
+		<button @click="triggerRestart" class="btn-danger">
+			{{ $t('leftMenu.shutdown') }}
+		</button>
     </ul>
   </nav>
 </template>

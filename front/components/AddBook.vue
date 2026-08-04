@@ -241,6 +241,8 @@ export default {
 				{ title: this.$t('addBook.formats.hardback'),  value: 'hardback'  },
 				{ title: this.$t('addBook.formats.paperback'), value: 'paperback' },
 				{ title: this.$t('addBook.formats.ebook'),     value: 'ebook'     },
+				{ title: this.$t('addBook.formats.jacket'),    value: 'jacket'    },
+				{ title: this.$t('addBook.formats.notebook'),  value: 'notebook'  }
 			];
 		},
 
@@ -251,6 +253,8 @@ export default {
 				{ title: this.$t('addBook.sizes.normal'), value: 'normal' },
 				{ title: this.$t('addBook.sizes.scientific'), value: 'scientific' },
 				{ title: this.$t('addBook.sizes.comics'), value: 'comics' },
+				{ title: this.$t('addBook.sizes.small'), value: 'small' },
+				{ title: this.$t('addBook.sizes.unusual'), value: 'unusual' },
 				{ title: this.$t('addBook.sizes.huge'), value: 'huge' }
 			];
 		}

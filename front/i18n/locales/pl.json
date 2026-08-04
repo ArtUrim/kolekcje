@@ -75,15 +75,19 @@
 		 "unknown":   "Nieznany",
 		 "hardback":  "Twarda oprawa",
 		 "paperback": "Miękka oprawa",
-		 "ebook":     "E-book"
+		 "ebook":     "E-book",
+		 "jacket":    "Z obwolutą",
+		 "notebook":  "Zeszyt"
 	 },
 	 "sizes": {
 		 "none": "żaden",
-		 "mini": "mały",
+		 "mini": "mini",
 		 "normal": "normalny",
 		 "scientific": "naukowy",
 		 "comics": "komiks",
-		 "huge": "duży"
+		 "huge": "duży",
+		 "small": "mały",
+		 "unusual": "nietypowy"
 	 }
   },
   "input": {
