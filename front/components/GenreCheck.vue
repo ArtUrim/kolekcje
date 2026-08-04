@@ -1,14 +1,14 @@
 <template>
   <div>
-    <!-- Wybrane chipy -->
-    <div v-if="selectedValueLocal.length" class="d-flex flex-wrap gap-1 mb-2">
+    <!-- Wybrane chipy: Zmieniono v-if na v-show aby zapobiec skokom DOM -->
+    <div v-show="selectedValueLocal.length" class="d-flex flex-wrap gap-1 mb-2">
       <v-chip
-        v-for="val in selectedValueLocal"
+        v-for="(val, index) in selectedValueLocal"
         :key="val"
         closable
-        @click:close="removeValue(val)"
+        @click:close="removeValue(index)" 
       >
-        {{ val }}
+        {{ val.title }}
       </v-chip>
     </div>
 
@@ -24,6 +24,7 @@
       @keydown.enter.prevent="onEnter"
       @keydown.esc="closeMenu"
       @focus="openMenu"
+      @click="openMenu" 
       @blur="onBlur"
     />
 
@@ -88,12 +89,23 @@ export default {
 
   data() {
     return {
-      // Inicjalizacja z props — BEZ watchera który by to nadpisywał
-      selectedValueLocal: Array.isArray(this.modelValue) ? [...this.modelValue] : [],
+      selectedValueLocal: [],
       items: [],
       loading: false,
       inputText: '',
       menuOpen: false
+    }
+  },
+
+  watch: {
+    modelValue: {
+      handler(newValue) {
+        const safeValue = Array.isArray(newValue) ? newValue : [];
+        if (JSON.stringify(safeValue) !== JSON.stringify(this.selectedValueLocal)) {
+          this.selectedValueLocal = [...safeValue];
+        }
+      },
+      immediate: true 
     }
   },
 
@@ -119,7 +131,19 @@ export default {
         this.loading = true
         const response = await fetch(this.apiEndpoint)
         if (!response.ok) throw new Error(`HTTP ${response.status}`)
-        this.items = await response.json()
+        
+        const data = await response.json()
+        
+        this.items = data.map((item, index) => {
+          if (typeof item === 'string') {
+            return { 
+              id: `genre-${index}`, 
+              title: item, 
+              value: item 
+            }
+          }
+          return item
+        })
       } catch (err) {
         console.error('Error fetching genres:', err)
       } finally {
@@ -156,7 +180,6 @@ export default {
     },
 
     onEnter() {
-      // Dokładne dopasowanie — wybierz z listy
       const exact = this.filteredItems.find(
         item => this.normalize(item.value) === this.normalize(this.inputText)
       )
@@ -165,43 +188,54 @@ export default {
         return
       }
 
-      // Jedno dopasowanie — wybierz je
       if (this.filteredItems.length === 1) {
         this.selectItem(this.filteredItems[0])
         return
       }
 
-      // Brak dopasowań — dodaj nową wartość
       if (this.filteredItems.length === 0 && this.inputText.trim()) {
         this.addNewValue()
       }
     },
 
-	  selectItem(item) {
-		  if (this.isSelected(item.value)) { this.inputText = ''; this.menuOpen = false; return }
-		  const next = [...this.selectedValueLocal, item.value]
-		  this.selectedValueLocal = next
-		  this.$emit('update:modelValue', next)   // <-- zmiana
-		  this.inputText = ''
-		  this.menuOpen = false
-	  },
+    selectItem(item) {
+      if (this.isSelected(item.value)) { 
+        this.inputText = ''; 
+        this.menuOpen = false; 
+        return 
+      }
+      const next = [...this.selectedValueLocal, item]
+      this.selectedValueLocal = next
+      this.$emit('update:modelValue', next) 
+      this.inputText = ''
+      this.menuOpen = false
+    },
 
-	  addNewValue() {
-		  const newVal = this.inputText.trim()
-		  if (!newVal) return
-		  if (this.isSelected(newVal)) { this.inputText = ''; this.menuOpen = false; return }
-		  const next = [...this.selectedValueLocal, newVal]
-		  this.selectedValueLocal = next
-		  this.$emit('update:modelValue', next)   // <-- zmiana
-		  this.inputText = ''
-		  this.menuOpen = false
-	  },
+    addNewValue() {
+      const newVal = this.inputText.trim()
+		 console.log( "Add value: ", newVal );
+      if (!newVal) return
+      if (this.isSelected(newVal)) { 
+			console.log( "is selected" );
+        this.inputText = ''; 
+        this.menuOpen = false; 
+        return 
+      }
+  	   const newObj = { 'id': null, 'title': newVal, 'value': newVal };
+      const next = [...this.selectedValueLocal, newObj]
+      this.selectedValueLocal = next
+      this.$emit('update:modelValue', next) 
+      this.inputText = ''
+      this.menuOpen = false
+    },
 
-	  removeValue(val) {
-		  const next = this.selectedValueLocal.filter(v => this.normalize(v) !== this.normalize(val))
-		  this.selectedValueLocal = next
-		  this.$emit('update:modelValue', next)   // <-- zmiana
-	  }
+    // Zmodyfikowana funkcja: Usuwanie na podstawie indeksu
+    removeValue(index) {
+      const next = [...this.selectedValueLocal]
+      next.splice(index, 1) // Bezpiecznie usuwa dokładnie 1 element pod tym indeksem
+      this.selectedValueLocal = next
+      this.$emit('update:modelValue', next)
+    }
   }
 }
 </script>
