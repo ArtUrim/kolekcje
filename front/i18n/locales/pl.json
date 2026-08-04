@@ -52,6 +52,7 @@
     "originalTitle": "Tytuł oryginalny",
     "translator": "Tłumacz",
     "language": "Język",
+	 "additional": "Dodatkowy {label}",
     "placeholders": {
       "author": "Wybierz lub dodaj autora (bądź autorów)",
       "publisher": "Wybierz lub dodaj wydawcę",

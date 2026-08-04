@@ -58,6 +58,7 @@
     "originalTitle": "Original Title",
     "translator": "Translator",
     "language": "Language",
+	 "additional": "Additional {label}",
     "placeholders": {
       "author": "Select or add author(s)",
       "publisher": "Select or add a publisher",

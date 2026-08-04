@@ -58,6 +58,7 @@
     "originalTitle": "Titolo originale",
     "translator": "Traduttore",
     "language": "Lingua",
+	 "additional": "Ulteriore {label}",
     "etykieta": "Etichetta",
     "placeholders": {
       "author": "Seleziona o aggiungi autore(i)",
