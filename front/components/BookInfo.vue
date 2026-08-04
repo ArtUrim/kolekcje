@@ -35,7 +35,7 @@
         <div class="meta-value">{{ book.releaseDate || 'N/A' }}</div>
       </div>
       <div class="meta-item">
-        <div class="meta-label">Wydanie PL</div>
+        <div class="meta-label">Pierwsze wydanie</div>
         <div class="meta-value">{{ book.firstPolishRelease || 'N/A' }}</div>
       </div>
       <div class="meta-item">
@@ -61,10 +61,6 @@
       <div class="meta-item">
         <div class="meta-label">Tłumacz</div>
         <div class="meta-value">{{ book.translator || 'N/A' }}</div>
-      </div>
-      <div class="meta-item">
-        <div class="meta-label">Wydawca</div>
-        <div class="meta-value">{{ book.publishers[0] || 'N/A' }}</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">Seria</div>

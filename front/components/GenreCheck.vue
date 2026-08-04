@@ -213,7 +213,6 @@ export default {
 
     addNewValue() {
       const newVal = this.inputText.trim()
-		 console.log( "Add value: ", newVal );
       if (!newVal) return
       if (this.isSelected(newVal)) { 
 			console.log( "is selected" );

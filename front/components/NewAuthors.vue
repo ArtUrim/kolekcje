@@ -7,7 +7,7 @@
       <v-combobox
         v-for="(author, index) in authors"
         :key="index"
-        :label="index === 0 ? 'Select or type author name' : 'Additional author'"
+        :label="index === 0 ? 'Select or type author name' : 'Dodatkowy author'"
         :items="availableAuthors"
         v-model="authors[index]"
         clearable

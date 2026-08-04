@@ -240,7 +240,7 @@ export default {
     },
 
     closeAddBookDialog() {
-      console.log('Closing the Add Book Dialog');
+      // console.log('Closing the Add Book Dialog');
       this.showEditDialog = false;
     },
     
