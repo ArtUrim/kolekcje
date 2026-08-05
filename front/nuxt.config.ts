@@ -20,7 +20,7 @@ export default defineNuxtConfig({
 			  '@vue/devtools-kit',
 		  ]
 	  }
-  }
+  },
 
 
   css: [
