@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "@nuxtjs/i18n": "latest",
+    "@pinia/nuxt": "^1.0.1",
     "mariadb": "latest",
     "nuxt": "latest",
+    "pinia": "^4.0.2",
     "vue": "latest",
     "vue-router": "latest",
     "vuetify-nuxt-module": "^0.18.3"
