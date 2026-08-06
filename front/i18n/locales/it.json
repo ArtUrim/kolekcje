@@ -14,6 +14,10 @@
     "addBook": "Aggiungi",
 	 "shutdown": "Spegnere"
   },
+	"common": {
+		"cancel": "Annulla",
+		"save": "Scrive"
+	},
   "books": {
     "db": "Database libri",
     "new": "Nuova",
@@ -39,7 +43,31 @@
     "deleteSuccess": "Libro eliminato con successo!",
     "deleteError": "Errore durante l'eliminazione del libro: {message}",
     "cancel": "Annulla",
-    "confirm": "Conferma"
+    "confirm": "Conferma",
+	 "colAuthor": "Autore",
+	 "colFirstPolishYear": "Anno di pubblicazioe",
+	 "colFormat": "Formato",
+	 "colGenres": "Ganere",
+	 "colIsbn": "ISBN",
+	 "colLabels": "Etichetta",
+	 "colLanguage": "Lingua",
+	 "colOriginalTitle": "Lingua originale",
+	 "colPages": "Pagine",
+	 "colPublisher": "Editore",
+	 "colSeries": "Serie",
+	 "colSize": "Grandezza",
+	 "colTitle": "Titolo",
+	 "colTranslator": "Traduttore",
+	 "colYear": "Anno",
+	 "filtersSelected": "Filtri salvari",
+	 "presetEdition": "Edizione",
+	 "presetFull": "Pieno",
+	 "presetPublishing": "Editore",
+	 "presetStandard": "Standard",
+	 "settings": "Regolare",
+	 "settingsColumns": "colonne",
+	 "settingsFilters": "filtri",
+	 "settingsTitle": "titoli"
   },
   "addBook": {
     "isbn": "ISBN",

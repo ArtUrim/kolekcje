@@ -14,6 +14,10 @@
     "addBook": "Add",
 	 "shutdown": "shutdown"
   },
+	"common": {
+		"cancel": "Cancel",
+		"save": "Save"
+	},
   "books": {
     "db": "Books database",
     "new": "New",
@@ -39,7 +43,31 @@
     "deleteSuccess": "Book deleted successfully!",
     "deleteError": "Error deleting book: {message}",
     "cancel": "Cancel",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+	 "colAuthor": "Authors",
+	 "colFirstPolishYear": "Edition year",
+	 "colFormat": "Format",
+	 "colGenres": "Genre",
+	 "colIsbn": "ISBN",
+	 "colLabels": "Label",
+	 "colLanguage": "Language",
+	 "colOriginalTitle": "Original language",
+	 "colPages": "Pages",
+	 "colPublisher": "Publishers",
+	 "colSeries": "Serie",
+	 "colSize": "Size",
+	 "colTitle": "Title",
+	 "colTranslator": "Translator",
+	 "colYear": "Year",
+	 "filtersSelected": "Selected filters",
+	 "presetEdition": "Edition",
+	 "presetFull": "Full",
+	 "presetPublishing": "Publishers",
+	 "presetStandard": "Standard",
+	 "settings": "Settings",
+	 "settingsColumns": "columns",
+	 "settingsFilters": "filters",
+	 "settingsTitle": "titles"
   },
   "addBook": {
     "isbn": "ISBN",
