@@ -168,12 +168,13 @@ const handleSearch = debounce(() => {
 }, 300)
 
 // ── Table options update ───────────────────────────────────────────────────
+// BookTableView.vue
 
 const handleOptionsUpdate = (options: any) => {
 	page.value         = options.page
 	itemsPerPage.value = options.itemsPerPage
-	sortBy.value       = options.sortBy
-	sortDesc.value     = options.sortDesc
+	sortBy.value       = options.sortBy ?? []
+	sortDesc.value     = options.sortDesc ?? [] // <-- Prevents sortDesc from becoming undefined
 	fetchCurrentPage()
 }
 

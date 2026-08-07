@@ -102,19 +102,24 @@
 import { useBookTableStore } from '~/stores/bookTable'
 
 // ── Props ──────────────────────────────────────────────────────────────────
-
-const props = defineProps<{
-	items:          any[]
-	loading:        boolean
-	totalItems:     number
-	bookDetails:    Record<number, any>
-	loadingDetails: Record<number, boolean>
-	detailsErrors:  Record<number, boolean>
-	page:           number
-	itemsPerPage:   number
-	sortBy:         string[]
-	sortDesc:       boolean[]
-}>()
+const props = withDefaults(
+	defineProps<{
+		items:          any[]
+		loading:        boolean
+		totalItems:     number
+		bookDetails:    Record<number, any>
+		loadingDetails: Record<number, boolean>
+		detailsErrors:  Record<number, boolean>
+		page:           number
+		itemsPerPage:   number
+		sortBy?:        any[]
+		sortDesc?:      boolean[]
+	}>(),
+	{
+		sortBy:   () => [],
+		sortDesc: () => [],
+	}
+)
 
 // ── Emits ──────────────────────────────────────────────────────────────────
 
