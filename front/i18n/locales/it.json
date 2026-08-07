@@ -33,6 +33,7 @@
       "publisher": "Editore",
       "releaseDate": "Data di pubblicazione",
       "seriesName": "Serie",
+		"language": "Lingua",
       "actions": "Azioni"
     },
     "edit": "Modifica",

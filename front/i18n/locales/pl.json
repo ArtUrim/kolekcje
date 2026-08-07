@@ -27,6 +27,7 @@
 			"publisher": "Wydawca",
 			"releaseDate": "Data wydania",
 			"seriesName": "Seria",
+			"language": "Język",
 			"actions": "Akcje"
 		},
 		"edit": "Edytuj",

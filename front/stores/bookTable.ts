@@ -29,10 +29,10 @@ export const ALL_BOOK_COLUMNS: BookColumnDef[] = [
   { key: 'isbn',                      titleI18n: 'books.colIsbn',               sortable: false, align: 'start'  },
   { key: 'original_title',            titleI18n: 'books.colOriginalTitle',      sortable: true,  align: 'start'  },
   { key: 'translator',                titleI18n: 'books.colTranslator',         sortable: true,  align: 'start'  },
-  { key: 'language',                  titleI18n: 'books.colLanguage',           sortable: true,  align: 'center' },
   { key: 'size',                      titleI18n: 'books.colSize',               sortable: true,  align: 'center' },
   { key: 'genres',                    titleI18n: 'books.colGenres',             sortable: false, align: 'start'  },
   { key: 'labels',                    titleI18n: 'books.colLabels',             sortable: false, align: 'start'  },
+  { key: 'language',                  titleI18n: 'books.headers.language',      sortable: true,  align: 'start'  }
 ]
 
 /**

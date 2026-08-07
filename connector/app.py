@@ -105,6 +105,7 @@ def build_query(params: Dict[str, Any]) -> tuple[str, list, list]:
         'original_title': 'b.original_title',
         'translator': 'b.translator',
         'language_id': 'b.language_id',
+        'language': 'l.name as language',
         'size': 'b.size',
         'author': 'GROUP_CONCAT(DISTINCT a.name SEPARATOR ", ") as author',
         'publisher': 'p.name as publisher',
@@ -149,6 +150,9 @@ def build_query(params: Dict[str, Any]) -> tuple[str, list, list]:
         joins.append("LEFT JOIN bookLabel bl ON b.id = bl.book_id")
         joins.append("LEFT JOIN labels l ON bl.label_id = l.id")
 
+    if 'language' in fields:
+        joins.append("LEFT JOIN language l ON b.language_id = l.id")
+
     # Ensure uniqueness of joins while preserving order
     unique_joins = []
     for j in joins:
@@ -188,6 +192,8 @@ def build_query(params: Dict[str, Any]) -> tuple[str, list, list]:
                 group_by_fields.append('p.name')
             elif f == 'series_name':
                 group_by_fields.append('s.name')
+            elif f == 'language':
+                group_by_fields.append('l.name')
             else:
                 group_by_fields.append(f'b.{f}')
 
