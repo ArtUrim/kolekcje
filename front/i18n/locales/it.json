@@ -67,7 +67,9 @@
 	 "settings": "Regolare",
 	 "settingsColumns": "colonne",
 	 "settingsFilters": "filtri",
-	 "settingsTitle": "titoli"
+	 "settingsTitle": "titoli",
+	 "nobooks": "Vuoto",
+	 "presetCustom": "personalizzata"
   },
   "addBook": {
     "isbn": "ISBN",

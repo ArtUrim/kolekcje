@@ -61,7 +61,9 @@
 		"settingsFilters": "filtry",
 		"settingsTitle": "tytuły",
 		"cancel": "Anuluj",
-		"confirm": "Potwierdź"
+		"confirm": "Potwierdź",
+		"nobooks": "Pusty",
+		"presetCustom": "Własny"
   },
   "addBook": {
     "isbn": "ISBN",
