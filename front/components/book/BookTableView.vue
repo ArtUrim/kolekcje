@@ -91,8 +91,10 @@
 
 <script setup lang="ts">
 import debounce from 'lodash/debounce'
+import { watch, computed, ref } from 'vue'
 import { useBooks }      from '~/composables/useBooks'
 import { useBookFormat } from '~/composables/bookFormat'
+import { useBookTableStore } from '~/stores/bookTable'
 
 // ── Emits ──────────────────────────────────────────────────────────────────
 
@@ -101,7 +103,7 @@ const emit = defineEmits<{
 	'edit-cancelled': []
 }>()
 
-// ── Composables ────────────────────────────────────────────────────────────
+// ── Composables & Stores ───────────────────────────────────────────────────
 
 const {
 	items,
@@ -113,6 +115,7 @@ const {
 } = useBooks()
 
 const { transformBookDataToCards, transformBookDataToBigCards } = useBookFormat()
+const store = useBookTableStore()
 
 // ── Local state ────────────────────────────────────────────────────────────
 
@@ -126,6 +129,20 @@ const bookDetails    = ref<Record<number, any>>({})
 const loadingDetails = ref<Record<number, boolean>>({})
 const detailsErrors  = ref<Record<number, boolean>>({})
 
+// ── Dynamic Fields Calculation ─────────────────────────────────────────────
+
+/**
+ * Extract the active columns from the store to pass to the API.
+ * Always ensures 'id' is requested so row expansion (book details) works[cite: 5, 7].
+ */
+const activeFields = computed(() => {
+	const keys = store.activeColumnDefs.map(col => col.key)
+	if (!keys.includes('id')) {
+		keys.push('id')
+	}
+	return keys.join(',')
+})
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 const fetchCurrentPage = () =>
@@ -135,7 +152,13 @@ const fetchCurrentPage = () =>
 		itemsPerPage: itemsPerPage.value,
 		sortBy:       sortBy.value,
 		sortDesc:     sortDesc.value,
+		fields:       activeFields.value, // Inject the dynamic fields parameter
 	})
+
+// Watch for changes to the active columns. If the user changes presets, refetch data.
+watch(() => store.activeColumnDefs, () => {
+	fetchCurrentPage()
+}, { deep: true })
 
 // ── Search (debounced) ─────────────────────────────────────────────────────
 
