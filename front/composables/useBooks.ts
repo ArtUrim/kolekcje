@@ -24,9 +24,6 @@ export const useBooks = () => {
   };
 
   const scheduleRetry = (options: SearchParams) => {
-    // Only retry in the browser: during SSR/prerender there is no user
-    // waiting, and retrying would block the build/render for up to
-    // MAX_RETRY_DURATION_MS if the API is unreachable.
     if (!import.meta.client) {
       return;
     }
@@ -50,7 +47,7 @@ export const useBooks = () => {
     stopRetrying();
   });
   
-  // Options for data table (can now be dynamically mapped if needed)
+  // Options for data table
   const headers = computed(() => [
     { title: t('books.headers.title'), key: 'title', sortable: true },
     { title: t('books.headers.authors'), key: 'authors', sortable: true },
@@ -70,6 +67,20 @@ export const useBooks = () => {
       if (options.author) queryParams.append('author', options.author);
       if (options.publisher) queryParams.append('publisher', options.publisher);
       if (options.serie) queryParams.append('serie', options.serie);
+      if (options.isbn) queryParams.append('isbn', options.isbn);
+      if (options.genres) queryParams.append('genres', options.genres);
+      if (options.label) queryParams.append('label', options.label);
+      if (options.release_date !== undefined && options.release_date !== '') {
+        queryParams.append('release_date', options.release_date.toString());
+      }
+      if (options.first_polish_release_date !== undefined && options.first_polish_release_date !== '') {
+        queryParams.append('first_polish_release_date', options.first_polish_release_date.toString());
+      }
+      if (options.format) queryParams.append('format', options.format);
+      if (options.original_title) queryParams.append('original_title', options.original_title);
+      if (options.translator) queryParams.append('translator', options.translator);
+      if (options.language_id) queryParams.append('language_id', options.language_id);
+
       if (options.page) queryParams.append('page', options.page.toString());
       if (options.itemsPerPage) queryParams.append('itemsPerPage', options.itemsPerPage.toString());
       
@@ -79,7 +90,7 @@ export const useBooks = () => {
         queryParams.append('sortDesc', options.sortBy[0]['order']);
       }
 
-      // Handle the new fields parameter
+      // Handle the fields parameter
       if (options.fields) {
         queryParams.append('fields', options.fields);
       }

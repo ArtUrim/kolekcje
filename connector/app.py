@@ -142,11 +142,11 @@ def build_query(params: Dict[str, Any]) -> tuple[str, list, list]:
     if 'series_name' in fields or params.get('serie'):
         joins.append("LEFT JOIN series s ON b.series_id = s.id")
 
-    if 'genres' in fields:
+    if 'genres' in fields or params.get('genres'):
         joins.append("LEFT JOIN bookGenres bg ON b.id = bg.book_id")
         joins.append("LEFT JOIN genres g ON bg.genre_id = g.id")
 
-    if 'labels' in fields:
+    if 'labels' in fields or params.get('label'):
         joins.append("LEFT JOIN bookLabel bl ON b.id = bl.book_id")
         joins.append("LEFT JOIN labels l ON bl.label_id = l.id")
 
@@ -181,6 +181,44 @@ def build_query(params: Dict[str, Any]) -> tuple[str, list, list]:
         conditions.append("s.name LIKE ?")
         parameters.append(f"%{params['serie']}%")
 
+    # --- NEW FILTERS ADDED HERE ---
+    if params.get('isbn'):
+        conditions.append("b.isbn LIKE ?")
+        parameters.append(f"%{params['isbn']}%")
+
+    if params.get('genres'):
+        conditions.append("g.name LIKE ?")
+        parameters.append(f"%{params['genres']}%")
+
+    if params.get('label'):
+        conditions.append("l.name LIKE ?")
+        parameters.append(f"%{params['label']}%")
+
+    if params.get('release_date'):
+        conditions.append("b.release_date LIKE ?")
+        parameters.append(f"%{params['release_date']}%")
+
+    if params.get('first_polish_release_date'):
+        conditions.append("b.first_polish_release_date LIKE ?")
+        parameters.append(f"%{params['first_polish_release_date']}%")
+
+    if params.get('format'):
+        conditions.append("b.format LIKE ?")
+        parameters.append(f"%{params['format']}%")
+
+    if params.get('original_title'):
+        conditions.append("b.original_title LIKE ?")
+        parameters.append(f"%{params['original_title']}%")
+
+    if params.get('translator'):
+        conditions.append("b.translator LIKE ?")
+        parameters.append(f"%{params['translator']}%")
+
+    if params.get('language_id'):
+        conditions.append("b.language_id LIKE ?")
+        parameters.append(f"%{params['language_id']}%")
+    # ------------------------------
+
     if conditions:
         base_query += "\nWHERE " + " AND ".join(conditions)
 
@@ -208,7 +246,6 @@ def build_query(params: Dict[str, Any]) -> tuple[str, list, list]:
         parameters.extend(p)
 
     return base_query, parameters, fields
-
 
 @app.route('/keepalive', methods=['GET','POST'])
 def kpalive():

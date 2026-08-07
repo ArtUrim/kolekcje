@@ -1,201 +1,70 @@
-openapi: 3.0.3
-info:
-  title: Katalog Book API
-  version: 1.0.0
-paths:
-  /book:
-    get:
-      summary: Retrieve a list of books
-      description: >
-        Fetches a paginated and filterable list of books. 
-        Supports sparse fieldsets via the `fields` query parameter to dynamically select returned properties[cite: 2].
-      parameters:
-        - name: fields
+- name: isbn
           in: query
           required: false
-          description: >
-            Comma-separated list of fields to include in each book object.
-            Allowed fields: `id`, `isbn`, `title`, `release_date`, `first_polish_release_date`,
-            `format`, `pages`, `description`, `note`, `original_title`, `translator`,
-            `language_id`, `size`, `authors`, `publisher`, `series_name`, `genres`, `labels`[cite: 1].
+          description: Partial ISBN filter (SQL `LIKE` search).
           schema:
             type: string
-            example: "id,title,authors,publisher,genres"
+            example: "978044"
 
-        - name: title
+        - name: genres
           in: query
           required: false
-          description: Partial title filter (SQL `LIKE` search)[cite: 2].
+          description: Partial genre name filter (SQL `LIKE` search).
+          schema:
+            type: string
+            example: "Science Fiction"
+
+        - name: label
+          in: query
+          required: false
+          description: Partial label name filter (SQL `LIKE` search).
+          schema:
+            type: string
+            example: "Bestseller"
+
+        - name: release_date
+          in: query
+          required: false
+          description: Release date filter (SQL `LIKE` search).
+          schema:
+            type: string
+            example: "1965"
+
+        - name: first_polish_release_date
+          in: query
+          required: false
+          description: First Polish release date filter (SQL `LIKE` search).
+          schema:
+            type: string
+            example: "1985"
+
+        - name: format
+          in: query
+          required: false
+          description: Partial format filter (SQL `LIKE` search).
+          schema:
+            type: string
+            example: "paperback"
+
+        - name: original_title
+          in: query
+          required: false
+          description: Partial original title filter (SQL `LIKE` search).
           schema:
             type: string
             example: "Dune"
 
-        - name: author
+        - name: translator
           in: query
           required: false
-          description: Partial author name filter (SQL `LIKE` search)[cite: 2].
-          schema:
-            type: string
-            example: "Herbert"
-
-        - name: publisher
-          in: query
-          required: false
-          description: Partial publisher name filter (SQL `LIKE` search)[cite: 2].
+          description: Partial translator name filter (SQL `LIKE` search).
           schema:
             type: string
 
-        - name: serie
+        - name: language_id
           in: query
           required: false
-          description: Partial series name filter (SQL `LIKE` search)[cite: 2].
+          description: Partial language ID filter (SQL `LIKE` search).
           schema:
             type: string
-
-        - name: sortBy
-          in: query
-          required: false
-          description: Field by which to order results[cite: 2].
-          schema:
-            type: string
-            enum: [title, author, authors, publisher, release, release_date, serie, series, series_name]
-
-        - name: sortDesc
-          in: query
-          required: false
-          description: Set to `desc` for descending order[cite: 2].
-          schema:
-            type: string
-            enum: [asc, desc, ASC, DESC]
-
-        - name: orderDesc
-          in: query
-          required: false
-          description: Alias for `sortDesc`[cite: 2].
-          schema:
-            type: string
-            enum: [asc, desc, ASC, DESC]
-
-        - name: itemsPerPage
-          in: query
-          required: false
-          description: Number of books per page[cite: 2].
-          schema:
-            type: integer
-            minimum: 1
-            example: 10
-
-        - name: page
-          in: query
-          required: false
-          description: Page number to retrieve (1-based index)[cite: 2].
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-
-      responses:
-        '200':
-          description: List of books successfully retrieved[cite: 2].
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "success"
-                  count:
-                    type: integer
-                    description: Total number of matching books found across all pages[cite: 2].
-                    example: 42
-                  books:
-                    type: array
-                    items:
-                      type: object
-                      description: Dynamic book object containing requested fields[cite: 2].
-                      additionalProperties: true
-                      properties:
-                        id:
-                          type: integer
-                          example: 1
-                        isbn:
-                          type: string
-                          nullable: true
-                          example: "9780441172719"
-                        title:
-                          type: string
-                          example: "Dune"
-                        release_date:
-                          type: integer
-                          nullable: true
-                          example: 1965
-                        first_polish_release_date:
-                          type: integer
-                          nullable: true
-                          example: 1985
-                        format:
-                          type: string
-                          enum: [unknown, hardback, paperback, ebook]
-                          example: "paperback"
-                        pages:
-                          type: integer
-                          nullable: true
-                          example: 412
-                        description:
-                          type: string
-                          nullable: true
-                        note:
-                          type: string
-                          nullable: true
-                        original_title:
-                          type: string
-                          nullable: true
-                          example: "Dune"
-                        translator:
-                          type: string
-                          nullable: true
-                        language_id:
-                          type: string
-                          example: "pol"
-                        size:
-                          type: string
-                          enum: [none, mini, normal, scientific, comics, huge]
-                          nullable: true
-                          example: "normal"
-                        authors:
-                          type: string
-                          nullable: true
-                          description: Comma-separated list of author names[cite: 2].
-                          example: "Frank Herbert"
-                        publisher:
-                          type: string
-                          nullable: true
-                          description: Name of the publisher[cite: 2].
-                          example: "Chilton Books"
-                        series_name:
-                          type: string
-                          nullable: true
-                          description: Name of the series[cite: 2].
-                          example: "Dune Chronicles"
-                        genres:
-                          type: string
-                          nullable: true
-                          description: Comma-separated list of genre names.
-                          example: "Science Fiction, Fantasy"
-                        labels:
-                          type: string
-                          nullable: true
-                          description: Comma-separated list of label names.
-                          example: "Bestseller, Classic"
-
-        '500':
-          description: Internal server or database error[cite: 2].
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Database connection failed"
+            example: "pol"
