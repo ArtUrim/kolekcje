@@ -50,7 +50,7 @@ export const useBooks = () => {
     stopRetrying();
   });
   
-  // Options for data table
+  // Options for data table (can now be dynamically mapped if needed)
   const headers = computed(() => [
     { title: t('books.headers.title'), key: 'title', sortable: true },
     { title: t('books.headers.authors'), key: 'authors', sortable: true },
@@ -70,14 +70,24 @@ export const useBooks = () => {
       if (options.author) queryParams.append('author', options.author);
       if (options.publisher) queryParams.append('publisher', options.publisher);
       if (options.serie) queryParams.append('serie', options.serie);
-		if (options.page) queryParams.append('page', options.page );
-		if (options.itemsPerPage) queryParams.append('itemsPerPage', options.itemsPerPage );
-	   if (options.sortBy !== undefined && options.sortBy.length) queryParams.append('sortBy', options.sortBy[0]['key'] );
-	   if (options.sortBy !== undefined && options.sortBy.length) queryParams.append('sortDesc', options.sortBy[0]['order'] );
+      if (options.page) queryParams.append('page', options.page.toString());
+      if (options.itemsPerPage) queryParams.append('itemsPerPage', options.itemsPerPage.toString());
       
-      const data = await useAPI<{ books: Book[]; count: number }>(`/book?${queryParams.toString()}`)
+      // Handle array-based sorting objects
+      if (options.sortBy !== undefined && options.sortBy.length) {
+        queryParams.append('sortBy', options.sortBy[0]['key']);
+        queryParams.append('sortDesc', options.sortBy[0]['order']);
+      }
+
+      // Handle the new fields parameter
+      if (options.fields) {
+        queryParams.append('fields', options.fields);
+      }
+      
+      const data = await useAPI<{ books: Book[]; count: number }>(`/book?${queryParams.toString()}`);
 
       if (data) {
+        // Safe deduplication, accounting for the possibility that 'id' was not requested
         const uniqueBooks = data.books.filter((book, index, source) => {
           if (book?.id === undefined || book?.id === null) {
             return true;
