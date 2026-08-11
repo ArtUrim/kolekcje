@@ -14,6 +14,8 @@ from updateBook import BookUpdateDatabase
 from bookinfo_handler import BookInfoHandler
 from table_handler import TableHandler
 
+from book_query_builder import BookQueryBuilder
+
 # Create handlers after app initialization
 publisher_handler = TableHandler('publisher')
 author_handler = TableHandler('Authors')
@@ -43,210 +45,6 @@ def get_db_connection():
         print(f"Error connecting to MariaDB: {e}")
         return None
 
-def sortPagination_query(params: Dict[str, Any]) -> tuple[str, list]:
-    """
-    Builds a sort and limit part of dynamic SQL query based on provided parameters
-    Returns tuple of (query_string, parameters_list)
-    """
-
-    conditions = []
-    parameters = []
-
-    if params.get('sortBy'):
-        order = 'ASC'
-        sort_order = params.get('sortDesc') or params.get('orderDesc')
-        if sort_order and sort_order.lower() == 'desc':
-            order = 'DESC'
-
-        sort_by = params['sortBy'].lower()
-        otype = None
-        if sort_by == 'title':
-            otype = 'b.title'
-        elif sort_by in ('author', 'authors'):
-            otype = 'author'
-        elif sort_by == 'publisher':
-            otype = 'p.name'
-        elif sort_by in ('release', 'release_date'):
-            otype = 'b.release_date'
-        elif sort_by in ('serie', 'series', 'series_name'):
-            otype = 's.name'
-
-        if otype:
-            conditions.append( f"ORDER BY {otype} {order}" )
-
-    if params.get('itemsPerPage'):
-        itemsPP = int(params.get('itemsPerPage'))
-        page = 1
-        if params.get('page'):
-            page = int(params['page'])
-        offset = itemsPP*(page-1)
-        conditions.append( "LIMIT ? OFFSET ?" )
-        parameters.extend( [itemsPP, offset] )
-
-    return (conditions,parameters)
-
-
-def build_query(params: Dict[str, Any]) -> tuple[str, list, list]:
-    """
-    Builds a dynamic SQL query based on provided parameters and requested fields.
-    Returns tuple of (query_string, parameters_list, selected_columns_list)
-    """
-    # Define all allowable fields and their corresponding SQL mapping
-    valid_fields = {
-        'id': 'b.id',
-        'isbn': 'b.isbn',
-        'title': 'b.title',
-        'release_date': 'b.release_date',
-        'first_polish_release_date': 'b.first_polish_release_date',
-        'format': 'b.format',
-        'pages': 'b.pages',
-        'description': 'b.description',
-        'note': 'b.note',
-        'original_title': 'b.original_title',
-        'translator': 'b.translator',
-        'language_id': 'b.language_id',
-        'language': 'l.name as language',
-        'size': 'b.size',
-        'author': 'GROUP_CONCAT(DISTINCT a.name SEPARATOR ", ") as author',
-        'publisher': 'p.name as publisher',
-        'series_name': 's.name as series_name',
-        'genres': 'GROUP_CONCAT(DISTINCT g.name SEPARATOR ", ") as genres',
-        'labels': 'GROUP_CONCAT(DISTINCT l.name SEPARATOR ", ") as labels'
-    }
-
-    # Determine which fields the client requested, defaulting to standard fields if none are provided
-    requested_fields_str = params.get('fields')
-    if requested_fields_str:
-        fields = [f.strip() for f in requested_fields_str.split(',') if f.strip() in valid_fields]
-        if not fields: # Fallback if they provided entirely invalid fields
-            fields = ['id', 'title', 'author', 'publisher', 'release_date', 'series_name']
-    else:
-        fields = ['id', 'title', 'author', 'publisher', 'release_date', 'series_name']
-
-    # Build SELECT clause
-    select_clause = "SELECT SQL_CALC_FOUND_ROWS DISTINCT " + ", ".join([valid_fields[f] for f in fields])
-
-    # Base FROM clause
-    from_clause = " FROM Books b"
-    joins = []
-
-    # Dynamically append JOINs only if they are needed for SELECT or WHERE clauses
-    if 'author' in fields or params.get('author'):
-        joins.append("LEFT JOIN bookAuthors ba ON b.id = ba.book_id")
-        joins.append("LEFT JOIN Authors a ON ba.author_id = a.id")
-
-    if 'publisher' in fields or params.get('publisher'):
-        joins.append("LEFT JOIN bookPublishers bp ON b.id = bp.book_id")
-        joins.append("LEFT JOIN publisher p ON bp.publisher_id = p.id")
-
-    if 'series_name' in fields or params.get('serie'):
-        joins.append("LEFT JOIN series s ON b.series_id = s.id")
-
-    if 'genres' in fields or params.get('genres'):
-        joins.append("LEFT JOIN bookGenres bg ON b.id = bg.book_id")
-        joins.append("LEFT JOIN genres g ON bg.genre_id = g.id")
-
-    if 'labels' in fields or params.get('label'):
-        joins.append("LEFT JOIN bookLabel bl ON b.id = bl.book_id")
-        joins.append("LEFT JOIN labels l ON bl.label_id = l.id")
-
-    if 'language' in fields:
-        joins.append("LEFT JOIN language l ON b.language_id = l.id")
-
-    # Ensure uniqueness of joins while preserving order
-    unique_joins = []
-    for j in joins:
-        if j not in unique_joins:
-            unique_joins.append(j)
-
-    base_query = select_clause + from_clause + "\n" + "\n".join(unique_joins)
-
-    # Build WHERE clause
-    conditions = []
-    parameters = []
-
-    if params.get('author'):
-        conditions.append("a.name LIKE ?")
-        parameters.append(f"%{params['author']}%")
-
-    if params.get('title'):
-        conditions.append("b.title LIKE ?")
-        parameters.append(f"%{params['title']}%")
-
-    if params.get('publisher'):
-        conditions.append("p.name LIKE ?")
-        parameters.append(f"%{params['publisher']}%")
-
-    if params.get('serie'):
-        conditions.append("s.name LIKE ?")
-        parameters.append(f"%{params['serie']}%")
-
-    # --- NEW FILTERS ADDED HERE ---
-    if params.get('isbn'):
-        conditions.append("b.isbn LIKE ?")
-        parameters.append(f"%{params['isbn']}%")
-
-    if params.get('genres'):
-        conditions.append("g.name LIKE ?")
-        parameters.append(f"%{params['genres']}%")
-
-    if params.get('label'):
-        conditions.append("l.name LIKE ?")
-        parameters.append(f"%{params['label']}%")
-
-    if params.get('release_date'):
-        conditions.append("b.release_date LIKE ?")
-        parameters.append(f"%{params['release_date']}%")
-
-    if params.get('first_polish_release_date'):
-        conditions.append("b.first_polish_release_date LIKE ?")
-        parameters.append(f"%{params['first_polish_release_date']}%")
-
-    if params.get('format'):
-        conditions.append("b.format LIKE ?")
-        parameters.append(f"%{params['format']}%")
-
-    if params.get('original_title'):
-        conditions.append("b.original_title LIKE ?")
-        parameters.append(f"%{params['original_title']}%")
-
-    if params.get('translator'):
-        conditions.append("b.translator LIKE ?")
-        parameters.append(f"%{params['translator']}%")
-
-    if params.get('language_id'):
-        conditions.append("b.language_id LIKE ?")
-        parameters.append(f"%{params['language_id']}%")
-    # ------------------------------
-
-    if conditions:
-        base_query += "\nWHERE " + " AND ".join(conditions)
-
-    # Build GROUP BY clause dynamically based on non-aggregated selected fields
-    group_by_fields = []
-    for f in fields:
-        if f not in ['author', 'genres', 'labels']: # These fields use GROUP_CONCAT
-            if f == 'publisher':
-                group_by_fields.append('p.name')
-            elif f == 'series_name':
-                group_by_fields.append('s.name')
-            elif f == 'language':
-                group_by_fields.append('l.name')
-            else:
-                group_by_fields.append(f'b.{f}')
-
-    if group_by_fields:
-        base_query += "\nGROUP BY " + ", ".join(group_by_fields)
-
-    # Apply Sorting and Pagination
-    (c, p) = sortPagination_query(params)
-    if c:
-        base_query += "\n" + "\n".join(c)
-    if p:
-        parameters.extend(p)
-
-    return base_query, parameters, fields
-
 @app.route('/keepalive', methods=['GET','POST'])
 def kpalive():
     return '', 204
@@ -261,8 +59,9 @@ def get_books():
         # Get query parameters
         params = { k: request.args.get(k) for k in request.args.keys() }
 
-        # Unpack the dynamic columns list as well
-        query, parameters, columns = build_query(params)
+        # Instantiate builder and unpack the results
+        builder = BookQueryBuilder(params)
+        query, parameters, columns = builder.build()
 
         cur = conn.cursor()
         cur.execute(query, parameters)
