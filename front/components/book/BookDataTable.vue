@@ -87,7 +87,7 @@
 		</template>
 
 		<template #item.series_name="{ item }">
-			{{ item.series_name || 'N/A' }}
+			{{ item.series_name || '' }}
 		</template>
 
 		<!-- ── Empty state ────────────────────────────────────────────────── -->

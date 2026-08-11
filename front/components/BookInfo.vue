@@ -2,7 +2,7 @@
   <v-card elevation="1" class="pa-6 mb-4" rounded="lg">
     <div class="d-flex justify-space-between align-start">
       <div>
-        <div class="book-title">{{ book.title || 'N/A' }}</div>
+        <div class="book-title">{{ book.title || '' }}</div>
         <div v-if="book.originalTitle" class="original-title">{{book.originalTitle}}</div>
       </div>
       <v-btn
@@ -32,39 +32,39 @@
     <div class="meta-grid">
       <div class="meta-item">
         <div class="meta-label">{{ $t('bookinfo.releaseDate') }}</div>
-        <div class="meta-value">{{ book.releaseDate || 'N/A' }}</div>
+        <div class="meta-value">{{ book.releaseDate || '' }}</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">{{ $t('bookinfo.firstPolishRelease') }}</div>
-        <div class="meta-value">{{ book.firstPolishRelease || 'N/A' }}</div>
+        <div class="meta-value">{{ book.firstPolishRelease || '' }}</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">{{ $t('bookinfo.pages') }}</div>
-        <div class="meta-value">{{ book.pages || 'N/A' }}</div>
+        <div class="meta-value">{{ book.pages || '' }}</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">{{ $t('bookinfo.isbn') }}</div>
-        <div class="meta-value">{{ book.isbn || 'N/A' }}</div>
+        <div class="meta-value">{{ book.isbn || '' }}</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">{{ $t('bookinfo.format') }}</div>
-        <div class="meta-value">{{ book.format ? $t('addBook.formats.' + book.format) : 'N/A' }}</div>
+        <div class="meta-value">{{ book.format ? $t('addBook.formats.' + book.format) : '' }}</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">{{ $t('bookinfo.size') }}</div>
-        <div class="meta-value">{{ book.size ? $t('addBook.sizes.' + book.size) : 'N/A' }}</div>
+        <div class="meta-value">{{ book.size ? $t('addBook.sizes.' + book.size) : '' }}</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">{{ $t('bookinfo.language') }}</div>
-        <div class="meta-value">{{ book.language || 'N/A' }}</div>
+        <div class="meta-value">{{ book.language || '' }}</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">{{ $t('bookinfo.translator') }}</div>
-        <div class="meta-value">{{ book.translator || 'N/A' }}</div>
+        <div class="meta-value">{{ book.translator || '' }}</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">{{ $t('bookinfo.serie') }}</div>
-        <div class="meta-value">{{ book.serie || 'N/A' }}</div>
+        <div class="meta-value">{{ book.serie || '' }}</div>
       </div>
     </div>
 
@@ -84,11 +84,11 @@
     </div>
 
     <div class="section-title">{{ $t('bookinfo.description') }}</div>
-    <p class="description-text">{{ book.description || 'N/A' }}</p>
+    <p class="description-text">{{ book.description || '' }}</p>
 
     <div class="section-title">{{ $t('bookinfo.note') }}</div>
     <v-alert type="info" variant="tonal" density="compact" icon="mdi-note-text">
-      {{ book.note || 'N/A' }}
+      {{ book.note || '' }}
     </v-alert>
   </v-card>
 </template>

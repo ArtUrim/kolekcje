@@ -38,12 +38,12 @@
 
               <tbody>
                 <tr>
-                  <td class="py-2">{{ item.isbn || 'N/A' }}</td>
-                  <td class="py-2">{{ item.labels || 'N/A' }}</td>
-                  <td class="py-2">{{ item.language_name || 'N/A' }}</td>
-                  <td class="py-2">{{ item.pages || 'N/A' }}</td>
-                  <td class="py-2">{{ item.publishers || 'N/A' }}</td>
-                  <td class="py-2">{{ item.size || 'N/A' }}</td>
+                  <td class="py-2">{{ item.isbn || '' }}</td>
+                  <td class="py-2">{{ item.labels || '' }}</td>
+                  <td class="py-2">{{ item.language_name || '' }}</td>
+                  <td class="py-2">{{ item.pages || '' }}</td>
+                  <td class="py-2">{{ item.publishers || '' }}</td>
+                  <td class="py-2">{{ item.size || '' }}</td>
                 </tr>
               </tbody>
             </v-table>
