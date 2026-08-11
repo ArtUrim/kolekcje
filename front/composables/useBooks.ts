@@ -62,6 +62,8 @@ export const useBooks = () => {
     try {
       // Build query parameters
       const queryParams = new URLSearchParams();
+
+		// console.log( options );
       
       if (options.title) queryParams.append('title', options.title);
       if (options.author) queryParams.append('author', options.author);
@@ -69,7 +71,7 @@ export const useBooks = () => {
       if (options.serie) queryParams.append('serie', options.serie);
       if (options.isbn) queryParams.append('isbn', options.isbn);
       if (options.genres) queryParams.append('genres', options.genres);
-      if (options.label) queryParams.append('label', options.label);
+      if (options.labels) queryParams.append('label', options.labels);
       if (options.release_date !== undefined && options.release_date !== '') {
         queryParams.append('release_date', options.release_date.toString());
       }
@@ -77,9 +79,9 @@ export const useBooks = () => {
         queryParams.append('first_polish_release_date', options.first_polish_release_date.toString());
       }
       if (options.format) queryParams.append('format', options.format);
-      if (options.original_title) queryParams.append('original_title', options.original_title);
+      if (options.originalTitle) queryParams.append('original_title', options.originalTitle);
       if (options.translator) queryParams.append('translator', options.translator);
-      if (options.language_id) queryParams.append('language_id', options.language_id);
+      if (options.language) queryParams.append('language', options.language);
 
       if (options.page) queryParams.append('page', options.page.toString());
       if (options.itemsPerPage) queryParams.append('itemsPerPage', options.itemsPerPage.toString());

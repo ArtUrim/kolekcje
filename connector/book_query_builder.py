@@ -126,9 +126,9 @@ class BookQueryBuilder:
             conditions.append("b.translator LIKE ?")
             parameters.append(f"%{self.params['translator']}%")
 
-        if self.params.get('language_id'):
-            conditions.append("b.language_id LIKE ?")
-            parameters.append(f"%{self.params['language_id']}%")
+        if self.params.get('language'):
+            conditions.append("lang.name LIKE ?")
+            parameters.append(f"%{self.params['language']}%")
 
         return conditions, parameters
 
@@ -171,17 +171,32 @@ class BookQueryBuilder:
                 otype = 'b.release_date'
             elif sort_by in ('serie', 'series', 'series_name'):
                 otype = 's.name'
+            elif sort_by == 'format':
+                otype = 'b.format'
+            elif sort_by == 'pages':
+                otype = 'b.pages'
+            elif sort_by == 'first_polish_release_date':
+                otype = 'b.first_polish_release_date'
+            elif sort_by == 'translator':
+                otype = 'b.translator'
+            elif sort_by == 'original_title':
+                otype = 'b.original_title'
+            elif sort_by == 'size':
+                otype = 'b.size'
+            elif sort_by == 'language':
+                otype = 'lang.name'
 
             if otype:
                 conditions.append(f"ORDER BY {otype} {order}")
 
         if self.params.get('itemsPerPage'):
             items_pp = int(self.params.get('itemsPerPage'))
-            page = int(self.params.get('page', 1))
-            offset = items_pp * (page - 1)
+            if items_pp > 0:
+                page = int(self.params.get('page', 1))
+                offset = items_pp * (page - 1)
 
-            conditions.append("LIMIT ? OFFSET ?")
-            parameters.extend([items_pp, offset])
+                conditions.append("LIMIT ? OFFSET ?")
+                parameters.extend([items_pp, offset])
 
         return conditions, parameters
 
