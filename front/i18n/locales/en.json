@@ -11,8 +11,13 @@
   "leftMenu": {
     "home": "Home",
     "books": "Book",
-    "addBook": "Add"
+    "addBook": "Add",
+	 "shutdown": "shutdown"
   },
+	"common": {
+		"cancel": "Cancel",
+		"save": "Save"
+	},
   "books": {
     "db": "Books database",
     "new": "New",
@@ -21,22 +26,51 @@
     "searchPublisher": "Search publisher",
     "searchSeries": "Search serie",
     "nobooks": "No books found",
+    "retrying": "Connection lost. Retrying...",
     "headers": {
       "title": "Title",
       "authors": "Author(s)",
       "publisher": "Publisher",
       "releaseDate": "Release Date",
       "seriesName": "Series",
+		"language": "Language",
       "actions": "Actions"
     },
     "edit": "Edit",
+    "clone": "Clone",
     "delete": "Delete",
     "deleteConfirmTitle": "Delete book",
     "deleteConfirmText": "Delete book '{title}'?",
     "deleteSuccess": "Book deleted successfully!",
     "deleteError": "Error deleting book: {message}",
     "cancel": "Cancel",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+	 "colAuthor": "Authors",
+	 "colFirstPolishYear": "First edition",
+	 "colFormat": "Format",
+	 "colGenres": "Genre",
+	 "colIsbn": "ISBN",
+	 "colLabels": "Label",
+	 "colLanguage": "Language",
+	 "colOriginalTitle": "Original title",
+	 "colPages": "Pages",
+	 "colPublisher": "Publishers",
+	 "colSeries": "Serie",
+	 "colSize": "Size",
+	 "colTitle": "Title",
+	 "colTranslator": "Translator",
+	 "colYear": "Edition year",
+	 "filtersSelected": "Selected filters",
+	 "presetEdition": "Edition",
+	 "presetFull": "Full",
+	 "presetPublishing": "Publishers",
+	 "presetStandard": "Standard",
+	 "settings": "Settings",
+	 "settingsColumns": "columns",
+	 "settingsFilters": "filters",
+	 "settingsTitle": "titles",
+	 "nobooks": "Empty",
+	 "presetCustom": "Custom"
   },
   "addBook": {
     "isbn": "ISBN",
@@ -55,6 +89,7 @@
     "originalTitle": "Original Title",
     "translator": "Translator",
     "language": "Language",
+	 "additional": "Additional {label}",
     "placeholders": {
       "author": "Select or add author(s)",
       "publisher": "Select or add a publisher",
@@ -73,6 +108,41 @@
       "bookAddedSuccess": "Book added successfully!",
       "errorAddingBook": "Error adding book: {message}",
 		"bookUpdatedSuccess": "Book updated successfully!"
-    }
-  }
+    },
+	 "formats": {
+		 "unknown":   "Unknown",
+		 "hardback":  "Hardback",
+		 "paperback": "Paperback",
+		 "ebook":     "E-book",
+		 "jacket":    "Dust jacket",
+		 "notebook":  "Notebook"
+	 },
+	 "sizes": {
+		 "none": "none",
+		 "mini": "mini",
+		 "normal": "normal",
+		 "scientific": "scientific",
+		 "comics": "comics",
+		 "huge": "huge",
+		 "small": "small",
+		 "unusual": "unusual"
+	 }
+  },
+	"bookinfo": {
+		"details": "Details",
+		"collapse": "Collapse",
+		"releaseDate": "Release year",
+		"firstPolishRelease": "First release",
+		"pages": "Pages",
+		"isbn": "ISBN",
+		"format": "Format",
+		"size": "Size",
+		"language": "Language",
+		"translator": "Tłumacz",
+		"serie": "Serie",
+		"genres": "Genres",
+		"labels": "Labels",
+		"description": "Description",
+		"note": "Notes"
+	}
 }

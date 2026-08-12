@@ -1,0 +1,70 @@
+- name: isbn
+          in: query
+          required: false
+          description: Partial ISBN filter (SQL `LIKE` search).
+          schema:
+            type: string
+            example: "978044"
+
+        - name: genres
+          in: query
+          required: false
+          description: Partial genre name filter (SQL `LIKE` search).
+          schema:
+            type: string
+            example: "Science Fiction"
+
+        - name: label
+          in: query
+          required: false
+          description: Partial label name filter (SQL `LIKE` search).
+          schema:
+            type: string
+            example: "Bestseller"
+
+        - name: release_date
+          in: query
+          required: false
+          description: Release date filter (SQL `LIKE` search).
+          schema:
+            type: string
+            example: "1965"
+
+        - name: first_polish_release_date
+          in: query
+          required: false
+          description: First Polish release date filter (SQL `LIKE` search).
+          schema:
+            type: string
+            example: "1985"
+
+        - name: format
+          in: query
+          required: false
+          description: Partial format filter (SQL `LIKE` search).
+          schema:
+            type: string
+            example: "paperback"
+
+        - name: original_title
+          in: query
+          required: false
+          description: Partial original title filter (SQL `LIKE` search).
+          schema:
+            type: string
+            example: "Dune"
+
+        - name: translator
+          in: query
+          required: false
+          description: Partial translator name filter (SQL `LIKE` search).
+          schema:
+            type: string
+
+        - name: language_id
+          in: query
+          required: false
+          description: Partial language ID filter (SQL `LIKE` search).
+          schema:
+            type: string
+            example: "pol"

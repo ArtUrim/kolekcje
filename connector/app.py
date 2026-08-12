@@ -5,11 +5,16 @@ import sys
 import logging
 import json
 from typing import List, Dict
+import os
+import uuid
+from functools import wraps
 
 from addBook import BookDatabase
 from updateBook import BookUpdateDatabase
 from bookinfo_handler import BookInfoHandler
 from table_handler import TableHandler
+
+from book_query_builder import BookQueryBuilder
 
 # Create handlers after app initialization
 publisher_handler = TableHandler('publisher')
@@ -30,6 +35,8 @@ DB_CONFIG = {
         "database": "katalog"
 }
 
+SHARED_DIR = '/app/shared'
+
 def get_db_connection():
     try:
         conn = mariadb.connect(**DB_CONFIG)
@@ -38,101 +45,9 @@ def get_db_connection():
         print(f"Error connecting to MariaDB: {e}")
         return None
 
-def sortPagination_query(params: Dict[str, Any]) -> tuple[str, list]:
-    """
-    Builds a sort and limit part of dynamic SQL query based on provided parameters
-    Returns tuple of (query_string, parameters_list)
-    """
-
-    conditions = []
-    parameters = []
-
-    if params.get('sortBy'):
-        order = 'ASC'
-        sort_order = params.get('sortDesc') or params.get('orderDesc')
-        if sort_order and sort_order.lower() == 'desc':
-            order = 'DESC'
-
-        sort_by = params['sortBy'].lower()
-        otype = None
-        if sort_by == 'title':
-            otype = 'b.title'
-        elif sort_by in ('author', 'authors'):
-            otype = 'authors'
-        elif sort_by == 'publisher':
-            otype = 'p.name'
-        elif sort_by in ('release', 'release_date'):
-            otype = 'b.release_date'
-        elif sort_by in ('serie', 'series', 'series_name'):
-            otype = 's.name'
-
-        if otype:
-            conditions.append( f"ORDER BY {otype} {order}" )
-
-    if params.get('itemsPerPage'):
-        itemsPP = int(params.get('itemsPerPage'))
-        page = 1
-        if params.get('page'):
-            page = int(params['page'])
-        offset = itemsPP*(page-1)
-        conditions.append( "LIMIT ? OFFSET ?" )
-        parameters.extend( [itemsPP, offset] )
-
-    return (conditions,parameters)
-        
-
-def build_query(params: Dict[str, Any]) -> tuple[str, list]:
-    """
-    Builds a dynamic SQL query based on provided parameters
-    Returns tuple of (query_string, parameters_list)
-    """
-    base_query = """
-        SELECT SQL_CALC_FOUND_ROWS DISTINCT
-            b.id,
-            b.title,
-            GROUP_CONCAT(DISTINCT a.name) as authors,
-            p.name as publisher,
-            b.release_date,
-            s.name as series_name
-        FROM Books b
-        LEFT JOIN bookAuthors ba ON b.id = ba.book_id
-        LEFT JOIN Authors a ON ba.author_id = a.id
-        LEFT JOIN bookPublishers bp ON b.id = bp.book_id
-        LEFT JOIN publisher p ON bp.publisher_id = p.id
-        LEFT JOIN series s ON b.series_id = s.id
-    """
-
-    conditions = []
-    parameters = []
-
-    if params.get('author'):
-        conditions.append("a.name LIKE ?")
-        parameters.append(f"%{params['author']}%")
-
-    if params.get('title'):
-        conditions.append("b.title LIKE ?")
-        parameters.append(f"%{params['title']}%")
-
-    if params.get('publisher'):
-        conditions.append("p.name LIKE ?")
-        parameters.append(f"%{params['publisher']}%")
-
-    if params.get('serie'):
-        conditions.append("s.name LIKE ?")
-        parameters.append(f"%{params['serie']}%")
-
-    if conditions:
-        base_query += " WHERE " + " AND ".join(conditions)
-
-    base_query += " GROUP BY b.id, b.title, p.name, b.release_date, s.name"
-
-    (c,p) = sortPagination_query( params )
-    if c:
-        base_query += "\n" + "\n".join(c)
-    if p:
-        parameters.extend(p)
-
-    return base_query, parameters
+@app.route('/keepalive', methods=['GET','POST'])
+def kpalive():
+    return '', 204
 
 @app.route('/book', methods=['GET'])
 def get_books():
@@ -144,17 +59,19 @@ def get_books():
         # Get query parameters
         params = { k: request.args.get(k) for k in request.args.keys() }
 
-        query, parameters = build_query(params)
+        # Instantiate builder and unpack the results
+        builder = BookQueryBuilder(params)
+        query, parameters, columns = builder.build()
 
         cur = conn.cursor()
         cur.execute(query, parameters)
 
         # Fetch results
-        columns = ['id', 'title', 'authors', 'publisher', 'release_date', 'series_name']
         results = []
 
         for row in cur:
             book_dict = {}
+            # Map the dynamically requested columns to the fetched row indices
             for i, column in enumerate(columns):
                 book_dict[column] = row[i]
             results.append(book_dict)
@@ -184,7 +101,7 @@ def add_books():
             data = request.get_json()
             with open('data.json', 'w') as f: # temporary: for debug
                 json.dump(data, f, indent=3)
-            if data.get('title'): 
+            if data.get('title'):
                 logging.info(f"Receive new book, title: {data['title']}")
                 print(f"Receive new book, title: {data['title']}")
             conn = get_db_connection()
@@ -202,141 +119,141 @@ def add_books():
         return jsonify({'error': 'Unsupported Media Type'}), 415
     return Response( status = 204 )
 
-# Modify the existing get_authors function  
-@app.route('/authors', methods=['GET'])  
-def get_authors():  
-    conn = get_db_connection()  
-    if not conn:  
-        return jsonify({"error": "Database connection failed"}), 500  
+# Modify the existing get_authors function
+@app.route('/authors', methods=['GET'])
+def get_authors():
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database connection failed"}), 500
 
-    try:  
-        query = request.args.get('query', '')  
-        authors = author_handler.get_items(conn, query)  
-        return jsonify(authors)  
+    try:
+        query = request.args.get('query', '')
+        authors = author_handler.get_items(conn, query)
+        return jsonify(authors)
 
-    except Exception as e:  
-        return jsonify({"error": str(e)}), 500  
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-    finally:  
-        if conn:  
-            conn.close()  
+    finally:
+        if conn:
+            conn.close()
 
-# Modify the existing get_publishers function  
-@app.route('/publishers', methods=['GET'])  
-def get_publishers():  
-    conn = get_db_connection()  
-    if not conn:  
-        return jsonify({"error": "Database connection failed"}), 500  
+# Modify the existing get_publishers function
+@app.route('/publishers', methods=['GET'])
+def get_publishers():
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database connection failed"}), 500
 
-    try:  
-        query = request.args.get('query', '')  
-        publishers = publisher_handler.get_items(conn, query)  
-        return jsonify(publishers)  
+    try:
+        query = request.args.get('query', '')
+        publishers = publisher_handler.get_items(conn, query)
+        return jsonify(publishers)
 
-    except Exception as e:  
-        return jsonify({"error": str(e)}), 500  
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-    finally:  
-        if conn:  
-            conn.close()  
+    finally:
+        if conn:
+            conn.close()
 
-# Add new series endpoints  
-@app.route('/series', methods=['GET'])  
-def get_series():  
-    conn = get_db_connection()  
-    if not conn:  
-        return jsonify({"error": "Database connection failed"}), 500  
+# Add new series endpoints
+@app.route('/series', methods=['GET'])
+def get_series():
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database connection failed"}), 500
 
-    try:  
-        query = request.args.get('query', '')  
-        series = series_handler.get_items(conn, query)  
-        return jsonify(series)  
+    try:
+        query = request.args.get('query', '')
+        series = series_handler.get_items(conn, query)
+        return jsonify(series)
 
-    except Exception as e:  
-        return jsonify({"error": str(e)}), 500  
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-    finally:  
-        if conn:  
-            conn.close()  
+    finally:
+        if conn:
+            conn.close()
 
-# Add new genres endpoints  
-@app.route('/genres', methods=['GET'])  
-def get_genres():  
-    conn = get_db_connection()  
-    if not conn:  
-        return jsonify({"error": "Database connection failed"}), 500  
+# Add new genres endpoints
+@app.route('/genres', methods=['GET'])
+def get_genres():
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database connection failed"}), 500
 
-    try:  
-        query = request.args.get('query', '')  
-        genres = genres_handler.get_items(conn, query)  
-        return jsonify(genres)  
+    try:
+        query = request.args.get('query', '')
+        genres = genres_handler.get_items(conn, query)
+        return jsonify(genres)
 
-    except Exception as e:  
-        return jsonify({"error": str(e)}), 500  
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-    finally:  
-        if conn:  
-            conn.close()  
+    finally:
+        if conn:
+            conn.close()
 
-# Add new labels endpoints  
-@app.route('/labels', methods=['GET'])  
-def get_labels():  
-    conn = get_db_connection()  
-    if not conn:  
-        return jsonify({"error": "Database connection failed"}), 500  
+# Add new labels endpoints
+@app.route('/labels', methods=['GET'])
+def get_labels():
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database connection failed"}), 500
 
-    try:  
-        query = request.args.get('query', '')  
-        labels = labels_handler.get_items(conn, query)  
-        return jsonify(labels)  
+    try:
+        query = request.args.get('query', '')
+        labels = labels_handler.get_items(conn, query)
+        return jsonify(labels)
 
-    except Exception as e:  
-        return jsonify({"error": str(e)}), 500  
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-    finally:  
-        if conn:  
-            conn.close()  
+    finally:
+        if conn:
+            conn.close()
 
 
-@app.route('/series/add', methods=['POST'])  
-def add_series():  
-    conn = get_db_connection()  
-    if not conn:  
-        return jsonify({"error": "Database connection failed"}), 500  
+@app.route('/series/add', methods=['POST'])
+def add_series():
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database connection failed"}), 500
 
-    try:  
-        data = request.get_json()  
-        series_handler.add_item(conn, data)  
-        return jsonify({'message': 'Series added successfully'}), 201  
+    try:
+        data = request.get_json()
+        series_handler.add_item(conn, data)
+        return jsonify({'message': 'Series added successfully'}), 201
 
-    except ValueError as e:  
-        return jsonify({'error': str(e)}), 400  
-    except Exception as e:  
-        return jsonify({'error': str(e)}), 500  
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
-    finally:  
-        if conn:  
-            conn.close()  
+    finally:
+        if conn:
+            conn.close()
 
-# Modify the existing publisher/add endpoint  
-@app.route('/publisher/add', methods=['POST'])  
-def add_publisher():  
-    conn = get_db_connection()  
-    if not conn:  
-        return jsonify({"error": "Database connection failed"}), 500  
+# Modify the existing publisher/add endpoint
+@app.route('/publisher/add', methods=['POST'])
+def add_publisher():
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database connection failed"}), 500
 
-    try:  
-        data = request.get_json()  
-        publisher_handler.add_item(conn, data)  
-        return jsonify({'message': 'Publisher added successfully'}), 201  
+    try:
+        data = request.get_json()
+        publisher_handler.add_item(conn, data)
+        return jsonify({'message': 'Publisher added successfully'}), 201
 
-    except ValueError as e:  
-        return jsonify({'error': str(e)}), 400  
-    except Exception as e:  
-        return jsonify({'error': str(e)}), 500  
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
-    finally:  
-        if conn:  
+    finally:
+        if conn:
             conn.close()
 
 @app.route('/bookinfo', methods=['GET', 'POST'])
@@ -512,6 +429,38 @@ def get_single_book(book_id):
     finally:
         if conn:
             conn.close()
+
+# Custom decorator to check Nginx injected headers
+def require_role(allowed_role):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            user_role = request.headers.get('X-App-Role', 'standard')
+            if user_role != allowed_role:
+                return jsonify({
+                    "error": "Unauthorized: Subnet access restricted",
+                    "your_role": user_role
+                }), 403
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+@app.route('/restart-router', methods=['POST'])
+@require_role('admin')
+def restart_router():
+    # Ensure the directory exists inside the container just in case
+    os.makedirs(SHARED_DIR, exist_ok=True)
+
+    trigger_filename = f"task_{uuid.uuid4().hex}.trigger"
+    trigger_filepath = os.path.join(SHARED_DIR, trigger_filename)
+
+    try:
+        with open(trigger_filepath, 'w') as f:
+            f.write("run")
+        return jsonify({"status": "success", "message": f"Created {trigger_filename}"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 @app.errorhandler(404)
 def not_found(error):

@@ -11,8 +11,13 @@
   "leftMenu": {
     "home": "Home",
     "books": "Libri",
-    "addBook": "Aggiungi"
+    "addBook": "Aggiungi",
+	 "shutdown": "Spegnere"
   },
+	"common": {
+		"cancel": "Annulla",
+		"save": "Scrive"
+	},
   "books": {
     "db": "Database libri",
     "new": "Nuova",
@@ -21,22 +26,51 @@
     "searchPublisher": "Cerca editore",
     "searchSeries": "Cerca serie",
     "nobooks": "Nessun libro trovato",
+    "retrying": "Connessione persa. Nuovo tentativo in corso...",
     "headers": {
       "title": "Titolo",
       "authors": "Autore(i)",
       "publisher": "Editore",
       "releaseDate": "Data di pubblicazione",
       "seriesName": "Serie",
+		"language": "Lingua",
       "actions": "Azioni"
     },
     "edit": "Modifica",
+    "clone": "Duplica",
     "delete": "Elimina",
     "deleteConfirmTitle": "Elimina libro",
     "deleteConfirmText": "Eliminare il libro '{title}'?",
     "deleteSuccess": "Libro eliminato con successo!",
     "deleteError": "Errore durante l'eliminazione del libro: {message}",
     "cancel": "Annulla",
-    "confirm": "Conferma"
+    "confirm": "Conferma",
+	 "colAuthor": "Autore",
+	 "colFirstPolishYear": "Primo pubblicazione",
+	 "colFormat": "Formato",
+	 "colGenres": "Ganere",
+	 "colIsbn": "ISBN",
+	 "colLabels": "Etichetta",
+	 "colLanguage": "Lingua",
+	 "colOriginalTitle": "Titolo originale",
+	 "colPages": "Pagine",
+	 "colPublisher": "Editore",
+	 "colSeries": "Serie",
+	 "colSize": "Grandezza",
+	 "colTitle": "Titolo",
+	 "colTranslator": "Traduttore",
+	 "colYear": "Anno di pubblicazione",
+	 "filtersSelected": "Filtri salvari",
+	 "presetEdition": "Edizione",
+	 "presetFull": "Pieno",
+	 "presetPublishing": "Editore",
+	 "presetStandard": "Standard",
+	 "settings": "Regolare",
+	 "settingsColumns": "colonne",
+	 "settingsFilters": "filtri",
+	 "settingsTitle": "titoli",
+	 "nobooks": "Vuoto",
+	 "presetCustom": "personalizzata"
   },
   "addBook": {
     "isbn": "ISBN",
@@ -55,6 +89,7 @@
     "originalTitle": "Titolo originale",
     "translator": "Traduttore",
     "language": "Lingua",
+	 "additional": "Ulteriore {label}",
     "etykieta": "Etichetta",
     "placeholders": {
       "author": "Seleziona o aggiungi autore(i)",
@@ -72,6 +107,65 @@
     "messages": {
       "bookAddedSuccess": "Libro aggiunto con successo!",
       "errorAddingBook": "Errore nell'aggiunta del libro: {message}"
+    },
+	 "formats": {
+		 "unknown":   "Sconosciuto",
+		 "hardback":  "Coperta rigida",
+		 "paperback": "Tascabile",
+		 "ebook":     "E-book",
+		 "jacket":    "con Copertura",
+		 "notebook":  "Quaderno"
+	 },
+	 "sizes": {
+		 "none": "nessun",
+		 "mini": "miniatura",
+		 "normal": "normale",
+		 "scientific": "scienzato",
+		 "comics": "fumetto",
+		 "huge": "enorme",
+		 "small": "piccolo",
+		 "unusual": "insolito"
+	 }
+  },
+	"bookinfo": {
+		"details": "Dettagli",
+		"collapse": "Nascondere",
+		"releaseDate": "Data di pubblicazione",
+		"firstPolishRelease": "Anno della prima pubblicazione",
+		"pages": "Pagine",
+		"isbn": "ISBN",
+		"format": "Formato",
+		"size": "Grandezza",
+		"language": "Lingua",
+		"translator": "Traduttore",
+		"serie": "Serie",
+		"genres": "Genere",
+		"labels": "Etichetta",
+      "description": "Descrizione",
+		"note": "Note"
+	},
+  "$vuetify": {
+    "open": "apre",
+	 "close": "chiude",
+    "input": {
+      "clear": "pulire"
+    },
+    "pagination": {
+      "ariaLabel": {
+        "root": "Navigazione di pagine"
+      }
+    },
+    "dataFooter": {
+      "pageText": "{0}-{1} con {2}",
+      "itemsPerPageText": "Per pagina:",
+      "itemsPerPageAll": "Tutto",
+      "nextPage": "Prossima pagina",
+      "prevPage": "Antecedende",
+      "firstPage": "Prima pagina",
+      "lastPage": "Ultima pagina"
+    },
+    "dataIterator": {
+      "loadingText": "Caricatore di elementi..."
     }
   }
 }

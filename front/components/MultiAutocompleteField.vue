@@ -42,6 +42,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import AutocompleteField from './AutocompleteField.vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   modelValue: {
@@ -86,8 +87,10 @@ const initializeFields = () => {
   }
 }
 
+const { t } = useI18n();
+
 const getFieldLabel = (index) => {
-  return index === 0 ? props.label : `Additional ${props.label}`
+  return index === 0 ? props.label : t('addBook.additional', { label: props.label } );
 }
 
 const addField = () => {

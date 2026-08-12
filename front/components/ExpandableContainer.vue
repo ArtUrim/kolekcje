@@ -3,16 +3,25 @@
 		<BookInfo :book="bookInfoData" @delete-requested="openDeleteDialog" />
 		<!-- Custom Card Components with Transitions -->
 
-		<!-- Edit Button positioned in bottom right -->
-		<v-btn
-				color="primary"
-				variant="flat"
-				prepend-icon="mdi-pencil"
-				class="edit-button"
-				@click="openEditDialog"
-				>
-				{{ $t('books.edit') }}
-		</v-btn>
+		<!-- Edit/Clone Buttons positioned in bottom right -->
+		<div class="action-buttons">
+			<v-btn
+					color="secondary"
+					variant="flat"
+					prepend-icon="mdi-content-copy"
+					@click="openCloneDialog"
+					>
+					{{ $t('books.clone') }}
+			</v-btn>
+			<v-btn
+					color="primary"
+					variant="flat"
+					prepend-icon="mdi-pencil"
+					@click="openEditDialog"
+					>
+					{{ $t('books.edit') }}
+			</v-btn>
+		</div>
 
 		<!-- Edit Dialog -->
 		<v-dialog
@@ -36,6 +45,32 @@
 								:initial-book-data="extractedBookData"
 								@book-updated="onBookUpdated"
 								@cancel-edit="onCancelEdit"
+								/>
+					</v-card-text>
+				</v-card>
+		</v-dialog>
+		<!-- Clone Dialog -->
+		<v-dialog
+				v-model="showCloneDialog"
+				max-width="1200"
+				persistent
+				scrollable
+				>
+				<v-card>
+					<v-card-title class="d-flex justify-space-between align-center">
+						<span>{{ $t('books.clone') }}</span>
+						<v-btn
+								icon="mdi-close"
+								variant="text"
+								@click="closeCloneDialog"
+								/>
+					</v-card-title>
+					<v-card-text class="pa-0">
+						<AddBook
+								:initial-book-data="cloneBookData"
+								:force-add-mode="true"
+								@book-added="onBookCloned"
+								@cancel-edit="onCancelClone"
 								/>
 					</v-card-text>
 				</v-card>
@@ -108,7 +143,7 @@ export default {
   components: {
     BookInfo
   },
-  emits: ['book-updated', 'edit-cancelled', 'book-deleted'],
+  emits: ['book-updated', 'edit-cancelled', 'book-deleted', 'book-added'],
  
   props: {
     fields: {
@@ -124,9 +159,11 @@ export default {
   data() {
     return {
       showEditDialog: false,
+      showCloneDialog: false,
       showDeleteDialog: false,
       deletingBook: false,
       extractedBookData: null,
+      cloneBookData: null,
       cards: [],
       longCards: []
     }
@@ -203,7 +240,7 @@ export default {
     },
 
     closeAddBookDialog() {
-      console.log('Closing the Add Book Dialog');
+      // console.log('Closing the Add Book Dialog');
       this.showEditDialog = false;
     },
     
@@ -211,6 +248,16 @@ export default {
       this.extractedBookData = null;
       this.showEditDialog = true;
     },
+
+    openCloneDialog() {
+      this.cloneBookData = this.fields?.originalData || null;
+      this.showCloneDialog = true;
+    },
+
+    closeCloneDialog() {
+      this.showCloneDialog = false;
+    },
+
     
     openDeleteDialog() {
       this.showDeleteDialog = true;
@@ -250,6 +297,15 @@ export default {
     onCancelEdit() {
       this.showEditDialog = false;
       this.$emit('edit-cancelled');
+    },
+
+    onBookCloned(bookData) {
+      this.showCloneDialog = false;
+      this.$emit('book-added', bookData);
+    },
+
+    onCancelClone() {
+      this.showCloneDialog = false;
     }
   }
 }
@@ -264,10 +320,12 @@ h1, h2 {
   font-weight: 700;
 }
 
-.edit-button {
+.action-buttons {
   position: absolute;
   bottom: 16px;
   right: 16px;
   z-index: 1;
+  display: flex;
+  gap: 8px;
 }
 </style>

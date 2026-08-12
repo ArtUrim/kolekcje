@@ -174,6 +174,10 @@ export default {
 		initialBookData: {
 			type: Object,
 			default: () => null
+		},
+		forceAddMode: {
+			type: Boolean,
+			default: false
 		}
 	},
 
@@ -205,22 +209,6 @@ export default {
 		label: [],
 		genreProp: ['proza', 'poezja'],
 
-		formatOptions: [
-			'unknown',
-			'hardback',
-			'paperback',
-			'ebook'
-		],
-
-		sizeOptions: [
-			'none',
-			'mini',
-			'normal',
-			'scientific',
-			'comics',
-			'huge'
-		],
-
 		isbnRules: [
 			v => !v || [10, 13].includes(v.length) || 'ISBN must be 10 or 13 characters'
 		],
@@ -238,11 +226,37 @@ export default {
 
 	computed: {
 		isEditMode() {
+			return !this.forceAddMode && !!(this.bookId || this.initialBookData);
+		},
+		hasInitialData() {
 			return !!(this.bookId || this.initialBookData);
 		},
 		hasChanges() {
 			if (!this.isEditMode || !this.originalData) return true;
 			return JSON.stringify(this.form) !== JSON.stringify(this.originalData);
+		},
+		formatOptions() {
+			return [
+				{ title: this.$t('addBook.formats.unknown'),   value: 'unknown'   },
+				{ title: this.$t('addBook.formats.hardback'),  value: 'hardback'  },
+				{ title: this.$t('addBook.formats.paperback'), value: 'paperback' },
+				{ title: this.$t('addBook.formats.ebook'),     value: 'ebook'     },
+				{ title: this.$t('addBook.formats.jacket'),    value: 'jacket'    },
+				{ title: this.$t('addBook.formats.notebook'),  value: 'notebook'  }
+			];
+		},
+
+		sizeOptions() {
+			return [
+				{ title: this.$t('addBook.sizes.none'), value: 'none' },
+				{ title: this.$t('addBook.sizes.mini'), value: 'mini' },
+				{ title: this.$t('addBook.sizes.normal'), value: 'normal' },
+				{ title: this.$t('addBook.sizes.scientific'), value: 'scientific' },
+				{ title: this.$t('addBook.sizes.comics'), value: 'comics' },
+				{ title: this.$t('addBook.sizes.small'), value: 'small' },
+				{ title: this.$t('addBook.sizes.unusual'), value: 'unusual' },
+				{ title: this.$t('addBook.sizes.huge'), value: 'huge' }
+			];
 		}
 	},
 
@@ -262,7 +276,7 @@ export default {
 		},
 
 		async initializeComponent() {
-			if (this.isEditMode) {
+			if (this.hasInitialData) {
 				this.isLoading = true;
 				try {
 					if (this.initialBookData) {

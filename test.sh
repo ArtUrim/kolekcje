@@ -2,7 +2,6 @@
 
 FNAME=compose_test.yml
 
-docker compose -f ${FNAME} up -d && \
-docker compose logs -f front connector
-
-docker compose -f ${FNAME} down
+docker compose -f "${FNAME}" up -d && \
+docker compose -f "${FNAME}" logs connector front -f
+docker compose -f "${FNAME}" down

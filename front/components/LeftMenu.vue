@@ -12,9 +12,14 @@
 		  </NuxtLink>
       </li>
 		<li><NuxtLink to="/contact">{{ $t('contact') }}</NuxtLink></li>
+	
 		<li> <NuxtLink :to="switchLocalePath('pl')">Polski</NuxtLink></li>
 		<li> <NuxtLink :to="switchLocalePath('en')">English</NuxtLink></li>
 		<li> <NuxtLink :to="switchLocalePath('it')">Italiano</NuxtLink></li>
+
+		<button @click="triggerRestart" class="btn-danger">
+			{{ $t('leftMenu.shutdown') }}
+		</button>
     </ul>
   </nav>
 </template>
@@ -23,6 +28,8 @@
 const route = useRoute()
 
 const switchLocalePath = useSwitchLocalePath()
+
+const { userRole, triggerRestart } =  useNetworkAdmin();
 
 const showAddBook = computed(() => {
   return ['/books', '/addbook'].includes(route.path)
@@ -91,4 +98,13 @@ const showAddBook = computed(() => {
 .indent-left {
   margin-left: 1rem; /* You can adjust this value to move it more or less */
 }
+
+.btn-danger {
+	background: #ef4444;
+}
+
+.btn-danger:hover {
+	background: #dc2626;
+}
+
 </style>

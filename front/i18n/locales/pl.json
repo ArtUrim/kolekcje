@@ -1,36 +1,70 @@
 {
-  "welcome": "Witamy na stronie kolekcje",
-  "shortDescription": "Aplikacja służąca do porządkowania kolekcji (książek, płyt z muzyką i filmów).",
-  "contact": "Kontakt",
-  "leftMenu": {
-    "home": "Główna",
-    "books": "Książki",
-    "addBook": "Dodaj"
-  },
-  "books": {
-    "db": "Baza książek",
-    "new": "Nowa",
-    "searchTitle": "Szukaj po tytule",
-    "searchAuthor": "Szukaj po autorze",
-    "searchPublisher": "Szukaj po wydawcy",
-    "searchSeries": "Szukaj po serii",
-    "nobooks": "Nie znaleziono żadnych książek",
-    "headers": {
-      "title": "Tytuł",
-      "authors": "Autor(zy)",
-      "publisher": "Wydawca",
-      "releaseDate": "Data wydania",
-      "seriesName": "Seria",
-      "actions": "Akcje"
-    },
-    "edit": "Edytuj",
-    "delete": "Usuń",
-    "deleteConfirmTitle": "Usuń książkę",
-    "deleteConfirmText": "Usunąć książkę '{title}'?",
-    "deleteSuccess": "Książka została pomyślnie usunięta!",
-    "deleteError": "Błąd podczas usuwania książki: {message}",
-    "cancel": "Anuluj",
-    "confirm": "Potwierdź"
+	"welcome": "Witamy na stronie kolekcje",
+	"shortDescription": "Aplikacja służąca do porządkowania kolekcji (książek, płyt z muzyką i filmów).",
+	"contact": "Kontakt",
+	"leftMenu": {
+		"home": "Główna",
+		"books": "Książki",
+		"addBook": "Dodaj",
+		"shutdown": "Wyłącz"
+	},
+	"common": {
+		"cancel": "Zrezygnuj",
+		"save": "Zapisz"
+	},
+	"books": {
+		"db": "Baza książek",
+		"new": "Nowa",
+		"searchTitle": "Szukaj po tytule",
+		"searchAuthor": "Szukaj po autorze",
+		"searchPublisher": "Szukaj po wydawcy",
+		"searchSeries": "Szukaj po serii",
+		"nobooks": "Nie znaleziono żadnych książek",
+		"retrying": "Utracono połączenie. Ponawianie próby...",
+		"headers": {
+			"title": "Tytuł",
+			"authors": "Autor(zy)",
+			"publisher": "Wydawca",
+			"releaseDate": "Data wydania",
+			"seriesName": "Seria",
+			"language": "Język",
+			"actions": "Akcje"
+		},
+		"edit": "Edytuj",
+		"clone": "Klonuj",
+		"delete": "Usuń",
+		"deleteConfirmTitle": "Usuń książkę",
+		"deleteConfirmText": "Usunąć książkę '{title}'?",
+		"deleteSuccess": "Książka została pomyślnie usunięta!",
+		"deleteError": "Błąd podczas usuwania książki: {message}",
+		"colAuthor": "Autorzy",
+		"colFirstPolishYear": "Pierwsze wydanie",
+		"colFormat": "Format",
+		"colGenres": "Gatunek",
+		"colIsbn": "ISBN",
+		"colLabels": "Etykieta",
+		"colLanguage": "Język",
+		"colOriginalTitle": "Tytuł oryginału",
+		"colPages": "Strony",
+		"colPublisher": "Wydawcy",
+		"colSeries": "Seria",
+		"colSize": "Rozmiar",
+		"colTitle": "Tytuł",
+		"colTranslator": "Tłumacz",
+		"colYear": "Rok wydania",
+		"filtersSelected": "Zapisane filtry",
+		"presetEdition": "Edycja",
+		"presetFull": "Pełny",
+		"presetPublishing": "Wydawca",
+		"presetStandard": "Standardowy",
+		"settings": "Ustawienia",
+		"settingsColumns": "kolumny",
+		"settingsFilters": "filtry",
+		"settingsTitle": "tytuły",
+		"cancel": "Anuluj",
+		"confirm": "Potwierdź",
+		"nobooks": "Pusty",
+		"presetCustom": "Własny"
   },
   "addBook": {
     "isbn": "ISBN",
@@ -49,6 +83,7 @@
     "originalTitle": "Tytuł oryginalny",
     "translator": "Tłumacz",
     "language": "Język",
+	 "additional": "Dodatkowy {label}",
     "placeholders": {
       "author": "Wybierz lub dodaj autora (bądź autorów)",
       "publisher": "Wybierz lub dodaj wydawcę",
@@ -67,8 +102,43 @@
       "bookAddedSuccess": "Książka została pomyślnie dodana!",
       "errorAddingBook": "Błąd podczas dodawania książki: {message}",
 		"bookUpdatedSuccess": "Książka została pomyślnie uaktualniona!"
-    }
+    },
+	 "formats": {
+		 "unknown":   "Nieznany",
+		 "hardback":  "Twarda oprawa",
+		 "paperback": "Miękka oprawa",
+		 "ebook":     "E-book",
+		 "jacket":    "Z obwolutą",
+		 "notebook":  "Zeszyt"
+	 },
+	 "sizes": {
+		 "none": "żaden",
+		 "mini": "mini",
+		 "normal": "normalny",
+		 "scientific": "naukowy",
+		 "comics": "komiks",
+		 "huge": "duży",
+		 "small": "mały",
+		 "unusual": "nietypowy"
+	 }
   },
+	"bookinfo": {
+		"details": "Szczegóły",
+		"collapse": "Schowaj",
+		"releaseDate": "Rok wydania",
+		"firstPolishRelease": "Pierwsze wydanie",
+		"pages": "Strony",
+		"isbn": "ISBN",
+		"format": "Format",
+		"size": "Rozmiar",
+		"language": "Język",
+		"translator": "Tłumacz",
+		"serie": "Seria",
+		"genres": "Gatunki",
+		"labels": "Etykiety",
+		"description": "Opis",
+		"note": "Notatka"
+	},
   "input": {
     "clear": "wyczyść"
   },
@@ -89,6 +159,7 @@
   },
   "$vuetify": {
     "open": "otwórz",
+	 "close": "zamknij",
     "input": {
       "clear": "wyczyść"
     },

@@ -1,6 +1,6 @@
 <template>  
   <div>  
-	  <BookTable/>
+	  <BookTableView/>
     <!-- <SampleExpandableRow/> -->
   </div>  
 </template>  

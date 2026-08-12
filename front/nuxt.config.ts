@@ -13,14 +13,22 @@ export default defineNuxtConfig({
     }
   },
 
+  vite: {
+	  optimizeDeps: {
+		  include: [
+			  '@vue/devtools-core',
+			  '@vue/devtools-kit',
+			  'lodash/debounce'
+		  ]
+	  }
+  },
+
+
   css: [
     '@/assets/styles/main.css'
   ],
 
-  modules: [
-    'vuetify-nuxt-module',
-    '@nuxtjs/i18n'
-  ],
+  modules: ['vuetify-nuxt-module', '@nuxtjs/i18n', '@pinia/nuxt'],
 
   vuetify: {
     moduleOptions: {},
