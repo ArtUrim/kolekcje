@@ -113,8 +113,11 @@ def add_books():
                 logging.warn( f"Connection to DB not successful" )
         except Exception as e:
             logging.warn(f"Error processing addbook POST request: {e}")
+            errJson =  { 'error': f"Error processing addbook POST request: {e}" }
             if data and data.get('title'):
                 logging.warn( f"for the book {data['title']}")
+                errJson['book'] = data['title']
+            return jsonify(errJson), 415
     else:
         return jsonify({'error': 'Unsupported Media Type'}), 415
     return Response( status = 204 )

@@ -1,6 +1,7 @@
 import mariadb
 from typing import Dict, Any, List, Optional, Tuple
 
+from isbn import validate_isbn, normalize_isbn
 
 class BookUpdateDatabase:
     def __init__(self, connection: mariadb.connections.Connection):
@@ -268,7 +269,21 @@ class BookUpdateDatabase:
 
             has_isbn, isbn = self._get_value(book_data, "isbn")
             if has_isbn:
-                normalized_isbn = None if isbn is None or not str(isbn).strip() else str(isbn).strip()
+                if isbn is None or not str(isbn).strip():
+                    normalized_isbn = None
+                else:
+                    # Normalize and validate the ISBN
+                    isbn_str = str(isbn).strip()
+                    normalized = normalize_isbn(isbn_str)
+
+                    # Validate the ISBN
+                    if not validate_isbn(normalized):
+                        raise ValueError(
+                            f"Invalid ISBN '{isbn_str}': Must be 10 or 13 digits with valid checksum. "
+                            f"For ISBN-10, last digit can be 'X'. For ISBN-13, all digits must be numeric."
+                        )
+                    normalized_isbn = normalized
+
                 updates.append("isbn = ?")
                 params.append(normalized_isbn)
 
