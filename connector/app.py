@@ -408,31 +408,6 @@ def update_book(book_id):
     finally:
         conn.close()
 
-
-@app.route('/api/books/<int:book_id>', methods=['GET'])
-def get_single_book(book_id):
-    """Get single book information by ID"""
-    conn = get_db_connection()
-    if not conn:
-        return jsonify({"error": "Database connection failed"}), 500
-
-    try:
-        book_handler = BookInfoHandler(conn)
-        book_info = book_handler.get_book_info(book_id)
-
-        if not book_info:
-            return jsonify({"error": "Book not found"}), 404
-
-        return jsonify(book_info)
-
-    except Exception as e:
-        logging.error(f"Error fetching book {book_id}: {e}")
-        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
-
-    finally:
-        if conn:
-            conn.close()
-
 # Custom decorator to check Nginx injected headers
 def require_role(allowed_role):
     def decorator(f):
