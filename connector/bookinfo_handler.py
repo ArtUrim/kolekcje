@@ -1,22 +1,97 @@
 import mariadb
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import logging
 
 logger = logging.getLogger(__name__)
 
+
 class BookInfoHandler:
-    """Handler for managing book information updates."""
+    """Handler for managing book information updates and queries."""
 
     def __init__(self, db_connection):
         self.connection = db_connection
 
+    def get_basic_book_info(self, search_params: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Retrieve basic book information based on dynamic search criteria.
+
+        Args:
+            search_params: Dictionary whose keys are a subset of {'title', 'isbn', 'original_title'}.
+
+        Returns:
+            List of dictionaries containing matching book details.
+
+        Raises:
+            ValueError: If dictionary keys are invalid or dictionary is empty.
+        """
+        allowed_keys = {'title', 'isbn', 'original_title'}
+
+        # 1. Validate dictionary structure and key set
+        if not isinstance(search_params, dict) or not search_params:
+            raise ValueError("search_params must be a non-empty dictionary.")
+
+        invalid_keys = set(search_params.keys()) - allowed_keys
+        if invalid_keys:
+            raise ValueError(
+                f"Invalid key(s) in search_params: {', '.join(invalid_keys)}. "
+                f"Allowed keys are: {', '.join(allowed_keys)}"
+            )
+
+        # 2. Build dynamic parameterized WHERE clause
+        where_clauses = [f"b.{key} = ?" for key in search_params.keys()]
+        where_sql = " AND ".join(where_clauses)
+        query_values = tuple(search_params.values())
+
+        # 3. Formulate SQL query combining book details, authors, language, and publishers
+        query = f"""
+        SELECT
+            b.title,
+            GROUP_CONCAT(DISTINCT a.name ORDER BY a.name SEPARATOR ', ') AS authors,
+            b.release_date AS release_year,
+            b.original_title,
+            l.name AS language,
+            GROUP_CONCAT(DISTINCT p.name ORDER BY p.name SEPARATOR ', ') AS publishers
+        FROM
+            Books b
+        LEFT JOIN
+            language l ON b.language_id = l.id
+        LEFT JOIN
+            bookAuthors ba ON b.id = ba.book_id
+        LEFT JOIN
+            Authors a ON ba.author_id = a.id
+        LEFT JOIN
+            bookPublishers bp ON b.id = bp.book_id
+        LEFT JOIN
+            publisher p ON bp.publisher_id = p.id
+        WHERE
+            {where_sql}
+        GROUP BY
+            b.id,
+            b.title,
+            b.release_date,
+            b.original_title,
+            l.name;
+        """
+
+        cursor = self.connection.cursor(dictionary=True)
+        try:
+            cursor.execute(query, query_values)
+            results = cursor.fetchall()
+            logger.info(f"Query returned {len(results)} row(s) for params: {search_params}")
+            return results
+        except mariadb.Error as e:
+            logger.error(f"Database error executing search query: {e}")
+            raise
+        finally:
+            cursor.close()
+
     def get_book_info(self, book_id: int) -> Optional[Dict[str, Any]]:
         """
         Retrieve complete book information from MariaDB.
-        
+
         Args:
             book_id: Unique identifier of the book
-            
+
         Returns:
             Dictionary containing complete book information or None if not found
         """
@@ -24,7 +99,7 @@ class BookInfoHandler:
         try:
             # Main book query with series and language information
             book_query = """
-            SELECT 
+            SELECT
                 b.id,
                 b.isbn,
                 b.title,
@@ -46,14 +121,14 @@ class BookInfoHandler:
             LEFT JOIN language l ON b.language_id = l.id
             WHERE b.id = ?
             """
-            
+
             cursor.execute(book_query, (book_id,))
             book_row = cursor.fetchone()
-            
+
             if not book_row:
                 logger.warning(f"Book with ID {book_id} not found")
                 return None
-            
+
             # Build book info dictionary with all fields
             book_info = {
                 'id': book_row[0],
@@ -73,7 +148,7 @@ class BookInfoHandler:
                 'series_name': book_row[14],
                 'language_name': book_row[15]
             }
-            
+
             # Get authors with their names
             authors_query = """
             SELECT a.id, a.name, a.nationality_id, a.description, a.birth_date, a.death_date, a.note
@@ -84,7 +159,7 @@ class BookInfoHandler:
             """
             cursor.execute(authors_query, (book_id,))
             authors_rows = cursor.fetchall()
-            
+
             authors_list = []
             authors_names = []
             for author_row in authors_rows:
@@ -98,10 +173,10 @@ class BookInfoHandler:
                     'note': author_row[6]
                 })
                 authors_names.append(author_row[1])
-            
+
             book_info['authors'] = ', '.join(authors_names) if authors_names else None
             book_info['authors_details'] = authors_list
-            
+
             # Get publishers with their names
             publishers_query = """
             SELECT p.id, p.name, p.description, p.note, p.webpage
@@ -112,7 +187,7 @@ class BookInfoHandler:
             """
             cursor.execute(publishers_query, (book_id,))
             publishers_rows = cursor.fetchall()
-            
+
             publishers_list = []
             publishers_names = []
             for publisher_row in publishers_rows:
@@ -124,10 +199,10 @@ class BookInfoHandler:
                     'webpage': publisher_row[4]
                 })
                 publishers_names.append(publisher_row[1])
-            
+
             book_info['publishers'] = ', '.join(publishers_names) if publishers_names else None
             book_info['publishers_details'] = publishers_list
-            
+
             # Get labels with their names
             labels_query = """
             SELECT l.id, l.name
@@ -138,7 +213,7 @@ class BookInfoHandler:
             """
             cursor.execute(labels_query, (book_id,))
             labels_rows = cursor.fetchall()
-            
+
             labels_list = []
             labels_names = []
             for label_row in labels_rows:
@@ -147,10 +222,10 @@ class BookInfoHandler:
                     'name': label_row[1]
                 })
                 labels_names.append(label_row[1])
-            
+
             book_info['labels'] = ', '.join(labels_names) if labels_names else None
             book_info['labels_details'] = labels_list
-            
+
             # Get genres with their names
             genres_query = """
             SELECT g.id, g.name
@@ -161,7 +236,7 @@ class BookInfoHandler:
             """
             cursor.execute(genres_query, (book_id,))
             genres_rows = cursor.fetchall()
-            
+
             genres_list = []
             genres_names = []
             for genre_row in genres_rows:
@@ -170,13 +245,13 @@ class BookInfoHandler:
                     'name': genre_row[1]
                 })
                 genres_names.append(genre_row[1])
-            
+
             book_info['genres'] = ', '.join(genres_names) if genres_names else None
             book_info['genres_details'] = genres_list
-            
+
             logger.info(f"Successfully retrieved book info for ID {book_id}")
             return book_info
-            
+
         except mariadb.Error as e:
             logger.error(f"Database error getting book info for ID {book_id}: {e}")
             raise
@@ -203,7 +278,6 @@ class BookInfoHandler:
                 logger.error(f"Book {book_id} not found")
                 return False
 
-            # TODO: Implement update logic based on your requirements
             logger.info(f"Book info update requested for ID {book_id}")
             return True
 

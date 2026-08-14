@@ -333,6 +333,33 @@ def book_info():
         if conn:
             conn.close()
 
+@app.route('/books/validate', methods=['GET'])
+def validate_book():
+
+    if len(request.args) == 0:
+        return jsonify( {"result": "empty hint list" } ), 204
+
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        book_handler = BookInfoHandler(conn)
+        book_info = book_handler.get_basic_book_info( request.args )
+
+        if not book_info:
+            return jsonify({"result": "Book not found"}), 206
+
+        return jsonify(book_info), 200
+
+    except Exception as e:
+        logging.error(f"Error fetching book {book_id}: {e}")
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+
+    finally:
+        if conn:
+            conn.close()
+
 @app.route('/books/<int:book_id>', methods=['GET', 'PUT', 'DELETE'])
 def update_book(book_id):
     """Handle book retrieval and updates by ID"""
