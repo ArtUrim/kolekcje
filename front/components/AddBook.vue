@@ -160,6 +160,82 @@
 			</v-btn>
 		</template>
 	</v-snackbar>
+
+	<v-dialog v-model="verifyDialog.show" max-width="500">
+		<v-card>
+			<v-card-title>
+				{{ $t('addBook.verifyDialog.title') }}
+			</v-card-title>
+			<v-card-text>
+				<v-alert
+					v-if="verifyDialog.isbnValid === false"
+					type="warning"
+					dense
+					class="mb-3"
+				>
+					{{ $t('addBook.verifyDialog.isbnInvalid') }}
+				</v-alert>
+
+				<template v-if="verifyDialog.book">
+					<v-alert type="info" dense class="mb-3">
+						{{ $t('addBook.verifyDialog.bookFound') }}
+					</v-alert>
+					<v-list dense>
+						<v-list-item v-if="verifyDialog.book.title">
+							<v-list-item-content>
+								<v-list-item-title>{{ $t('addBook.title') }}</v-list-item-title>
+								<v-list-item-subtitle>{{ verifyDialog.book.title }}</v-list-item-subtitle>
+							</v-list-item-content>
+						</v-list-item>
+						<v-list-item v-if="verifyDialog.book.authors">
+							<v-list-item-content>
+								<v-list-item-title>{{ $t('addBook.author') }}</v-list-item-title>
+								<v-list-item-subtitle>{{ verifyDialog.book.authors }}</v-list-item-subtitle>
+							</v-list-item-content>
+						</v-list-item>
+						<v-list-item v-if="verifyDialog.book.original_title">
+							<v-list-item-content>
+								<v-list-item-title>{{ $t('addBook.originalTitle') }}</v-list-item-title>
+								<v-list-item-subtitle>{{ verifyDialog.book.original_title }}</v-list-item-subtitle>
+							</v-list-item-content>
+						</v-list-item>
+						<v-list-item v-if="verifyDialog.book.release_year">
+							<v-list-item-content>
+								<v-list-item-title>{{ $t('addBook.publishYear') }}</v-list-item-title>
+								<v-list-item-subtitle>{{ verifyDialog.book.release_year }}</v-list-item-subtitle>
+							</v-list-item-content>
+						</v-list-item>
+						<v-list-item v-if="verifyDialog.book.language">
+							<v-list-item-content>
+								<v-list-item-title>{{ $t('addBook.language') }}</v-list-item-title>
+								<v-list-item-subtitle>{{ verifyDialog.book.language }}</v-list-item-subtitle>
+							</v-list-item-content>
+						</v-list-item>
+						<v-list-item v-if="verifyDialog.book.publishers">
+							<v-list-item-content>
+								<v-list-item-title>{{ $t('addBook.publisher') }}</v-list-item-title>
+								<v-list-item-subtitle>{{ verifyDialog.book.publishers }}</v-list-item-subtitle>
+							</v-list-item-content>
+						</v-list-item>
+					</v-list>
+				</template>
+
+				<v-alert
+					v-else-if="verifyDialog.notFound"
+					type="info"
+					dense
+				>
+					{{ $t('addBook.verifyDialog.notFound') }}
+				</v-alert>
+			</v-card-text>
+			<v-card-actions>
+				<v-spacer></v-spacer>
+				<v-btn color="primary" text @click="verifyDialog.show = false">
+					{{ $t('addBook.buttons.close') }}
+				</v-btn>
+			</v-card-actions>
+		</v-card>
+	</v-dialog>
 </template>
 
 <script>
@@ -189,6 +265,12 @@ export default {
 			show: false,
 			message: '',
 			color: 'success'
+		},
+		verifyDialog: {
+			show: false,
+			isbnValid: null,
+			book: null,
+			notFound: false
 		},
 		isbn: '',
 		title: '',
@@ -271,8 +353,37 @@ export default {
 			this.snackbar.show = true;
 		},
 
-		verifyForm() {
+		async verifyForm() {
 			this.$refs.form.validate()
+
+			const params = new URLSearchParams();
+			if (this.isbn) params.set('isbn', this.isbn);
+			if (this.title) params.set('title', this.title);
+			if (this.originalTitle) params.set('original_title', this.originalTitle);
+
+			if (params.toString() === '') return;
+
+			this.verifyDialog.show = false;
+			this.verifyDialog.isbnValid = null;
+			this.verifyDialog.book = null;
+			this.verifyDialog.notFound = false;
+
+			try {
+				const response = await fetch(`/api/books/validate?${params.toString()}`);
+
+				if (response.status === 200) {
+					const data = await response.json();
+					this.verifyDialog.book = data;
+					this.verifyDialog.isbnValid = data.isbn_valid;
+					this.verifyDialog.show = true;
+				} else if (response.status === 206) {
+					this.verifyDialog.notFound = true;
+					this.verifyDialog.show = true;
+				}
+			} catch (err) {
+				console.error('Error validating book:', err);
+				this.showSnackbar(this.$t('addBook.verifyDialog.error'), 'error');
+			}
 		},
 
 		async initializeComponent() {

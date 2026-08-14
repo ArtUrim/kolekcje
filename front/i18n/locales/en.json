@@ -109,6 +109,13 @@
       "errorAddingBook": "Error adding book: {message}",
 		"bookUpdatedSuccess": "Book updated successfully!"
     },
+    "verifyDialog": {
+      "title": "Verification results",
+      "isbnInvalid": "The provided ISBN is not valid.",
+      "bookFound": "A matching book was found in the database:",
+      "notFound": "No matching book was found in the database.",
+      "error": "Error while verifying the book."
+    },
 	 "formats": {
 		 "unknown":   "Unknown",
 		 "hardback":  "Hardback",

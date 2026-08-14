@@ -108,6 +108,13 @@
       "bookAddedSuccess": "Libro aggiunto con successo!",
       "errorAddingBook": "Errore nell'aggiunta del libro: {message}"
     },
+    "verifyDialog": {
+      "title": "Risultati della verifica",
+      "isbnInvalid": "L'ISBN fornito non è valido.",
+      "bookFound": "Trovato un libro corrispondente nel database:",
+      "notFound": "Nessun libro corrispondente trovato nel database.",
+      "error": "Errore durante la verifica del libro."
+    },
 	 "formats": {
 		 "unknown":   "Sconosciuto",
 		 "hardback":  "Coperta rigida",

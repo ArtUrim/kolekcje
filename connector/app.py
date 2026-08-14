@@ -16,6 +16,8 @@ from table_handler import TableHandler
 
 from book_query_builder import BookQueryBuilder
 
+from isbn  import normalize_isbn, validate_isbn
+
 # Create handlers after app initialization
 publisher_handler = TableHandler('publisher')
 author_handler = TableHandler('Authors')
@@ -339,6 +341,14 @@ def validate_book():
     if len(request.args) == 0:
         return jsonify( {"result": "empty hint list" } ), 204
 
+    isbn_valid = None
+    if 'isbn' in request.args:
+        isbn_norm = normalize_isbn( request.args.get('isbn') )
+        if isbn_norm:
+            isbn_valid = validate_isbn( isbn_norm )
+        else:
+            isbn_valid = False
+
     conn = get_db_connection()
     if not conn:
         return jsonify({"error": "Database connection failed"}), 500
@@ -350,6 +360,8 @@ def validate_book():
         if not book_info:
             return jsonify({"result": "Book not found"}), 206
 
+        if isbn_valid is not None:
+            book_info['isbn_valid'] = isbn_valid
         return jsonify(book_info), 200
 
     except Exception as e:

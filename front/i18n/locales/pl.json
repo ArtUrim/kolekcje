@@ -103,6 +103,13 @@
       "errorAddingBook": "Błąd podczas dodawania książki: {message}",
 		"bookUpdatedSuccess": "Książka została pomyślnie uaktualniona!"
     },
+    "verifyDialog": {
+      "title": "Wyniki weryfikacji",
+      "isbnInvalid": "Podany ISBN jest nieprawidłowy.",
+      "bookFound": "Znaleziono pasującą książkę w bazie danych:",
+      "notFound": "Nie znaleziono pasującej książki w bazie danych.",
+      "error": "Błąd podczas weryfikacji książki."
+    },
 	 "formats": {
 		 "unknown":   "Nieznany",
 		 "hardback":  "Twarda oprawa",
