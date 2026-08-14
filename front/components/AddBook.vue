@@ -364,7 +364,7 @@ export default {
 
 		getFormData() {
 			return {
-				isbn: this.isbn ? parseInt(this.isbn) : null,
+				isbn: this.isbn,
 				title: this.title,
 				publishYear: this.publishYear ? parseInt(this.publishYear) : null,
 				firstPublishYear: this.firstPublishYear ? parseInt(this.firstPublishYear) : null,
@@ -569,7 +569,7 @@ export default {
 			
 			// For new books (not edit mode), include all data as before
 			const bookData = {
-				isbn: this.isbn ? parseInt(this.isbn) : null,
+				isbn: this.isbn,
 				title: this.title,
 				publishYear: this.publishYear ? parseInt(this.publishYear) : null,
 				firstPublishYear: this.firstPublishYear ? parseInt(this.firstPublishYear) : null,
