@@ -339,15 +339,22 @@ def book_info():
 def validate_book():
 
     if len(request.args) == 0:
-        return jsonify( {"result": "empty hint list" } ), 204
+        return jsonify( {"result": "empty hint list" } ), 403
 
     isbn_valid = None
     if 'isbn' in request.args:
         isbn_norm = normalize_isbn( request.args.get('isbn') )
         if isbn_norm:
             isbn_valid = validate_isbn( isbn_norm )
-        else:
-            isbn_valid = False
+
+        if isbn_valid is not True:
+            isbn_result = { "title": "Invalid ISBN" }
+            if not isbn_norm:
+                isbn_result['detail'] = f"Provided ISBN {request.args.get('isbn')} cannot be normalized"
+            else:
+                isbn_result['detail'] = f"Provided ISBN {request.args.get('isbn')} has no valid checksum"
+
+            return jsonify(isbn_result), 400
 
     conn = get_db_connection()
     if not conn:
@@ -358,14 +365,12 @@ def validate_book():
         book_info = book_handler.get_basic_book_info( request.args )
 
         if not book_info:
-            return jsonify({"result": "Book not found"}), 206
+            return '', 204
 
-        if isbn_valid is not None:
-            book_info['isbn_valid'] = isbn_valid
-        return jsonify(book_info), 200
+        return jsonify(book_info[0]), 409
 
     except Exception as e:
-        logging.error(f"Error fetching book {book_id}: {e}")
+        logging.error(f"Error validate book: {e}")
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
     finally:

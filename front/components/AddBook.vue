@@ -5,7 +5,7 @@
 				<v-row>
 					<v-col cols="12" sm="6">
 						<v-text-field v-model="isbn" :label="$t('addBook.isbn')" :rules="isbnRules"
-															  hint="10 or 13 characters"></v-text-field>
+										  hint="10 or 13 characters"></v-text-field>
 					</v-col>
 
 					<v-col cols="12" sm="6">
@@ -32,12 +32,12 @@
 
 					<v-col cols="12" sm="6">
 						<GenreCheck v-model="genre" :label="$t('addBook.genre')" :placeholder="$t('addBook.placeholders.genre')"
-																				  api-endpoint="/api/genres" />
+										api-endpoint="/api/genres" />
 					</v-col>
 
 					<v-col cols="12" sm="6">
 						<GenreCheck v-model="label" :label="$t('addBook.etykieta')" :placeholder="$t('addBook.placeholders.etykieta')"
-																				  api-endpoint="/api/labels" />
+										api-endpoint="/api/labels" />
 					</v-col>
 
 
@@ -102,7 +102,7 @@
 
 					<v-col cols="12" sm="6">
 						<AutocompleteField v-model="series" :label="$t('addBook.series')" :placeholder="$t('addBook.placeholders.series')"
-																							api-endpoint="/api/series" />
+												 api-endpoint="/api/series" />
 					</v-col>
 
 					<v-col cols="12" sm="6">
@@ -143,22 +143,21 @@
 		</v-card>
 	</v-container>
 	<v-snackbar
-		v-model="snackbar.show"
-		:color="snackbar.color"
-		:timeout="5000"
-		top
-		right
-	>
-		{{ snackbar.message }}
-		<template v-slot:actions>
-			<v-btn
-				color="white"
-				text
-				@click="snackbar.show = false"
+			v-model="snackbar.show"
+			:color="snackbar.color"
+			:timeout="5000"
+			location="top end"
 			>
-				{{ $t('addBook.buttons.close') }}
-			</v-btn>
-		</template>
+			{{ snackbar.message }}
+			<template v-slot:actions>
+				<v-btn
+						color="white"
+						variant="text"
+						@click="snackbar.show = false"
+						>
+						{{ $t('addBook.buttons.close') }}
+				</v-btn>
+			</template>
 	</v-snackbar>
 
 	<v-dialog v-model="verifyDialog.show" max-width="500">
@@ -168,69 +167,63 @@
 			</v-card-title>
 			<v-card-text>
 				<v-alert
-					v-if="verifyDialog.isbnValid === false"
-					type="warning"
-					dense
-					class="mb-3"
-				>
-					{{ $t('addBook.verifyDialog.isbnInvalid') }}
+						v-if="verifyDialog.isbnValid === false"
+						type="warning"
+						density="compact"
+						class="mb-3"
+						>
+						{{ $t('addBook.verifyDialog.isbnInvalid') }}
 				</v-alert>
 
-				<template v-if="verifyDialog.book">
-					<v-alert type="info" dense class="mb-3">
-						{{ $t('addBook.verifyDialog.bookFound') }}
+					<template v-if="verifyDialog.book">
+						<v-alert type="info" density="compact" class="mb-3">
+							{{ $t('addBook.verifyDialog.bookFound') }}
+						</v-alert>
+						<v-list density="compact">
+							<v-list-item 
+								  v-if="verifyDialog.book.title"
+								  :title="$t('addBook.title')"
+								  :subtitle="verifyDialog.book.title"
+								  />
+								<v-list-item 
+								  v-if="verifyDialog.book.authors"
+								  :title="$t('addBook.author')"
+								  :subtitle="verifyDialog.book.authors"
+								  />
+									<v-list-item 
+								  v-if="verifyDialog.book.original_title"
+								  :title="$t('addBook.originalTitle')"
+								  :subtitle="verifyDialog.book.original_title"
+								  />
+										<v-list-item 
+								  v-if="verifyDialog.book.release_year"
+								  :title="$t('addBook.publishYear')"
+								  :subtitle="verifyDialog.book.release_year"
+								  />
+											<v-list-item 
+								  v-if="verifyDialog.book.language"
+								  :title="$t('addBook.language')"
+								  :subtitle="verifyDialog.book.language"
+								  />
+												<v-list-item 
+								  v-if="verifyDialog.book.publishers"
+								  :title="$t('addBook.publisher')"
+								  :subtitle="verifyDialog.book.publishers"
+								  />
+												</v-list>
+					</template>
+
+					<v-alert
+							v-else-if="verifyDialog.notFound"
+							type="info"
+							density="compact"
+							>
+							{{ $t('addBook.verifyDialog.notFound') }}
 					</v-alert>
-					<v-list dense>
-						<v-list-item v-if="verifyDialog.book.title">
-							<v-list-item-content>
-								<v-list-item-title>{{ $t('addBook.title') }}</v-list-item-title>
-								<v-list-item-subtitle>{{ verifyDialog.book.title }}</v-list-item-subtitle>
-							</v-list-item-content>
-						</v-list-item>
-						<v-list-item v-if="verifyDialog.book.authors">
-							<v-list-item-content>
-								<v-list-item-title>{{ $t('addBook.author') }}</v-list-item-title>
-								<v-list-item-subtitle>{{ verifyDialog.book.authors }}</v-list-item-subtitle>
-							</v-list-item-content>
-						</v-list-item>
-						<v-list-item v-if="verifyDialog.book.original_title">
-							<v-list-item-content>
-								<v-list-item-title>{{ $t('addBook.originalTitle') }}</v-list-item-title>
-								<v-list-item-subtitle>{{ verifyDialog.book.original_title }}</v-list-item-subtitle>
-							</v-list-item-content>
-						</v-list-item>
-						<v-list-item v-if="verifyDialog.book.release_year">
-							<v-list-item-content>
-								<v-list-item-title>{{ $t('addBook.publishYear') }}</v-list-item-title>
-								<v-list-item-subtitle>{{ verifyDialog.book.release_year }}</v-list-item-subtitle>
-							</v-list-item-content>
-						</v-list-item>
-						<v-list-item v-if="verifyDialog.book.language">
-							<v-list-item-content>
-								<v-list-item-title>{{ $t('addBook.language') }}</v-list-item-title>
-								<v-list-item-subtitle>{{ verifyDialog.book.language }}</v-list-item-subtitle>
-							</v-list-item-content>
-						</v-list-item>
-						<v-list-item v-if="verifyDialog.book.publishers">
-							<v-list-item-content>
-								<v-list-item-title>{{ $t('addBook.publisher') }}</v-list-item-title>
-								<v-list-item-subtitle>{{ verifyDialog.book.publishers }}</v-list-item-subtitle>
-							</v-list-item-content>
-						</v-list-item>
-					</v-list>
-				</template>
-
-				<v-alert
-					v-else-if="verifyDialog.notFound"
-					type="info"
-					dense
-				>
-					{{ $t('addBook.verifyDialog.notFound') }}
-				</v-alert>
 			</v-card-text>
 			<v-card-actions>
 				<v-spacer></v-spacer>
-				<v-btn color="primary" text @click="verifyDialog.show = false">
+				<v-btn color="primary" variant="text" @click="verifyDialog.show = false">
 					{{ $t('addBook.buttons.close') }}
 				</v-btn>
 			</v-card-actions>
@@ -371,13 +364,22 @@ export default {
 			try {
 				const response = await fetch(`/api/books/validate?${params.toString()}`);
 
-				if (response.status === 200) {
+				if (response.status === 403) {
+					const data = await response.json();
+					console.error('Error initializing component:', data.result);
+					this.showSnackbar(this.$t('addBook.verifyDialog.emptyQuery'), 'error');
+				} else	if (response.status === 400) {
+					this.verifyDialog.isbnValid = false;
+					this.verifyDialog.show = true;
+				} else if (response.status === 409) {
 					const data = await response.json();
 					this.verifyDialog.book = data;
-					this.verifyDialog.isbnValid = data.isbn_valid;
+					console.log( this.verifyDialog.book );
+					this.verifyDialog.isbnValid = true;
 					this.verifyDialog.show = true;
-				} else if (response.status === 206) {
+				} else if (response.status === 204) {
 					this.verifyDialog.notFound = true;
+					this.verifyDialog.isbnValid = true;
 					this.verifyDialog.show = true;
 				}
 			} catch (err) {
@@ -541,7 +543,12 @@ export default {
 
 				// For non-204 responses, try to parse response body
 				const data = await response.json();
-				if (!response.ok) {
+				if (response.status === 406) {
+					this.showSnackbar(
+						this.$t(`book.messages.error${this.isEditMode ? 'Updating' : 'Adding'}Book`, { message: data.errJson }),
+						'error'
+					);
+				} else if (!response.ok) {
 					throw new Error(data.message || `Error ${this.isEditMode ? 'updating' : 'adding'} book (Status: ${response.status})`);
 				}
 			} catch (err) {

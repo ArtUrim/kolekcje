@@ -113,7 +113,8 @@
       "isbnInvalid": "L'ISBN fornito non è valido.",
       "bookFound": "Trovato un libro corrispondente nel database:",
       "notFound": "Nessun libro corrispondente trovato nel database.",
-      "error": "Errore durante la verifica del libro."
+      "error": "Errore durante la verifica del libro.",
+		"emptyQuery": "Nessun libro for verificazione"
     },
 	 "formats": {
 		 "unknown":   "Sconosciuto",
@@ -174,5 +175,11 @@
     "dataIterator": {
       "loadingText": "Caricatore di elementi..."
     }
-  }
+  },
+	"book": {
+		"messages": {
+			"errorUpdatingBook": "Errore per libro updating",
+			"errorAddingBook": "Errore per l ibro assungiere"
+		}
+	}
 }

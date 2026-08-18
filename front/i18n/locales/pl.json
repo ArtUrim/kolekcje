@@ -108,7 +108,8 @@
       "isbnInvalid": "Podany ISBN jest nieprawidłowy.",
       "bookFound": "Znaleziono pasującą książkę w bazie danych:",
       "notFound": "Nie znaleziono pasującej książki w bazie danych.",
-      "error": "Błąd podczas weryfikacji książki."
+      "error": "Błąd podczas weryfikacji książki.",
+		"emptyQuery": "Brak danych książki do weryfikacji"
     },
 	 "formats": {
 		 "unknown":   "Nieznany",
@@ -187,5 +188,12 @@
     "dataIterator": {
       "loadingText": "Ładowanie elementów..."
     }
-  }
+  },
+	"book": {
+		"messages": {
+			"errorUpdatingBook": "Błąd w trakcie aktualizacji książki",
+			"errorAddingBook": "Błąd w trakcie dodawania książki"
+		}
+	}
+
 }
