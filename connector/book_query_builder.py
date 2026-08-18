@@ -153,14 +153,20 @@ class BookQueryBuilder:
         conditions = []
         parameters = []
 
+        otype = 'b.id'
+        order = 'ASC'
+
+        sort_order = None
+        if self.params.get('sortDesc'):
+            sort_order = self.params.get('sortDesc')
+        elif self.params.get('orderDesc'):
+            sort_order = self.params.get('orderDesc')
+        if sort_order and sort_order.lower() == 'desc':
+            order = 'DESC'
+
         if self.params.get('sortBy'):
-            order = 'ASC'
-            sort_order = self.params.get('sortDesc') or self.params.get('orderDesc')
-            if sort_order and sort_order.lower() == 'desc':
-                order = 'DESC'
 
             sort_by = self.params['sortBy'].lower()
-            otype = None
             if sort_by == 'title':
                 otype = 'b.title'
             elif sort_by in ('author', 'authors'):
@@ -186,8 +192,7 @@ class BookQueryBuilder:
             elif sort_by == 'language':
                 otype = 'lang.name'
 
-            if otype:
-                conditions.append(f"ORDER BY {otype} {order}")
+        conditions.append(f"ORDER BY {otype} {order}")
 
         if self.params.get('itemsPerPage'):
             items_pp = int(self.params.get('itemsPerPage'))

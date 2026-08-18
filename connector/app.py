@@ -16,6 +16,8 @@ from table_handler import TableHandler
 
 from book_query_builder import BookQueryBuilder
 
+from isbn  import normalize_isbn, validate_isbn
+
 # Create handlers after app initialization
 publisher_handler = TableHandler('publisher')
 author_handler = TableHandler('Authors')
@@ -113,8 +115,11 @@ def add_books():
                 logging.warn( f"Connection to DB not successful" )
         except Exception as e:
             logging.warn(f"Error processing addbook POST request: {e}")
+            errJson =  { 'error': f"Error processing addbook POST request: {e}" }
             if data and data.get('title'):
                 logging.warn( f"for the book {data['title']}")
+                errJson['book'] = data['title']
+            return jsonify(errJson), 415
     else:
         return jsonify({'error': 'Unsupported Media Type'}), 415
     return Response( status = 204 )
@@ -330,6 +335,48 @@ def book_info():
         if conn:
             conn.close()
 
+@app.route('/books/validate', methods=['GET'])
+def validate_book():
+
+    if len(request.args) == 0:
+        return jsonify( {"result": "empty hint list" } ), 403
+
+    isbn_valid = None
+    if 'isbn' in request.args:
+        isbn_norm = normalize_isbn( request.args.get('isbn') )
+        if isbn_norm:
+            isbn_valid = validate_isbn( isbn_norm )
+
+        if isbn_valid is not True:
+            isbn_result = { "title": "Invalid ISBN" }
+            if not isbn_norm:
+                isbn_result['detail'] = f"Provided ISBN {request.args.get('isbn')} cannot be normalized"
+            else:
+                isbn_result['detail'] = f"Provided ISBN {request.args.get('isbn')} has no valid checksum"
+
+            return jsonify(isbn_result), 400
+
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        book_handler = BookInfoHandler(conn)
+        book_info = book_handler.get_basic_book_info( request.args )
+
+        if not book_info:
+            return '', 204
+
+        return jsonify(book_info[0]), 409
+
+    except Exception as e:
+        logging.error(f"Error validate book: {e}")
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+
+    finally:
+        if conn:
+            conn.close()
+
 @app.route('/books/<int:book_id>', methods=['GET', 'PUT', 'DELETE'])
 def update_book(book_id):
     """Handle book retrieval and updates by ID"""
@@ -404,31 +451,6 @@ def update_book(book_id):
         return jsonify({'error': f'Internal server error: {str(e)}'}), 500
     finally:
         conn.close()
-
-
-@app.route('/api/books/<int:book_id>', methods=['GET'])
-def get_single_book(book_id):
-    """Get single book information by ID"""
-    conn = get_db_connection()
-    if not conn:
-        return jsonify({"error": "Database connection failed"}), 500
-
-    try:
-        book_handler = BookInfoHandler(conn)
-        book_info = book_handler.get_book_info(book_id)
-
-        if not book_info:
-            return jsonify({"error": "Book not found"}), 404
-
-        return jsonify(book_info)
-
-    except Exception as e:
-        logging.error(f"Error fetching book {book_id}: {e}")
-        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
-
-    finally:
-        if conn:
-            conn.close()
 
 # Custom decorator to check Nginx injected headers
 def require_role(allowed_role):

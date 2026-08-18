@@ -7,6 +7,8 @@ from jsonschema import validate, ValidationError
 
 import logging
 
+from isbn import validate_isbn, normalize_isbn
+
 class BookDatabase:
     def __init__(self, connection: mariadb.connections.Connection):
         self.connection = connection
@@ -29,7 +31,7 @@ class BookDatabase:
                 return publisher_id
         else:
             raise ValueError("Invalid publisher data format")
-            
+
         cursor = self.connection.cursor()
         try:
             # Check if publisher exists
@@ -66,7 +68,7 @@ class BookDatabase:
                 return series_id
         else:
             raise ValueError("Invalid series data format")
-            
+
         cursor = self.connection.cursor()
         try:
             cursor.execute("SELECT id FROM series WHERE name = ?", (series_name,))
@@ -127,7 +129,7 @@ class BookDatabase:
         """Get label ID or create new label"""
         if not label_name or not label_name.strip():
             return None
-            
+
         cursor = self.connection.cursor()
         try:
             cursor.execute("SELECT id FROM labels WHERE name = ?", (label_name,))
@@ -146,7 +148,7 @@ class BookDatabase:
         """Get genre ID or create new genre"""
         if not genre_name or not genre_name.strip():
             return None
-            
+
         cursor = self.connection.cursor()
         try:
             cursor.execute("SELECT id FROM genres WHERE name = ?", (genre_name,))
@@ -165,10 +167,10 @@ class BookDatabase:
         """Process array fields that can be either array of objects or simple strings"""
         if not field_data:
             return []
-        
+
         if isinstance(field_data, str):
             return [field_data] if field_data.strip() else []
-        
+
         if isinstance(field_data, list):
             result = []
             for item in field_data:
@@ -179,17 +181,17 @@ class BookDatabase:
                 elif isinstance(item, str) and item.strip():
                     result.append(item)
             return result
-        
+
         return []
 
     def _safe_int_conversion(self, value: Any, field_name: str) -> Optional[int]:
         """Safely convert value to integer"""
         if value is None:
             return None
-        
+
         if isinstance(value, int):
             return value
-        
+
         if isinstance(value, str):
             if not value.strip():
                 return None
@@ -197,17 +199,17 @@ class BookDatabase:
                 return int(value)
             except ValueError:
                 raise ValueError(f"Invalid integer value for {field_name}: {value}")
-        
+
         raise ValueError(f"Cannot convert {type(value)} to integer for {field_name}")
 
     def _extract_year(self, year_data: Any) -> Optional[int]:
         """Extract year from various formats"""
         if year_data is None:
             return None
-        
+
         if isinstance(year_data, int):
             return year_data
-        
+
         if isinstance(year_data, str):
             if not year_data.strip():
                 return None
@@ -217,20 +219,53 @@ class BookDatabase:
                 return int(year_str)
             except ValueError:
                 raise ValueError(f"Invalid year format: {year_data}")
-        
+
         raise ValueError(f"Cannot extract year from {type(year_data)}: {year_data}")
 
     def _extract_isbn(self, isbn_data: Any) -> Optional[int]:
-        """Extract isbn from various formats"""
-        return isbn_data
+        """
+        Extract and validate ISBN from various formats.
+
+        Validates that the ISBN is either:
+        - 10 digits (last digit can be 'X' for checksum)
+        - 13 digits (all numeric, with checksum validation)
+
+        Args:
+            isbn_data: The ISBN value (can be int, str, or None)
+
+        Returns:
+            Normalized ISBN string if valid, None if not provided
+
+        Raises:
+            ValueError: If ISBN format is invalid
+        """
+        if isbn_data is None:
+            return None
+
+        # Convert to string and normalize
+        isbn_str = str(isbn_data).strip()
+        if not isbn_str:
+            return None
+
+        # Normalize the ISBN (remove hyphens/spaces, uppercase X)
+        normalized = normalize_isbn(isbn_str)
+
+        # Validate the ISBN
+        if not validate_isbn(normalized):
+            raise ValueError(
+                f"Invalid ISBN '{isbn_str}': Must be 10 or 13 digits with valid checksum. "
+                f"For ISBN-10, last digit can be 'X'. For ISBN-13, all digits must be numeric."
+            )
+
+        return normalized
 
     def _normalize_format(self, format_value: Any) -> str:
         """Normalize format value"""
         if not format_value:
             return 'unknown'
-        
+
         format_str = str(format_value).lower().strip()
-        
+
         format_mapping = {
             'papier': 'paperback',
             'paperback': 'paperback',
@@ -242,7 +277,7 @@ class BookDatabase:
             'notebook': 'notebook',
             'jacket': 'jacket'
         }
-        
+
         return format_mapping.get(format_str, 'unknown')
 
     def _ensure_language_exists(self, language_id: str) -> str:
@@ -308,24 +343,24 @@ class BookDatabase:
             title = str(book_data['title']).strip()
             original_title = book_data.get('originalTitle')
             original_title = str(original_title).strip() if original_title else None
-            
+
             # Handle publish year - try both publishYear and firstPublishYear
             publish_year = self._extract_year(book_data.get('publishYear'))
             firstPublYear = self._extract_year(book_data.get('firstPublishYear'))
             isbn = self._extract_isbn(book_data.get('isbn'))
-            
+
             format_value = self._normalize_format(book_data.get('format'))
             pages = self._safe_int_conversion(book_data.get('pages'), 'pages')
-            
+
             description = book_data.get('description', '')
             description = str(description) if description else ''
-            
+
             notes = book_data.get('notes', '')
             notes = str(notes) if notes else ''
-            
+
             translator = book_data.get('translator')
             translator = str(translator).strip() if translator else None
-            
+
             language_id = self._get_default_language(book_data.get('language'))
             self._ensure_language_exists(language_id)
 
@@ -446,15 +481,11 @@ class BookDatabase:
                     print(f"  {context_path}: {context_error.message}")
             raise
 
-    def insert_book_from_json_file(self, json_file_path: str, schema_path: str = 'schemaBookNew.json') -> int:
+    def insert_book_from_json_file(self, book_date: Dict[str, Any], schema_path: str = 'schemaBookNew.json') -> int:
         """Insert book data from JSON file with schema validation and better error handling"""
         try:
             # Load the JSON schema
             schema = self._load_schema(schema_path)
-
-            # Load and parse the book data
-            with open(json_file_path, 'r', encoding='utf-8') as file:
-                book_data = json.load(file)
 
             # Validate the book data against the schema
             self._validate_book_data(book_data, schema)
@@ -467,6 +498,7 @@ class BookDatabase:
             raise
         except json.JSONDecodeError as e:
             print(f"Error: Invalid JSON format in {json_file_path}: {e}")
+            logging.error(f"Error: Invalid JSON format in {json_file_path}: {e}")
             raise
         except ValidationError:
             print(f"Error: JSON data in {json_file_path} does not match the required schema")
@@ -519,26 +551,26 @@ class BookDatabase:
 def migrate_old_format_to_new(old_data: Dict[str, Any]) -> Dict[str, Any]:
     """Helper function to migrate old data format to new expected format"""
     new_data = {}
-    
+
     # Copy direct fields
-    direct_fields = ['isbn', 'title', 'publishYear', 'firstPublishYear', 'format', 
+    direct_fields = ['isbn', 'title', 'publishYear', 'firstPublishYear', 'format',
                     'pages', 'description', 'notes', 'originalTitle', 'translator', 'language']
-    
+
     for field in direct_fields:
         if field in old_data:
             new_data[field] = old_data[field]
-    
+
     # Handle fields that need to be converted to array format
     # Note: This assumes we have default values since the old format doesn't have these
     if 'author' not in old_data:
         new_data['author'] = [{"id": None, "title": "Unknown Author", "isCustom": True}]
-    
+
     if 'publisher' not in old_data:
         new_data['publisher'] = [{"id": None, "title": "Unknown Publisher", "isCustom": True}]
-    
+
     if 'genre' not in old_data:
         new_data['genre'] = [{"id": None, "title": "Unknown", "isCustom": True}]
-    
+
     return new_data
 
 if __name__ == "__main__":
@@ -572,7 +604,7 @@ if __name__ == "__main__":
 
         # Migrate old format to new format
         migrated_data = migrate_old_format_to_new(sample_old_data)
-        
+
         # Insert the migrated data
         book_id = db.insert_book_from_dict(migrated_data, schema_path=None)  # Skip schema validation for migration
         print(f"Successfully inserted migrated book with ID: {book_id}")
@@ -587,8 +619,12 @@ if __name__ == "__main__":
 
         # Process each JSON file
         for json_file in json_files:
+
+            # Load and parse the book data
+            with open(json_file, 'r', encoding='utf-8') as file:
+                book_data = json.load(file)
             try:
-                book_id = db.insert_book_from_json_file(json_file)
+                book_id = db.insert_book_from_json_file(book_data)
                 print(f"Successfully inserted book from {json_file} with ID: {book_id}")
             except Exception as e:
                 print(f"Error processing {json_file}: {e}")

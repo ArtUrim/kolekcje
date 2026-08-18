@@ -1,4 +1,6 @@
-# Do zrobienia na branczy feature/new-details
+# Do zrobienia 
 
-1. W polu edycji nie pojawiają się Autorzy, wydawcy, etykiety oraz Gatunki - czyli multipola
-1. Jeśli nie ma tytułu oryginalnego - nic nie powinno się wyśwuetlać, a nie *N/A*
+1. Podtytuł (w przypadku publikacji technicznych ważne)
+1. Sprawdź - możliwość sprawdzenia, czy dana książka jest już w bazie danych
+1. Kolejność pól przy nowej lub edycji książki
+1. 
