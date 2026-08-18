@@ -176,7 +176,7 @@
 				</v-alert>
 
 					<template v-if="verifyDialog.book">
-						<v-alert type="info" density="compact" class="mb-3">
+						<v-alert color="#C51162" density="compact" class="mb-3">
 							{{ $t('addBook.verifyDialog.bookFound') }}
 						</v-alert>
 						<v-list density="compact">
@@ -374,7 +374,6 @@ export default {
 				} else if (response.status === 409) {
 					const data = await response.json();
 					this.verifyDialog.book = data;
-					console.log( this.verifyDialog.book );
 					this.verifyDialog.isbnValid = true;
 					this.verifyDialog.show = true;
 				} else if (response.status === 204) {
