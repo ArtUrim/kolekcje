@@ -108,6 +108,8 @@
 </template>
 
 <script>
+import BookInfo from '../book/BookInfo.vue'
+
 const toArray = (value) => {
   if (Array.isArray(value)) {
     return value.filter(Boolean)
