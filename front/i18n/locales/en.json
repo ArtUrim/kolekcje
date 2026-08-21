@@ -87,6 +87,7 @@
     "notes": "Notes",
     "series": "Series",
     "originalTitle": "Original Title",
+    "subtitle": "Subtitle",
     "translator": "Translator",
     "language": "Language",
 	 "additional": "Additional {label}",

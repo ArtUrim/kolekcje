@@ -87,6 +87,7 @@
     "notes": "Note",
     "series": "Serie",
     "originalTitle": "Titolo originale",
+    "subtitle": "Sottotitolo",
     "translator": "Traduttore",
     "language": "Lingua",
 	 "additional": "Ulteriore {label}",

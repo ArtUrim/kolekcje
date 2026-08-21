@@ -9,7 +9,11 @@
 					</v-col>
 
 					<v-col cols="12" sm="6">
-						<v-text-field v-model="title" :label="$t('addBook.title')" :rules="titleRules" required></v-text-field>
+						<ExpandableTextField
+								v-model="titleFields"
+								:labels="[$t('addBook.title'), $t('addBook.originalTitle'), $t('addBook.subtitle')]"
+								:max-fields="3"
+								/>
 					</v-col>
 
 					<v-col cols="12" sm="6">
@@ -103,13 +107,6 @@
 					<v-col cols="12" sm="6">
 						<AutocompleteField v-model="series" :label="$t('addBook.series')" :placeholder="$t('addBook.placeholders.series')"
 												 api-endpoint="/api/series" />
-					</v-col>
-
-					<v-col cols="12" sm="6">
-						<v-text-field
-								v-model="originalTitle"
-								:label="$t('addBook.originalTitle')"
-								></v-text-field>
 					</v-col>
 
 					<v-col cols="12" sm="6">
@@ -278,6 +275,7 @@ export default {
 		notes: '',
 		series: '',
 		originalTitle: '',
+		subtitle: '',
 		translator: '',
 		language: '',
 		genre: [],
@@ -300,6 +298,16 @@ export default {
 	}),
 
 	computed: {
+		titleFields: {
+			get() {
+				return [this.title, this.originalTitle, this.subtitle];
+			},
+			set(value) {
+				this.title = value[0] || '';
+				this.originalTitle = value[1] || '';
+				this.subtitle = value[2] || '';
+			}
+		},
 		isEditMode() {
 			return !this.forceAddMode && !!(this.bookId || this.initialBookData);
 		},
@@ -462,6 +470,7 @@ export default {
 				isCustom: false
 			} : '');
 			this.originalTitle = bookData.originalTitle || bookData.original_title || '';
+			this.subtitle = bookData.subtitle || '';
 			this.translator = bookData.translator || '';
 			this.language = bookData.language || bookData.language_name || '';
 			this.genre = (Array.isArray(bookData.genre) && bookData.genre.length > 0)
@@ -486,6 +495,7 @@ export default {
 				description: this.description,
 				notes: this.notes,
 				originalTitle: this.originalTitle,
+				subtitle: this.subtitle,
 				translator: this.translator,
 				language: this.language,
 				author: this.author,
@@ -581,6 +591,7 @@ export default {
 				this.notes = '';
 				this.series = '';
 				this.originalTitle = '';
+				this.subtitle = '';
 				this.translator = '';
 				this.language = '';
 				this.genre = [];
@@ -696,6 +707,7 @@ export default {
 				description: this.description,
 				notes: this.notes,
 				originalTitle: this.originalTitle,
+				subtitle: this.subtitle,
 				translator: this.translator,
 				language: this.language,
 			};
