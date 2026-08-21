@@ -81,7 +81,7 @@
 					/>
 				</v-card-title>
 				<v-card-text class="pa-0">
-					<AddBook @book-added="handleBookAdded" />
+					<BookAdd @book-added="handleBookAdded" />
 				</v-card-text>
 			</v-card>
 		</v-dialog>

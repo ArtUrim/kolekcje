@@ -1,6 +1,6 @@
 <template>  
   <div>  
-	  <AddBook/>
+	  <BookAdd/>
   </div>  
 </template>  
 
