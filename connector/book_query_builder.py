@@ -7,6 +7,7 @@ class BookQueryBuilder:
             'id': 'b.id',
             'isbn': 'b.isbn',
             'title': 'b.title',
+            'subtitle': 'b.subtitle',
             'release_date': 'b.release_date',
             'first_polish_release_date': 'b.first_polish_release_date',
             'format': 'b.format',
@@ -85,6 +86,10 @@ class BookQueryBuilder:
         if self.params.get('title'):
             conditions.append("b.title LIKE ?")
             parameters.append(f"%{self.params['title']}%")
+
+        if self.params.get('subtitle'):
+            conditions.append("b.subtitle LIKE ?")
+            parameters.append(f"%{self.params['subtitle']}%")
 
         if self.params.get('publisher'):
             conditions.append("EXISTS ( SELECT 1 FROM bookPublishers bp2 JOIN publisher p2 ON bp2.publisher_id = p2.id WHERE bp2.book_id = b.id AND p2.name LIKE ? )")
@@ -169,6 +174,8 @@ class BookQueryBuilder:
             sort_by = self.params['sortBy'].lower()
             if sort_by == 'title':
                 otype = 'b.title'
+            elif sort_by == 'subtitle':
+                otype = 'b.subtitle'
             elif sort_by in ('author', 'authors'):
                 otype = 'author'
             elif sort_by == 'publisher':

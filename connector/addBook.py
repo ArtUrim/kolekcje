@@ -341,6 +341,8 @@ class BookDatabase:
 
             # Process other fields with proper null handling
             title = str(book_data['title']).strip()
+            subtitle = book_data.get('subtitle')
+            subtitle = str(subtitle).strip() if subtitle else None
             original_title = book_data.get('originalTitle')
             original_title = str(original_title).strip() if original_title else None
 
@@ -370,14 +372,15 @@ class BookDatabase:
             # Insert book
             query = """
                 INSERT INTO Books (
-                    title, original_title, release_date, format, note,
+                    title, subtitle, original_title, release_date, format, note,
                     pages, description, series_id, translator,
                     language_id, first_polish_release_date, isbn, size
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
 
             values = (
                 title,
+                subtitle,
                 original_title,
                 publish_year,
                 format_value,
