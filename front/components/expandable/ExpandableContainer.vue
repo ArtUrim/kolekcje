@@ -40,7 +40,7 @@
 								/>
 					</v-card-title>
 					<v-card-text class="pa-0">
-						<AddBook
+						<BookAdd
 								:book-id="bookId"
 								:initial-book-data="extractedBookData"
 								@book-updated="onBookUpdated"
@@ -66,7 +66,7 @@
 								/>
 					</v-card-title>
 					<v-card-text class="pa-0">
-						<AddBook
+						<BookAdd
 								:initial-book-data="cloneBookData"
 								:force-add-mode="true"
 								@book-added="onBookCloned"
@@ -194,6 +194,7 @@ export default {
         return {
           title: source?.title || '',
           originalTitle: source?.original_title || '',
+          subtitle: source?.subtitle || '',
           authors: toArray(source?.authors_details?.map((author) => author?.name) || source?.authors),
           isbn: source?.isbn || '',
           releaseDate: source?.release_date || '',
@@ -215,6 +216,7 @@ export default {
       return {
         title: getCardValue(this.cards, 'Title'),
         originalTitle: getCardValue(this.cards, 'Title', 'expandedText'),
+        subtitle: getCardValue(this.cards, 'Title', 'expandedText'),
         authors: toArray(getCardValue(this.cards, 'Authors')),
         isbn: getCardValue(this.longCards, 'Details').match(/ISBN:\s*([^|]+)/)?.[1]?.trim() || '',
         releaseDate: getCardValue(this.longCards, 'Details').match(/Year:\s*([^|]+)/)?.[1]?.trim() || '',

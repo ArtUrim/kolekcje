@@ -90,7 +90,7 @@
     "subtitle": "Sottotitolo",
     "translator": "Traduttore",
     "language": "Lingua",
-	 "additional": "Ulteriore {label}",
+	 "additional": "{label}",
     "etykieta": "Etichetta",
     "placeholders": {
       "author": "Seleziona o aggiungi autore(i)",

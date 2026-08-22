@@ -4,11 +4,6 @@
 			<v-form ref="form" v-model="valid" @submit.prevent>
 				<v-row>
 					<v-col cols="12" sm="6">
-						<v-text-field v-model="isbn" :label="$t('addBook.isbn')" :rules="isbnRules"
-										  hint="10 or 13 characters"></v-text-field>
-					</v-col>
-
-					<v-col cols="12" sm="6">
 						<ExpandableTextField
 								v-model="titleFields"
 								:labels="[$t('addBook.title'), $t('addBook.originalTitle'), $t('addBook.subtitle')]"
@@ -35,73 +30,8 @@
 					</v-col>
 
 					<v-col cols="12" sm="6">
-						<GenreCheck v-model="genre" :label="$t('addBook.genre')" :placeholder="$t('addBook.placeholders.genre')"
-										api-endpoint="/api/genres" />
-					</v-col>
-
-					<v-col cols="12" sm="6">
-						<GenreCheck v-model="label" :label="$t('addBook.etykieta')" :placeholder="$t('addBook.placeholders.etykieta')"
-										api-endpoint="/api/labels" />
-					</v-col>
-
-
-					<v-col cols="12" sm="6">
-						<v-text-field
-								v-model="publishYear"
-								:label="$t('addBook.publishYear')"
-								type="number"
-								:rules="yearRules"
-								></v-text-field>
-					</v-col>
-
-					<v-col cols="12" sm="6">
-						<v-text-field
-								v-model="firstPublishYear"
-								:label="$t('addBook.firstPublishYear')"
-								type="number"
-								:rules="yearRules"
-								></v-text-field>
-					</v-col>
-
-					<v-col cols="12" sm="6">
-						<v-select
-								v-model="format"
-								:items="formatOptions"
-								:label="$t('addBook.format')"
-								></v-select>
-					</v-col>
-
-					<v-col cols="12" sm="6">
-						<v-text-field
-								v-model="pages"
-								:label="$t('addBook.pages')"
-								type="number"
-								:rules="pagesRules"
-								></v-text-field>
-					</v-col>
-
-					<v-col cols="12" sm="6">
-						<v-select
-								v-model="booksize"
-								:items="sizeOptions"
-								:label="$t('addBook.size')"
-								></v-select>
-					</v-col>
-
-					<v-col cols="12">
-						<v-textarea
-								v-model="description"
-								:label="$t('addBook.description')"
-								rows="3"
-								></v-textarea>
-					</v-col>
-
-					<v-col cols="12">
-						<v-textarea
-								v-model="notes"
-								:label="$t('addBook.notes')"
-								rows="3"
-								></v-textarea>
+						<v-text-field v-model="isbn" :label="$t('addBook.isbn')" :rules="isbnRules"
+										  hint="10 or 13 characters"></v-text-field>
 					</v-col>
 
 					<v-col cols="12" sm="6">
@@ -121,6 +51,67 @@
 								v-model="language"
 								:label="$t('addBook.language')"
 								></v-text-field>
+					</v-col>
+
+					<v-col cols="12" sm="6">
+						<ExpandableTextField
+								v-model="yearFields"
+								:labels="[$t('addBook.publishYear'), $t('addBook.firstPublishYear')]"
+								:max-fields="2"
+								type="number"
+								:rules="yearRules"
+								/>
+					</v-col>
+
+					<v-col cols="12" sm="6">
+						<v-text-field
+								v-model="pages"
+								:label="$t('addBook.pages')"
+								type="number"
+								:rules="pagesRules"
+								></v-text-field>
+					</v-col>
+
+					<v-col cols="12" sm="6">
+						<v-select
+								v-model="format"
+								:items="formatOptions"
+								:label="$t('addBook.format')"
+								></v-select>
+					</v-col>
+
+					<v-col cols="12" sm="6">
+						<v-select
+								v-model="booksize"
+								:items="sizeOptions"
+								:label="$t('addBook.size')"
+								></v-select>
+					</v-col>
+
+					<v-col cols="12" sm="6">
+						<GenreCheck v-model="genre" :label="$t('addBook.genre')" :placeholder="$t('addBook.placeholders.genre')"
+										api-endpoint="/api/genres" />
+					</v-col>
+
+					<v-col cols="12" sm="6">
+						<GenreCheck v-model="label" :label="$t('addBook.etykieta')" :placeholder="$t('addBook.placeholders.etykieta')"
+										api-endpoint="/api/labels" />
+					</v-col>
+
+					<v-col cols="12">
+						<v-textarea
+								v-model="description"
+								:label="$t('addBook.description')"
+								rows="3"
+								></v-textarea>
+					</v-col>
+
+					<v-col cols="12">
+						<v-textarea
+								v-model="notes"
+								:label="$t('addBook.notes')"
+								rows="3"
+								></v-textarea>
 					</v-col>
 				</v-row>
 
@@ -306,6 +297,15 @@ export default {
 				this.title = value[0] || '';
 				this.originalTitle = value[1] || '';
 				this.subtitle = value[2] || '';
+			}
+		},
+		yearFields: {
+			get() {
+				return [this.publishYear, this.firstPublishYear];
+			},
+			set(value) {
+				this.publishYear = value[0] || '';
+				this.firstPublishYear = value[1] || '';
 			}
 		},
 		isEditMode() {

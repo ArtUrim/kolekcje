@@ -84,7 +84,7 @@
     "subtitle": "Podtytuł",
     "translator": "Tłumacz",
     "language": "Język",
-	 "additional": "Dodatkowy {label}",
+	 "additional": "{label}",
     "placeholders": {
       "author": "Wybierz lub dodaj autora (bądź autorów)",
       "publisher": "Wybierz lub dodaj wydawcę",

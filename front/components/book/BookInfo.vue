@@ -4,6 +4,7 @@
       <div>
         <div class="book-title">{{ book.title || '' }}</div>
         <div v-if="book.originalTitle" class="original-title">{{book.originalTitle}}</div>
+        <div v-if="book.subtitle" class="sub-title">{{book.subtitle}}</div>
       </div>
       <v-btn
         icon="mdi-delete"
@@ -31,6 +32,22 @@
     <div class="section-title">{{ $t('bookinfo.details') }}</div>
     <div class="meta-grid">
       <div class="meta-item">
+        <div class="meta-label">{{ $t('bookinfo.isbn') }}</div>
+        <div class="meta-value">{{ book.isbn || '' }}</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">{{ $t('bookinfo.serie') }}</div>
+        <div class="meta-value">{{ book.serie || '' }}</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">{{ $t('bookinfo.translator') }}</div>
+        <div class="meta-value">{{ book.translator || '' }}</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">{{ $t('bookinfo.language') }}</div>
+        <div class="meta-value">{{ book.language || '' }}</div>
+      </div>
+      <div class="meta-item">
         <div class="meta-label">{{ $t('bookinfo.releaseDate') }}</div>
         <div class="meta-value">{{ book.releaseDate || '' }}</div>
       </div>
@@ -43,28 +60,12 @@
         <div class="meta-value">{{ book.pages || '' }}</div>
       </div>
       <div class="meta-item">
-        <div class="meta-label">{{ $t('bookinfo.isbn') }}</div>
-        <div class="meta-value">{{ book.isbn || '' }}</div>
-      </div>
-      <div class="meta-item">
         <div class="meta-label">{{ $t('bookinfo.format') }}</div>
         <div class="meta-value">{{ book.format ? $t('addBook.formats.' + book.format) : '' }}</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">{{ $t('bookinfo.size') }}</div>
         <div class="meta-value">{{ book.size ? $t('addBook.sizes.' + book.size) : '' }}</div>
-      </div>
-      <div class="meta-item">
-        <div class="meta-label">{{ $t('bookinfo.language') }}</div>
-        <div class="meta-value">{{ book.language || '' }}</div>
-      </div>
-      <div class="meta-item">
-        <div class="meta-label">{{ $t('bookinfo.translator') }}</div>
-        <div class="meta-value">{{ book.translator || '' }}</div>
-      </div>
-      <div class="meta-item">
-        <div class="meta-label">{{ $t('bookinfo.serie') }}</div>
-        <div class="meta-value">{{ book.serie || '' }}</div>
       </div>
     </div>
 
@@ -99,6 +100,7 @@ import { computed } from 'vue';
 interface BookInfoData {
   title: string;
   originalTitle: string;
+  subtitle: string;
   authors: string[];
   isbn: string;
   releaseDate: number | string;
@@ -134,6 +136,7 @@ const openDeleteDialog = () => {
 const normalizedBook = computed<BookInfoData>(() => ({
   title: props.book.title ?? '',
   originalTitle: props.book.originalTitle ?? '',
+  subtitle: props.book.subtitle ?? '',
   authors: props.book.authors ?? [],
   isbn: props.book.isbn ?? '',
   releaseDate: props.book.releaseDate ?? '',
@@ -202,6 +205,12 @@ const displayPublishers = computed(() => (book.value.publishers.length ?  book.v
   font-size: 0.9rem;
   color: #888;
   font-style: italic;
+  margin-top: 4px;
+}
+
+.sub-title {
+  font-size: 0.9rem;
+  color: #666;
   margin-top: 4px;
 }
 

@@ -6,6 +6,8 @@
       <v-text-field
         v-model="values[0]"
         :label="getFieldLabel(0)"
+        :type="type"
+        :rules="rules"
         hide-details="auto"
         @update:model-value="emitUpdate"
       ></v-text-field>
@@ -27,6 +29,8 @@
           <v-text-field
             v-model="values[index]"
             :label="getFieldLabel(index)"
+            :type="type"
+            :rules="rules"
             hide-details="auto"
             @update:model-value="emitUpdate"
           ></v-text-field>
@@ -56,6 +60,16 @@ const props = defineProps({
     type: Number,
     default: 3,
     validator: (val) => [2, 3].includes(val)
+  },
+  // Input type for the text fields (e.g. 'text', 'number')
+  type: {
+    type: String,
+    default: 'text'
+  },
+  // Validation rules applied to each text field
+  rules: {
+    type: Array,
+    default: () => []
   }
 })
 
