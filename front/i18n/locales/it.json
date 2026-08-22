@@ -1,5 +1,5 @@
 {
-  "welcome": "Benvenuto nella pagina kolekcje",
+  "welcome": "Benvenuto nella pagina",
   "shortDescription": "Applicazione per organizzare collezioni (libri, album musicali e film).",
   "contact": "Contatto",
   "contactInfo": {
@@ -58,6 +58,7 @@
 	 "colSeries": "Serie",
 	 "colSize": "Grandezza",
 	 "colTitle": "Titolo",
+	 "colSubtitle": "Sottotitolo",
 	 "colTranslator": "Traduttore",
 	 "colYear": "Anno di pubblicazione",
 	 "filtersSelected": "Filtri salvari",
