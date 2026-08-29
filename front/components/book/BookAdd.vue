@@ -4,12 +4,11 @@
 			<v-form ref="form" v-model="valid" @submit.prevent>
 				<v-row>
 					<v-col cols="12" sm="6">
-						<v-text-field v-model="isbn" :label="$t('addBook.isbn')" :rules="isbnRules"
-										  hint="10 or 13 characters"></v-text-field>
-					</v-col>
-
-					<v-col cols="12" sm="6">
-						<v-text-field v-model="title" :label="$t('addBook.title')" :rules="titleRules" required></v-text-field>
+						<ExpandableTextField
+								v-model="titleFields"
+								:labels="[$t('addBook.title'), $t('addBook.subtitle'), $t('addBook.originalTitle')]"
+								:max-fields="3"
+								/>
 					</v-col>
 
 					<v-col cols="12" sm="6">
@@ -31,40 +30,37 @@
 					</v-col>
 
 					<v-col cols="12" sm="6">
-						<GenreCheck v-model="genre" :label="$t('addBook.genre')" :placeholder="$t('addBook.placeholders.genre')"
-										api-endpoint="/api/genres" />
+						<v-text-field v-model="isbn" :label="$t('addBook.isbn')" :rules="isbnRules"
+										  hint="10 or 13 characters"></v-text-field>
 					</v-col>
 
 					<v-col cols="12" sm="6">
-						<GenreCheck v-model="label" :label="$t('addBook.etykieta')" :placeholder="$t('addBook.placeholders.etykieta')"
-										api-endpoint="/api/labels" />
+						<AutocompleteField v-model="series" :label="$t('addBook.series')" :placeholder="$t('addBook.placeholders.series')"
+												 api-endpoint="/api/series" />
 					</v-col>
-
 
 					<v-col cols="12" sm="6">
 						<v-text-field
-								v-model="publishYear"
-								:label="$t('addBook.publishYear')"
-								type="number"
-								:rules="yearRules"
+								v-model="translator"
+								:label="$t('addBook.translator')"
 								></v-text-field>
 					</v-col>
 
 					<v-col cols="12" sm="6">
 						<v-text-field
-								v-model="firstPublishYear"
-								:label="$t('addBook.firstPublishYear')"
-								type="number"
-								:rules="yearRules"
+								v-model="language"
+								:label="$t('addBook.language')"
 								></v-text-field>
 					</v-col>
 
 					<v-col cols="12" sm="6">
-						<v-select
-								v-model="format"
-								:items="formatOptions"
-								:label="$t('addBook.format')"
-								></v-select>
+						<ExpandableTextField
+								v-model="yearFields"
+								:labels="[$t('addBook.publishYear'), $t('addBook.firstPublishYear')]"
+								:max-fields="2"
+								type="number"
+								:rules="yearRules"
+								/>
 					</v-col>
 
 					<v-col cols="12" sm="6">
@@ -78,10 +74,28 @@
 
 					<v-col cols="12" sm="6">
 						<v-select
+								v-model="format"
+								:items="formatOptions"
+								:label="$t('addBook.format')"
+								></v-select>
+					</v-col>
+
+					<v-col cols="12" sm="6">
+						<v-select
 								v-model="booksize"
 								:items="sizeOptions"
 								:label="$t('addBook.size')"
 								></v-select>
+					</v-col>
+
+					<v-col cols="12" sm="6">
+						<GenreCheck v-model="genre" :label="$t('addBook.genre')" :placeholder="$t('addBook.placeholders.genre')"
+										api-endpoint="/api/genres" />
+					</v-col>
+
+					<v-col cols="12" sm="6">
+						<GenreCheck v-model="label" :label="$t('addBook.etykieta')" :placeholder="$t('addBook.placeholders.etykieta')"
+										api-endpoint="/api/labels" />
 					</v-col>
 
 					<v-col cols="12">
@@ -98,32 +112,6 @@
 								:label="$t('addBook.notes')"
 								rows="3"
 								></v-textarea>
-					</v-col>
-
-					<v-col cols="12" sm="6">
-						<AutocompleteField v-model="series" :label="$t('addBook.series')" :placeholder="$t('addBook.placeholders.series')"
-												 api-endpoint="/api/series" />
-					</v-col>
-
-					<v-col cols="12" sm="6">
-						<v-text-field
-								v-model="originalTitle"
-								:label="$t('addBook.originalTitle')"
-								></v-text-field>
-					</v-col>
-
-					<v-col cols="12" sm="6">
-						<v-text-field
-								v-model="translator"
-								:label="$t('addBook.translator')"
-								></v-text-field>
-					</v-col>
-
-					<v-col cols="12" sm="6">
-						<v-text-field
-								v-model="language"
-								:label="$t('addBook.language')"
-								></v-text-field>
 					</v-col>
 				</v-row>
 
@@ -278,6 +266,7 @@ export default {
 		notes: '',
 		series: '',
 		originalTitle: '',
+		subtitle: '',
 		translator: '',
 		language: '',
 		genre: [],
@@ -300,6 +289,25 @@ export default {
 	}),
 
 	computed: {
+		titleFields: {
+			get() {
+				return [this.title, this.subtitle, this.originalTitle];
+			},
+			set(value) {
+				this.title = value[0] || '';
+				this.subtitle = value[2] || '';
+				this.originalTitle = value[1] || '';
+			}
+		},
+		yearFields: {
+			get() {
+				return [this.publishYear, this.firstPublishYear];
+			},
+			set(value) {
+				this.publishYear = value[0] || '';
+				this.firstPublishYear = value[1] || '';
+			}
+		},
 		isEditMode() {
 			return !this.forceAddMode && !!(this.bookId || this.initialBookData);
 		},
@@ -462,6 +470,7 @@ export default {
 				isCustom: false
 			} : '');
 			this.originalTitle = bookData.originalTitle || bookData.original_title || '';
+			this.subtitle = bookData.subtitle || '';
 			this.translator = bookData.translator || '';
 			this.language = bookData.language || bookData.language_name || '';
 			this.genre = (Array.isArray(bookData.genre) && bookData.genre.length > 0)
@@ -486,6 +495,7 @@ export default {
 				description: this.description,
 				notes: this.notes,
 				originalTitle: this.originalTitle,
+				subtitle: this.subtitle,
 				translator: this.translator,
 				language: this.language,
 				author: this.author,
@@ -581,6 +591,7 @@ export default {
 				this.notes = '';
 				this.series = '';
 				this.originalTitle = '';
+				this.subtitle = '';
 				this.translator = '';
 				this.language = '';
 				this.genre = [];
@@ -696,6 +707,7 @@ export default {
 				description: this.description,
 				notes: this.notes,
 				originalTitle: this.originalTitle,
+				subtitle: this.subtitle,
 				translator: this.translator,
 				language: this.language,
 			};

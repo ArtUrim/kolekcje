@@ -2,6 +2,7 @@ export interface Book {
   id?: number;
   isbn?: string | null;
   title?: string;
+  subtitle?: string | null;
   release_date?: number | string | null;
   first_polish_release_date?: number | string | null;
   format?: 'unknown' | 'hardback' | 'paperback' | 'ebook' | 'jacket' | 'notebook';
@@ -27,6 +28,7 @@ export interface BookResponse {
 
 export interface SearchParams {
   title?: string;
+  subtitle?: string;
   author?: string;
   publisher?: string;
   serie?: string;

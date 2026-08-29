@@ -1,5 +1,5 @@
 {
-  "welcome": "Welcome on page kolekcje",
+  "welcome": "Welcome on page",
   "shortDescription": "Application for organizing collections (books, music albums and movies).",
   "contact": "Contact",
   "contactInfo": {
@@ -58,6 +58,7 @@
 	 "colSeries": "Serie",
 	 "colSize": "Size",
 	 "colTitle": "Title",
+	 "colSubtitle": "Subtitle",
 	 "colTranslator": "Translator",
 	 "colYear": "Edition year",
 	 "filtersSelected": "Selected filters",
@@ -87,9 +88,10 @@
     "notes": "Notes",
     "series": "Series",
     "originalTitle": "Original Title",
+    "subtitle": "Subtitle",
     "translator": "Translator",
     "language": "Language",
-	 "additional": "Additional {label}",
+	 "additional": "{label}",
     "placeholders": {
       "author": "Select or add author(s)",
       "publisher": "Select or add a publisher",
@@ -140,7 +142,7 @@
 		"details": "Details",
 		"collapse": "Collapse",
 		"releaseDate": "Release year",
-		"firstPolishRelease": "First release",
+		"firstPolishRelease": "First",
 		"pages": "Pages",
 		"isbn": "ISBN",
 		"format": "Format",

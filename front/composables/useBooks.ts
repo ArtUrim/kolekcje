@@ -66,6 +66,7 @@ export const useBooks = () => {
 		// console.log( options );
       
       if (options.title) queryParams.append('title', options.title);
+      if (options.subtitle) queryParams.append('subtitle', options.subtitle);
       if (options.author) queryParams.append('author', options.author);
       if (options.publisher) queryParams.append('publisher', options.publisher);
       if (options.serie) queryParams.append('serie', options.serie);

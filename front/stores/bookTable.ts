@@ -19,6 +19,7 @@ export interface BookColumnDef {
 /** All columns that CAN appear in the table (derived from KatalogMariaDB.sql). */
 export const ALL_BOOK_COLUMNS: BookColumnDef[] = [
   { key: 'title',                     titleI18n: 'books.colTitle',              sortable: true,  align: 'start'  },
+  { key: 'subtitle',                  titleI18n: 'books.colSubtitle',           sortable: true,  align: 'start'  },
   { key: 'author',                    titleI18n: 'books.colAuthor',             sortable: true,  align: 'start'  },
   { key: 'release_date',              titleI18n: 'books.colYear',               sortable: true,  align: 'center' },
   { key: 'first_polish_release_date', titleI18n: 'books.colFirstPolishYear',    sortable: true,  align: 'center' },
@@ -40,7 +41,7 @@ export const ALL_BOOK_COLUMNS: BookColumnDef[] = [
  * These are the only columns that appear in BookFilterSelector.
  */
 export const FILTERABLE_KEYS: string[] = [
-  'title', 'author', 'publisher', 'series_name',
+  'title', 'subtitle', 'author', 'publisher', 'series_name',
   'isbn', 'original_title', 'translator',
   'genres', 'labels', 'language',
 ]
@@ -51,6 +52,7 @@ export const FILTERABLE_KEYS: string[] = [
  */
 export const COLUMN_TO_SEARCH_KEY: Record<string, string> = {
   title:         'title',
+  subtitle:      'subtitle',
   author:        'author',
   publisher:     'publisher',
   series_name:   'serie',

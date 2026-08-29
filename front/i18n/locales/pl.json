@@ -1,5 +1,5 @@
 {
-	"welcome": "Witamy na stronie kolekcje",
+	"welcome": "Witamy na stronie",
 	"shortDescription": "Aplikacja służąca do porządkowania kolekcji (książek, płyt z muzyką i filmów).",
 	"contact": "Kontakt",
 	"leftMenu": {
@@ -50,6 +50,7 @@
 		"colSeries": "Seria",
 		"colSize": "Rozmiar",
 		"colTitle": "Tytuł",
+		"colSubtitle": "Podtytuł",
 		"colTranslator": "Tłumacz",
 		"colYear": "Rok wydania",
 		"filtersSelected": "Zapisane filtry",
@@ -74,16 +75,17 @@
     "genre": "Gatunek",
     "publishYear": "Data wydania",
     "firstPublishYear": "Data pierwszego wydania",
-    "format": "Format",
-    "size": "Rozmiar",
+    "format": "Oprawa",
+    "size": "Wielkość",
     "pages": "Liczba stron",
     "description": "Opis",
     "notes": "Uwagi",
     "series": "Seria",
     "originalTitle": "Tytuł oryginalny",
+    "subtitle": "Podtytuł",
     "translator": "Tłumacz",
     "language": "Język",
-	 "additional": "Dodatkowy {label}",
+	 "additional": "{label}",
     "placeholders": {
       "author": "Wybierz lub dodaj autora (bądź autorów)",
       "publisher": "Wybierz lub dodaj wydawcę",
@@ -120,32 +122,32 @@
 		 "notebook":  "Zeszyt"
 	 },
 	 "sizes": {
-		 "none": "żaden",
+		 "none": "nieokreślona",
 		 "mini": "mini",
-		 "normal": "normalny",
-		 "scientific": "naukowy",
+		 "normal": "normalna",
+		 "scientific": "naukowa",
 		 "comics": "komiks",
-		 "huge": "duży",
-		 "small": "mały",
-		 "unusual": "nietypowy"
+		 "huge": "duża",
+		 "small": "mała",
+		 "unusual": "nietypowa"
 	 }
   },
 	"bookinfo": {
 		"details": "Szczegóły",
 		"collapse": "Schowaj",
 		"releaseDate": "Rok wydania",
-		"firstPolishRelease": "Pierwsze wydanie",
+		"firstPolishRelease": "Pierwszego",
 		"pages": "Strony",
 		"isbn": "ISBN",
-		"format": "Format",
-		"size": "Rozmiar",
+		"format": "Oprawa",
+		"size": "Wielkość",
 		"language": "Język",
 		"translator": "Tłumacz",
 		"serie": "Seria",
 		"genres": "Gatunki",
 		"labels": "Etykiety",
 		"description": "Opis",
-		"note": "Notatka"
+		"note": "Uwagi"
 	},
   "input": {
     "clear": "wyczyść"

@@ -223,6 +223,12 @@ class BookUpdateDatabase:
                 updates.append("title = ?")
                 params.append(str(title).strip())
 
+            has_subtitle, subtitle = self._get_value(book_data, "subtitle")
+            if has_subtitle:
+                normalized_subtitle = None if subtitle is None or not str(subtitle).strip() else str(subtitle).strip()
+                updates.append("subtitle = ?")
+                params.append(normalized_subtitle)
+
             has_original_title, original_title = self._get_value(book_data, "originalTitle", "original_title")
             if has_original_title:
                 normalized_original_title = None if original_title is None or not str(original_title).strip() else str(original_title).strip()
