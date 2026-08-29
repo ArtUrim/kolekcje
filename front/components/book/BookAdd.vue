@@ -6,7 +6,7 @@
 					<v-col cols="12" sm="6">
 						<ExpandableTextField
 								v-model="titleFields"
-								:labels="[$t('addBook.title'), $t('addBook.originalTitle'), $t('addBook.subtitle')]"
+								:labels="[$t('addBook.title'), $t('addBook.subtitle'), $t('addBook.originalTitle')]"
 								:max-fields="3"
 								/>
 					</v-col>
@@ -291,12 +291,12 @@ export default {
 	computed: {
 		titleFields: {
 			get() {
-				return [this.title, this.originalTitle, this.subtitle];
+				return [this.title, this.subtitle, this.originalTitle];
 			},
 			set(value) {
 				this.title = value[0] || '';
-				this.originalTitle = value[1] || '';
 				this.subtitle = value[2] || '';
+				this.originalTitle = value[1] || '';
 			}
 		},
 		yearFields: {
