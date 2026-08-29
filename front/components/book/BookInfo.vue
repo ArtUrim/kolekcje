@@ -3,8 +3,8 @@
     <div class="d-flex justify-space-between align-start">
       <div>
         <div class="book-title">{{ book.title || '' }}</div>
-        <div v-if="book.originalTitle" class="original-title">{{book.originalTitle}}</div>
         <div v-if="book.subtitle" class="sub-title">{{book.subtitle}}</div>
+        <div v-if="book.originalTitle" class="original-title">{{book.originalTitle}}</div>
       </div>
       <v-btn
         icon="mdi-delete"
@@ -48,12 +48,18 @@
         <div class="meta-value">{{ book.language || '' }}</div>
       </div>
       <div class="meta-item">
-        <div class="meta-label">{{ $t('bookinfo.releaseDate') }}</div>
-        <div class="meta-value">{{ book.releaseDate || '' }}</div>
-      </div>
-      <div class="meta-item">
-        <div class="meta-label">{{ $t('bookinfo.firstPolishRelease') }}</div>
-        <div class="meta-value">{{ book.firstPolishRelease || '' }}</div>
+        <div class="meta-label">
+			  {{ $t('bookinfo.releaseDate') }}
+			  <span v-if="book.firstPolishRelease">
+				  / {{ $t('bookinfo.firstPolishRelease') }}
+			  </span>
+		  </div>
+        <div class="meta-value">
+			  {{ book.releaseDate || '' }}
+			  <span v-if="book.firstPolishRelease">
+				  / {{ book.firstPolishRelease }}
+			  </span>
+		  </div>
       </div>
       <div class="meta-item">
         <div class="meta-label">{{ $t('bookinfo.pages') }}</div>
@@ -202,8 +208,8 @@ const displayPublishers = computed(() => (book.value.publishers.length ?  book.v
 }
 
 .original-title {
-  font-size: 0.9rem;
-  color: #888;
+  font-size: 1.2rem;
+  color: #555;
   font-style: italic;
   margin-top: 4px;
 }
