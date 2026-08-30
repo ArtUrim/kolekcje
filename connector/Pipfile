@@ -11,6 +11,7 @@ requests = "*"
 selenium = "*"
 flask = "*"
 jsonschema = "*"
+pytest = "*"
 
 [dev-packages]
 pytest = "*"
