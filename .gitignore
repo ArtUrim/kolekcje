@@ -1,34 +1,27 @@
-# Nuxt dev/build outputs
-front/.output
-front/.data
-front/.nuxt
-front/.nitro
-front/.cache
-front/dist
-
-# Node dependencies
-front/node_modules
-
-# Logs
-logs
+```
+# Dependencies
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.venv.bak/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
 *.log
-
-# Misc
+*.tmp
+*.swp
+*.swo
 .DS_Store
-.fleet
-.idea
-
-# Local env files
-.env
-.env.*
-!.env.example
-
-**/Pipfile.lock
-**/*~
-**/.*.swp
-**/__pycache__
-
-/*.md
-/references/**
-/.abacus
-/.abacusai
+Thumbs.db
+```
