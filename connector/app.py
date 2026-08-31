@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, Response
+from werkzeug.exceptions import BadRequest
 import mariadb
 from typing import Optional, Dict, Any
 import sys
@@ -101,6 +102,8 @@ def add_books():
         try:
             # Process JSON data
             data = request.get_json()
+            if data is None:
+                return jsonify({'error': 'Invalid JSON data'}), 400
             with open('data.json', 'w') as f: # temporary: for debug
                 json.dump(data, f, indent=3)
             if data.get('title'):
@@ -116,10 +119,12 @@ def add_books():
         except Exception as e:
             logging.warn(f"Error processing addbook POST request: {e}")
             errJson =  { 'error': f"Error processing addbook POST request: {e}" }
-            if data and data.get('title'):
+            if 'data' in locals() and data and data.get('title'):
                 logging.warn( f"for the book {data['title']}")
                 errJson['book'] = data['title']
-            return jsonify(errJson), 415
+            # Return 400 for BadRequest (invalid JSON), 415 for other errors
+            status_code = 400 if isinstance(e, BadRequest) else 415
+            return jsonify(errJson), status_code
     else:
         return jsonify({'error': 'Unsupported Media Type'}), 415
     return Response( status = 204 )
