@@ -101,6 +101,8 @@ def add_books():
         try:
             # Process JSON data
             data = request.get_json()
+            if data is None:
+                return jsonify( {'error': 'Invalid JSON data' } ), 400
             with open('data.json', 'w') as f: # temporary: for debug
                 json.dump(data, f, indent=3)
             if data.get('title'):
