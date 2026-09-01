@@ -98,11 +98,12 @@ def get_books():
 def add_books():
     content_type = request.headers.get('Content-Type')
     if content_type == 'application/json':
+        data = None
         try:
             # Process JSON data
-            data = request.get_json()
+            data = request.get_json(silent=True)
             if data is None:
-                return jsonify( {'error': 'Invalid JSON data' } ), 400
+                return jsonify( {'error': 'Bad Request: Invalid JSON data' } ), 400
             with open('data.json', 'w') as f: # temporary: for debug
                 json.dump(data, f, indent=3)
             if data.get('title'):
