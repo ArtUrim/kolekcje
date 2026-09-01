@@ -115,12 +115,12 @@ def add_books():
                 db.insert_book( data )
                 conn.close()
             else:
-                logging.warn( f"Connection to DB not successful" )
+                logging.warning( f"Connection to DB not successful" )
         except Exception as e:
-            logging.warn(f"Error processing addbook POST request: {e}")
+            logging.warning(f"Error processing addbook POST request: {e}")
             errJson =  { 'error': f"Error processing addbook POST request: {e}" }
             if data and data.get('title'):
-                logging.warn( f"for the book {data['title']}")
+                logging.warning( f"for the book {data['title']}")
                 errJson['book'] = data['title']
             return jsonify(errJson), 415
     else:
