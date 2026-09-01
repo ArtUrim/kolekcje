@@ -295,8 +295,8 @@ export default {
 			},
 			set(value) {
 				this.title = value[0] || '';
-				this.subtitle = value[2] || '';
-				this.originalTitle = value[1] || '';
+				this.subtitle = value[1] || '';
+				this.originalTitle = value[2] || '';
 			}
 		},
 		yearFields: {
