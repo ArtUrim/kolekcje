@@ -1,5 +1,5 @@
 import pytest
-from .book_query_builder import BookQueryBuilder
+from ..source.book_query_builder import BookQueryBuilder
 
 class TestBookQueryBuilder:
 

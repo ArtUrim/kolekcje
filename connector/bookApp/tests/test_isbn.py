@@ -13,7 +13,7 @@ Description:
 Tests for ISBN validation module
 """
 import pytest
-from .isbn import validate_isbn, normalize_isbn
+from ..source.isbn import validate_isbn, normalize_isbn
 
 
 class TestISBN10Validation:

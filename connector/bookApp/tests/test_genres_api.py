@@ -2,7 +2,7 @@ import pytest
 import json
 from unittest.mock import Mock, patch, MagicMock
 import mariadb
-from .app import app, genres_handler
+from ..source.app import app, genres_handler
 
 
 class TestGenresAPI:
@@ -34,7 +34,7 @@ class TestGenresAPI:
             ('Science Fiction', 3)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/genres')
 
             assert response.status_code == 200
@@ -55,7 +55,7 @@ class TestGenresAPI:
             ('Fantasy Science', 5)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/genres?query=sci-fi')
 
             assert response.status_code == 200
@@ -80,7 +80,7 @@ class TestGenresAPI:
         # Mock empty result set
         mock_cursor.__iter__ = Mock(return_value=iter([]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/genres?query=nonexistent')
 
             assert response.status_code == 200
@@ -90,7 +90,7 @@ class TestGenresAPI:
 
     def test_get_genres_database_connection_failed(self, client):
         """Test behavior when database connection fails"""
-        with patch('bookApp.app.get_db_connection', return_value=None):
+        with patch('bookApp.source.app.get_db_connection', return_value=None):
             response = client.get('/genres')
 
             assert response.status_code == 500
@@ -105,7 +105,7 @@ class TestGenresAPI:
         # Mock database error
         mock_cursor.__iter__ = Mock(side_effect=mariadb.Error("Query failed"))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/genres')
 
             assert response.status_code == 500
@@ -122,7 +122,7 @@ class TestGenresAPI:
             ("Romance & Drama", 10)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/genres?query=romance%20%26%20drama')
 
             assert response.status_code == 200
@@ -140,7 +140,7 @@ class TestGenresAPI:
             ('FICTION', 2)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             # Query with uppercase
             response = client.get('/genres?query=FICTION')
 
@@ -156,7 +156,7 @@ class TestGenresAPI:
             ('Mystery', 7)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/genres?query=mystery')
 
             assert response.status_code == 200
@@ -173,7 +173,7 @@ class TestGenresAPI:
             ('科学幻想小说', 16)  # Chinese
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/genres')
 
             assert response.status_code == 200
@@ -190,7 +190,7 @@ class TestGenresAPI:
             ('Thriller', 20)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/genres')
 
             assert response.status_code == 200

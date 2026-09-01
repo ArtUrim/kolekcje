@@ -37,7 +37,7 @@ services:
     working_dir: /pg 
     tty: true
     stdin_open: true
-    entrypoint: ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5000", "bookApp.app:app"]
+    entrypoint: ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5000", "bookApp.source.app:app"]
     ports:
       - "5000:5000"
     depends_on:

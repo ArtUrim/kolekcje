@@ -2,7 +2,7 @@
 import pytest
 from unittest.mock import Mock, patch
 
-from .app import app
+from ..source.app import app
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ class TestAuthorsAPI:
             ('Jane Austen', 3)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/authors')
 
         assert response.status_code == 200
@@ -53,7 +53,7 @@ class TestAuthorsAPI:
             ('J.K. Rowling', 1)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/authors?query=Rowling')
 
         assert response.status_code == 200
@@ -70,7 +70,7 @@ class TestAuthorsAPI:
         mock_conn, mock_cursor = mock_db_connection
         mock_cursor.__iter__ = Mock(return_value=iter([]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/authors?query=NonExistentAuthor')
 
         assert response.status_code == 200
@@ -79,7 +79,7 @@ class TestAuthorsAPI:
 
     def test_get_authors_database_connection_failed(self, client):
         """Test 500 error response when DB connection fails."""
-        with patch('bookApp.app.get_db_connection', return_value=None):
+        with patch('bookApp.source.app.get_db_connection', return_value=None):
             response = client.get('/authors')
 
         assert response.status_code == 500
@@ -92,7 +92,7 @@ class TestAuthorsAPI:
         mock_conn, mock_cursor = mock_db_connection
         mock_cursor.__iter__ = Mock(side_effect=Exception("Database query failed"))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/authors')
 
         assert response.status_code == 500
@@ -107,7 +107,7 @@ class TestAuthorsAPI:
             ("O'Connor, Patrick", 1)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get("/authors?query=O'Connor")
 
         assert response.status_code == 200
@@ -121,7 +121,7 @@ class TestAuthorsAPI:
             ('J.K. Rowling', 1)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/authors?query=rowling')
 
         assert response.status_code == 200
@@ -136,7 +136,7 @@ class TestAuthorsAPI:
             ('Stephen King', 5)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/authors?query=King')
 
         assert response.status_code == 200
@@ -153,7 +153,7 @@ class TestAuthorsAPI:
             ('Гоголь', 2)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/authors')
 
         assert response.status_code == 200
@@ -169,7 +169,7 @@ class TestAuthorsAPI:
             ('Agatha Christie', 42)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/authors')
 
         assert response.status_code == 200

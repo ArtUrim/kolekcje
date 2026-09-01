@@ -46,7 +46,7 @@ services:
     stdin_open: true
     working_dir: /pg
     environment:
-      - FLASK_APP=bookApp.app
+      - FLASK_APP=bookApp.source.app
     volumes:
       - ./connector:/pg
       - ./shared:/app/shared

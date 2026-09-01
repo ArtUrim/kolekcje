@@ -2,7 +2,7 @@
 import pytest
 from unittest.mock import Mock, patch
 
-from .app import app
+from ..source.app import app
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ class TestLabelsAPI:
             ('Science Fiction', 3)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/labels')
 
         assert response.status_code == 200
@@ -53,7 +53,7 @@ class TestLabelsAPI:
             ('Fiction', 1)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/labels?query=Fiction')
 
         assert response.status_code == 200
@@ -71,7 +71,7 @@ class TestLabelsAPI:
         mock_conn, mock_cursor = mock_db_connection
         mock_cursor.__iter__ = Mock(return_value=iter([]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/labels?query=NonExistentLabel')
 
         assert response.status_code == 200
@@ -81,7 +81,7 @@ class TestLabelsAPI:
 
     def test_get_labels_database_connection_failed(self, client):
         """Test 500 error response when DB connection fails."""
-        with patch('bookApp.app.get_db_connection', return_value=None):
+        with patch('bookApp.source.app.get_db_connection', return_value=None):
             response = client.get('/labels')
 
         assert response.status_code == 500
@@ -94,7 +94,7 @@ class TestLabelsAPI:
         mock_conn, mock_cursor = mock_db_connection
         mock_cursor.__iter__ = Mock(side_effect=Exception("Database query failed"))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/labels')
 
         assert response.status_code == 500
@@ -109,7 +109,7 @@ class TestLabelsAPI:
             (1, "Children's Books")
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get("/labels?query=Children's")
 
         assert response.status_code == 200
@@ -123,7 +123,7 @@ class TestLabelsAPI:
             ('Science Fiction', 1)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/labels?query=science fiction')
 
         assert response.status_code == 200
@@ -138,7 +138,7 @@ class TestLabelsAPI:
             ('Mystery & Thriller', 5)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/labels?query=Mystery')
 
         assert response.status_code == 200
@@ -155,7 +155,7 @@ class TestLabelsAPI:
             ('Фантастика', 2)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/labels')
 
         assert response.status_code == 200
@@ -171,7 +171,7 @@ class TestLabelsAPI:
             ('Romance', 42)
         ]))
 
-        with patch('bookApp.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
             response = client.get('/labels')
 
         assert response.status_code == 200
