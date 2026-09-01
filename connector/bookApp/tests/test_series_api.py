@@ -2,15 +2,6 @@
 import pytest
 from unittest.mock import Mock, patch
 
-from ..source.app import app
-
-
-@pytest.fixture
-def client():
-    """Create a test client for the Flask app."""
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
 
 
 @pytest.fixture
@@ -36,7 +27,7 @@ class TestSeriesAPI:
             ('A Song of Ice and Fire', 3)
         ]))
 
-        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
             response = client.get('/series')
 
         assert response.status_code == 200
@@ -53,7 +44,7 @@ class TestSeriesAPI:
             ('Harry Potter', 1)
         ]))
 
-        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
             response = client.get('/series?query=Potter')
 
         assert response.status_code == 200
@@ -70,7 +61,7 @@ class TestSeriesAPI:
         mock_conn, mock_cursor = mock_db_connection
         mock_cursor.__iter__ = Mock(return_value=iter([]))
 
-        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
             response = client.get('/series?query=NonExistentSeries')
 
         assert response.status_code == 200
@@ -79,7 +70,7 @@ class TestSeriesAPI:
 
     def test_get_series_database_connection_failed(self, client):
         """Test 500 error response when DB connection fails."""
-        with patch('bookApp.source.app.get_db_connection', return_value=None):
+        with patch('bookApp.core.db.get_db_connection', return_value=None):
             response = client.get('/series')
 
         assert response.status_code == 500
@@ -92,7 +83,7 @@ class TestSeriesAPI:
         mock_conn, mock_cursor = mock_db_connection
         mock_cursor.__iter__ = Mock(side_effect=Exception("Database query failed"))
 
-        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
             response = client.get('/series')
 
         assert response.status_code == 500
@@ -107,7 +98,7 @@ class TestSeriesAPI:
             ("The Hitchhiker's Guide to the Galaxy", 1)
         ]))
 
-        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
             response = client.get("/series?query=Hitchhiker's")
 
         assert response.status_code == 200
@@ -121,7 +112,7 @@ class TestSeriesAPI:
             ('Harry Potter', 1)
         ]))
 
-        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
             response = client.get('/series?query=harry potter')
 
         assert response.status_code == 200
@@ -136,7 +127,7 @@ class TestSeriesAPI:
             ('The Wheel of Time', 5)
         ]))
 
-        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
             response = client.get('/series?query=Wheel')
 
         assert response.status_code == 200
@@ -153,7 +144,7 @@ class TestSeriesAPI:
             ('Ведьмак', 2)
         ]))
 
-        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
             response = client.get('/series')
 
         assert response.status_code == 200
@@ -169,7 +160,7 @@ class TestSeriesAPI:
             ('The Hunger Games', 42)
         ]))
 
-        with patch('bookApp.source.app.get_db_connection', return_value=mock_conn):
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
             response = client.get('/series')
 
         assert response.status_code == 200

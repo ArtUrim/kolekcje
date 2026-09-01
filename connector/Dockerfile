@@ -13,4 +13,4 @@ COPY scripts/ ./scripts/
 COPY TestData/ ./TestData/
 
 # ENTRYPOINT ["ipython3"]
-ENTRYPOINT ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5000", "bookApp.source.app:app"]
+ENTRYPOINT ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5000", "bookApp.app:create_app()"]

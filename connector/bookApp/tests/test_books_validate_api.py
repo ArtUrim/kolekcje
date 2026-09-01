@@ -4,21 +4,12 @@ Tests book validation by ISBN and other parameters
 """
 import pytest
 from unittest.mock import Mock, patch, MagicMock
-from ..source.app import app
-
-
-@pytest.fixture
-def client():
-    """Create a test client for the Flask application"""
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
 
 
 @pytest.fixture
 def mock_db_connection():
     """Mock database connection fixture"""
-    with patch('bookApp.source.app.get_db_connection') as mock_get_connection:
+    with patch('bookApp.core.db.get_db_connection') as mock_get_connection:
         mock_conn = Mock()
         mock_get_connection.return_value = mock_conn
         yield mock_get_connection, mock_conn
@@ -41,7 +32,7 @@ class TestBooksValidate:
         mock_get_connection, mock_conn = mock_db_connection
         
         # Mock BookInfoHandler
-        with patch('bookApp.source.app.BookInfoHandler') as MockHandler:
+        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
             mock_handler_instance = Mock()
             mock_handler_instance.get_basic_book_info.return_value = [
                 {'id': 1, 'title': 'Test Book', 'isbn': '978-0-123456-78-9'}
@@ -78,7 +69,7 @@ class TestBooksValidate:
         """Test when book doesn't exist in database"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookInfoHandler') as MockHandler:
+        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
             mock_handler_instance = Mock()
             mock_handler_instance.get_basic_book_info.return_value = []
             MockHandler.return_value = mock_handler_instance
@@ -92,7 +83,7 @@ class TestBooksValidate:
         """Test validation with title parameter"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookInfoHandler') as MockHandler:
+        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
             mock_handler_instance = Mock()
             mock_handler_instance.get_basic_book_info.return_value = [
                 {'id': 1, 'title': 'Matching Book'}
@@ -108,7 +99,7 @@ class TestBooksValidate:
         """Test validation with author parameter"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookInfoHandler') as MockHandler:
+        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
             mock_handler_instance = Mock()
             mock_handler_instance.get_basic_book_info.return_value = [
                 {'id': 1, 'title': 'Book', 'author': 'Test Author'}
@@ -123,7 +114,7 @@ class TestBooksValidate:
         """Test validation with multiple parameters"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookInfoHandler') as MockHandler:
+        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
             mock_handler_instance = Mock()
             mock_handler_instance.get_basic_book_info.return_value = [
                 {'id': 1, 'title': 'Test Book', 'author': 'Author', 'year': 2023}
@@ -142,10 +133,10 @@ class TestBooksValidate:
     def test_validate_book_database_connection_failed(self, client):
         """Test 500 error when database connection fails"""
         # First provide a valid ISBN to pass ISBN validation
-        with patch('bookApp.source.app.get_db_connection', return_value=None):
+        with patch('bookApp.core.db.get_db_connection', return_value=None):
             # Need to mock isbn functions too since they run before DB connection
-            with patch('bookApp.source.app.normalize_isbn', return_value='9780123456789'):
-                with patch('bookApp.source.app.validate_isbn', return_value=True):
+            with patch('bookApp.services.bookinfo_service.normalize_isbn', return_value='9780123456789'):
+                with patch('bookApp.services.bookinfo_service.validate_isbn', return_value=True):
                     response = client.get('/books/validate?isbn=9780123456789')
                     
                     assert response.status_code == 500
@@ -157,7 +148,7 @@ class TestBooksValidate:
         """Test handling of database errors during validation"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookInfoHandler') as MockHandler:
+        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
             mock_handler_instance = Mock()
             mock_handler_instance.get_basic_book_info.side_effect = Exception("DB error")
             MockHandler.return_value = mock_handler_instance
@@ -173,7 +164,7 @@ class TestBooksValidate:
         """Test validation with valid ISBN-10"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookInfoHandler') as MockHandler:
+        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
             mock_handler_instance = Mock()
             mock_handler_instance.get_basic_book_info.return_value = [
                 {'id': 1, 'title': 'ISBN10 Book'}
@@ -189,7 +180,7 @@ class TestBooksValidate:
         """Test validation with special characters in title"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookInfoHandler') as MockHandler:
+        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
             mock_handler_instance = Mock()
             mock_handler_instance.get_basic_book_info.return_value = [
                 {'id': 1, 'title': "Book & More: Author's Story"}

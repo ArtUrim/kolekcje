@@ -1,14 +1,15 @@
 from typing import List, Dict
 import mariadb
 
-class TableHandler:
-    def __init__(self, table_name: str, name_field: str = 'name'):
+class CatalogRepository:
+    def __init__(self, connection, table_name: str, name_field: str = 'name'):
+        self.connection = connection
         self.table_name = table_name
         self.name_field = name_field
 
-    def get_items(self, conn, query: str = '') -> List[Dict[str, str]]:
+    def list_items(self, query: str = '') -> List[Dict[str, str]]:
         try:
-            cur = conn.cursor()
+            cur = self.connection.cursor()
 
             if query:
                 sql = f"SELECT {self.name_field} as title, id FROM {self.table_name} WHERE LOWER({self.name_field}) LIKE ?"
@@ -29,12 +30,12 @@ class TableHandler:
         except mariadb.Error as e:
             raise Exception(f"Database error: {str(e)}")
 
-    def add_item(self, conn, data: Dict[str, str]) -> None:
+    def add_item(self, data: Dict[str, str]) -> None:
         try:
             if not all(key in data for key in ['value', 'title']):
                 raise ValueError('Missing required fields')
 
-            cur = conn.cursor()
+            cur = self.connection.cursor()
 
             # Check if item already exists
             cur.execute(f"SELECT COUNT(*) FROM {self.table_name} WHERE {self.name_field} = ?", [data['value']])
@@ -43,7 +44,7 @@ class TableHandler:
 
             # Insert new item
             cur.execute(f"INSERT INTO {self.table_name} ({self.name_field}) VALUES (?)", [data['value']])
-            conn.commit()
+            self.connection.commit()
 
         except mariadb.Error as e:
             raise Exception(f"Database error: {str(e)}")

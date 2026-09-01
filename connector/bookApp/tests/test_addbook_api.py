@@ -5,21 +5,12 @@ Tests the book creation functionality with mocked database calls
 import pytest
 import json
 from unittest.mock import Mock, patch, MagicMock
-from ..source.app import app
-
-
-@pytest.fixture
-def client():
-    """Create a test client for the Flask application"""
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
 
 
 @pytest.fixture
 def mock_db_connection():
     """Mock database connection fixture"""
-    with patch('bookApp.source.app.get_db_connection') as mock_get_conn:
+    with patch('bookApp.core.db.get_db_connection') as mock_get_conn:
         mock_conn = Mock()
         mock_cursor = Mock()
         mock_conn.cursor.return_value = mock_cursor
@@ -156,7 +147,7 @@ class TestAddBookEndpoint:
 
     def test_add_book_database_connection_failed(self, client):
         """Test handling of database connection failure"""
-        with patch('bookApp.source.app.get_db_connection') as mock_get_conn:
+        with patch('bookApp.core.db.get_db_connection') as mock_get_conn:
             mock_get_conn.return_value = None
             
             book_data = {

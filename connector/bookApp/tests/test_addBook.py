@@ -6,11 +6,11 @@ from jsonschema import ValidationError
 import sys
 import os
 
-# Assuming the BookDatabase class is in addBook.py
-from ..source.addBook import BookDatabase
+# Assuming the BookRepository class is in book_repository.py
+from ..repositories.book_repository import BookRepository
 
 
-class TestBookDatabase:
+class TestBookRepository:
     
     @pytest.fixture
     def mock_connection(self):
@@ -24,9 +24,9 @@ class TestBookDatabase:
     
     @pytest.fixture
     def book_db(self, mock_connection):
-        """Create BookDatabase instance with mocked connection"""
+        """Create BookRepository instance with mocked connection"""
         mock_conn, _ = mock_connection
-        return BookDatabase(mock_conn)
+        return BookRepository(mock_conn)
     
     @pytest.fixture
     def valid_book_data(self):
@@ -409,7 +409,7 @@ class TestWithActualDataStructure:
     def test_data_structure_mismatch(self, actual_data_structure):
         """Test that highlights the mismatch between expected and actual data structure"""
         # This test demonstrates that the current data structure doesn't match
-        # what the addBook.py expects (missing author, publisher, etc.)
+        # what the book_repository.py expects (missing author, publisher, etc.)
         
         required_fields_in_code = ["author", "publisher", "publishYear", "format", "pages", "description"]
         

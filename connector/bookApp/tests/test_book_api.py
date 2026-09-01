@@ -4,21 +4,12 @@ Tests book retrieval with query parameters
 """
 import pytest
 from unittest.mock import Mock, patch, MagicMock
-from ..source.app import app
-
-
-@pytest.fixture
-def client():
-    """Create a test client for the Flask application"""
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
 
 
 @pytest.fixture
 def mock_db_connection():
     """Mock database connection fixture"""
-    with patch('bookApp.source.app.get_db_connection') as mock_get_connection:
+    with patch('bookApp.core.db.get_db_connection') as mock_get_connection:
         mock_conn = Mock()
         mock_cursor = Mock()
         
@@ -86,7 +77,7 @@ class TestGetBooks:
         
     def test_get_books_database_connection_failed(self, client):
         """Test 500 error when database connection fails"""
-        with patch('bookApp.source.app.get_db_connection', return_value=None):
+        with patch('bookApp.core.db.get_db_connection', return_value=None):
             response = client.get('/book')
             
             assert response.status_code == 500

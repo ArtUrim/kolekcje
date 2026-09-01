@@ -3,17 +3,7 @@ Unit tests for Error Handlers (404 and 500)
 Tests custom error handlers for not found and internal server errors
 """
 import pytest
-import os
 from unittest.mock import Mock, patch, MagicMock
-from ..source.app import app
-
-
-@pytest.fixture
-def client():
-    """Create a test client for the Flask application"""
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
 
 
 class TestErrorHandler404:
@@ -91,7 +81,7 @@ class TestErrorHandler500:
         """Test that 500 errors are properly handled"""
         # The app has route-specific error handling that catches mariadb.Error
         # This test verifies the error handler is working by checking response format
-        with patch('bookApp.source.app.get_db_connection') as mock_conn:
+        with patch('bookApp.core.db.get_db_connection') as mock_conn:
             import mariadb
             mock_conn.side_effect = mariadb.Error("Unexpected error")
             
@@ -111,30 +101,38 @@ class TestErrorHandler500:
         # Verify the test completed without assertion errors
         assert True
             
-    def test_500_error_response_format(self, client):
+    def test_500_error_response_format(self, app):
         """Test that 500 error response has correct JSON format"""
-        # Verify the error handler is registered in the app
-        assert 500 in app.error_handler_spec or len(app.error_handler_spec) > 0
-        
-    def test_500_error_message_exact(self):
-        """Test that 500 error handler returns exact message by checking source"""
-        # Read the app.py file to verify the handler exists
-        with open(os.path.join(os.path.dirname(__file__), '..', 'source', 'app.py'), 'r') as f:
-            source = f.read()
-        
-        expected_message = "Internal server error"
-        assert expected_message in source
-        assert '@app.errorhandler(500)' in source
-        
-    def test_500_error_is_json_response(self):
+        # Verify the error handlers are registered in the app
+        handlers = app.error_handler_spec[None]
+        assert 404 in handlers
+        assert 500 in handlers
+
+    def test_500_error_message_exact(self, app):
+        """Test that 500 error handler returns exact message"""
+        @app.route('/boom')
+        def boom():
+            raise RuntimeError('boom')
+
+        app.config['PROPAGATE_EXCEPTIONS'] = False
+        with app.test_client() as client:
+            response = client.get('/boom')
+
+        assert response.status_code == 500
+        assert response.get_json() == {'error': 'Internal server error'}
+
+    def test_500_error_is_json_response(self, app):
         """Test that 500 errors return JSON responses"""
-        # Verify by checking app.py source
-        with open(os.path.join(os.path.dirname(__file__), '..', 'source', 'app.py'), 'r') as f:
-            source = f.read()
-        
-        assert 'jsonify' in source
-        assert '"error"' in source or "'error'" in source
-        assert '@app.errorhandler(500)' in source
+        @app.route('/boom')
+        def boom():
+            raise RuntimeError('boom')
+
+        app.config['PROPAGATE_EXCEPTIONS'] = False
+        with app.test_client() as client:
+            response = client.get('/boom')
+
+        assert response.status_code == 500
+        assert response.content_type == 'application/json'
 
 
 class TestErrorHandlersIntegration:

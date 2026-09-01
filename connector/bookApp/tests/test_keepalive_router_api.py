@@ -4,15 +4,6 @@ Tests keep-alive functionality and router restart with role-based access
 """
 import pytest
 from unittest.mock import Mock, patch, MagicMock
-from ..source.app import app
-
-
-@pytest.fixture
-def client():
-    """Create a test client for the Flask application"""
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
 
 
 class TestKeepalive:
@@ -50,7 +41,7 @@ class TestRestartRouter:
     
     def test_restart_router_success_with_admin_role(self, client):
         """Test successful router restart with admin role"""
-        with patch('bookApp.source.app.os.makedirs') as mock_makedirs:
+        with patch('bookApp.services.router_service.os.makedirs') as mock_makedirs:
             with patch('builtins.open', create=True) as mock_open:
                 mock_file = MagicMock()
                 mock_file.__enter__ = Mock(return_value=mock_file)
@@ -109,7 +100,7 @@ class TestRestartRouter:
         
     def test_restart_router_creates_unique_filename(self, client):
         """Test that each request creates a unique trigger file"""
-        with patch('bookApp.source.app.os.makedirs') as mock_makedirs:
+        with patch('bookApp.services.router_service.os.makedirs') as mock_makedirs:
             with patch('builtins.open', create=True) as mock_open:
                 mock_file = MagicMock()
                 mock_file.__enter__ = Mock(return_value=mock_file)
@@ -131,7 +122,7 @@ class TestRestartRouter:
                 
     def test_restart_router_file_write_error(self, client):
         """Test 500 error when file write fails"""
-        with patch('bookApp.source.app.os.makedirs') as mock_makedirs:
+        with patch('bookApp.services.router_service.os.makedirs') as mock_makedirs:
             with patch('builtins.open', create=True) as mock_open:
                 mock_open.side_effect = Exception("Permission denied")
                 
@@ -145,7 +136,7 @@ class TestRestartRouter:
                 
     def test_restart_router_uses_shared_dir(self, client):
         """Test that trigger file is created in shared directory"""
-        with patch('bookApp.source.app.os.makedirs') as mock_makedirs:
+        with patch('bookApp.services.router_service.os.makedirs') as mock_makedirs:
             with patch('builtins.open', create=True) as mock_open:
                 mock_file = MagicMock()
                 mock_file.__enter__ = Mock(return_value=mock_file)
@@ -163,7 +154,7 @@ class TestRestartRouter:
                 
     def test_restart_router_writes_run_content(self, client):
         """Test that trigger file contains 'run' content"""
-        with patch('bookApp.source.app.os.makedirs'):
+        with patch('bookApp.services.router_service.os.makedirs'):
             with patch('builtins.open', create=True) as mock_open:
                 mock_file = MagicMock()
                 mock_file.__enter__ = Mock(return_value=mock_file)

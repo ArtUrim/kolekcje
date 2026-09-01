@@ -7,9 +7,9 @@ from jsonschema import validate, ValidationError
 
 import logging
 
-from .isbn import validate_isbn, normalize_isbn
+from ..core.isbn import validate_isbn, normalize_isbn
 
-class BookDatabase:
+class BookRepository:
     def __init__(self, connection: mariadb.connections.Connection):
         self.connection = connection
 
@@ -592,7 +592,7 @@ if __name__ == "__main__":
     try:
         # Initialize database connection
         connection = mariadb.connect(**db_params)
-        db = BookDatabase(connection)
+        db = BookRepository(connection)
 
         # Example of processing the data1.json format
         sample_old_data = {

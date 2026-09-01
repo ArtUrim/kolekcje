@@ -4,21 +4,12 @@ Tests retrieval, update, and deletion of specific books by ID
 """
 import pytest
 from unittest.mock import Mock, patch, MagicMock
-from ..source.app import app
-
-
-@pytest.fixture
-def client():
-    """Create a test client for the Flask application"""
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
 
 
 @pytest.fixture
 def mock_db_connection():
     """Mock database connection fixture"""
-    with patch('bookApp.source.app.get_db_connection') as mock_get_connection:
+    with patch('bookApp.core.db.get_db_connection') as mock_get_connection:
         mock_conn = Mock()
         mock_get_connection.return_value = mock_conn
         yield mock_get_connection, mock_conn
@@ -31,7 +22,7 @@ class TestBooksByIdGET:
         """Test successful retrieval of book by ID"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookInfoHandler') as MockHandler:
+        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
             mock_handler_instance = Mock()
             mock_handler_instance.get_book_info.return_value = {
                 'id': 1,
@@ -52,7 +43,7 @@ class TestBooksByIdGET:
         """Test 404 when book doesn't exist"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookInfoHandler') as MockHandler:
+        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
             mock_handler_instance = Mock()
             mock_handler_instance.get_book_info.return_value = None
             MockHandler.return_value = mock_handler_instance
@@ -66,7 +57,7 @@ class TestBooksByIdGET:
             
     def test_get_book_by_id_database_connection_failed(self, client):
         """Test 500 error when database connection fails"""
-        with patch('bookApp.source.app.get_db_connection', return_value=None):
+        with patch('bookApp.core.db.get_db_connection', return_value=None):
             response = client.get('/books/1')
             
             assert response.status_code == 500
@@ -78,7 +69,7 @@ class TestBooksByIdGET:
         """Test handling of database errors during retrieval"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookInfoHandler') as MockHandler:
+        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
             mock_handler_instance = Mock()
             mock_handler_instance.get_book_info.side_effect = Exception("DB error")
             MockHandler.return_value = mock_handler_instance
@@ -98,7 +89,7 @@ class TestBooksByIdPUT:
         """Test successful book update by ID"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookUpdateDatabase') as MockDB:
+        with patch('bookApp.services.book_service.BookUpdateRepository') as MockDB:
             mock_db_instance = Mock()
             mock_db_instance.update_book.return_value = {'success': True}
             MockDB.return_value = mock_db_instance
@@ -117,7 +108,7 @@ class TestBooksByIdPUT:
         """Test 404 when updating non-existent book"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookUpdateDatabase') as MockDB:
+        with patch('bookApp.services.book_service.BookUpdateRepository') as MockDB:
             mock_db_instance = Mock()
             mock_db_instance.update_book.return_value = {'not_found': True}
             MockDB.return_value = mock_db_instance
@@ -159,7 +150,7 @@ class TestBooksByIdPUT:
         """Test 400 error on validation failure"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookUpdateDatabase') as MockDB:
+        with patch('bookApp.services.book_service.BookUpdateRepository') as MockDB:
             mock_db_instance = Mock()
             mock_db_instance.update_book.side_effect = ValueError("Invalid data")
             MockDB.return_value = mock_db_instance
@@ -177,7 +168,7 @@ class TestBooksByIdPUT:
         """Test 500 error on database failure"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookUpdateDatabase') as MockDB:
+        with patch('bookApp.services.book_service.BookUpdateRepository') as MockDB:
             mock_db_instance = Mock()
             mock_db_instance.update_book.side_effect = Exception("DB error")
             MockDB.return_value = mock_db_instance
@@ -193,7 +184,7 @@ class TestBooksByIdPUT:
             
     def test_update_book_by_id_database_connection_failed(self, client):
         """Test 500 error when database connection fails"""
-        with patch('bookApp.source.app.get_db_connection', return_value=None):
+        with patch('bookApp.core.db.get_db_connection', return_value=None):
             response = client.put('/books/1',
                                   json={'title': 'Test'},
                                   content_type='application/json')
@@ -211,7 +202,7 @@ class TestBooksByIdDELETE:
         """Test successful book deletion by ID"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookUpdateDatabase') as MockDB:
+        with patch('bookApp.services.book_service.BookUpdateRepository') as MockDB:
             mock_db_instance = Mock()
             mock_db_instance.delete_book.return_value = {'success': True}
             MockDB.return_value = mock_db_instance
@@ -227,7 +218,7 @@ class TestBooksByIdDELETE:
         """Test 404 when deleting non-existent book"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookUpdateDatabase') as MockDB:
+        with patch('bookApp.services.book_service.BookUpdateRepository') as MockDB:
             mock_db_instance = Mock()
             mock_db_instance.delete_book.return_value = {'not_found': True}
             MockDB.return_value = mock_db_instance
@@ -241,7 +232,7 @@ class TestBooksByIdDELETE:
             
     def test_delete_book_by_id_database_connection_failed(self, client):
         """Test 500 error when database connection fails"""
-        with patch('bookApp.source.app.get_db_connection', return_value=None):
+        with patch('bookApp.core.db.get_db_connection', return_value=None):
             response = client.delete('/books/1')
             
             assert response.status_code == 500
@@ -253,7 +244,7 @@ class TestBooksByIdDELETE:
         """Test 500 error on database failure during deletion"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookUpdateDatabase') as MockDB:
+        with patch('bookApp.services.book_service.BookUpdateRepository') as MockDB:
             mock_db_instance = Mock()
             mock_db_instance.delete_book.side_effect = Exception("DB error")
             MockDB.return_value = mock_db_instance

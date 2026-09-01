@@ -4,21 +4,12 @@ Tests book info retrieval by ID and book info updates
 """
 import pytest
 from unittest.mock import Mock, patch, MagicMock
-from ..source.app import app
-
-
-@pytest.fixture
-def client():
-    """Create a test client for the Flask application"""
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
 
 
 @pytest.fixture
 def mock_db_connection():
     """Mock database connection fixture"""
-    with patch('bookApp.source.app.get_db_connection') as mock_get_connection:
+    with patch('bookApp.core.db.get_db_connection') as mock_get_connection:
         mock_conn = Mock()
         mock_get_connection.return_value = mock_conn
         yield mock_get_connection, mock_conn
@@ -32,7 +23,7 @@ class TestBookInfoGET:
         mock_get_connection, mock_conn = mock_db_connection
         
         # Mock BookInfoHandler
-        with patch('bookApp.source.app.BookInfoHandler') as MockHandler:
+        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
             mock_handler_instance = Mock()
             mock_handler_instance.get_book_info.return_value = {
                 'id': 1,
@@ -71,7 +62,7 @@ class TestBookInfoGET:
         """Test 404 when book doesn't exist"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookInfoHandler') as MockHandler:
+        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
             mock_handler_instance = Mock()
             mock_handler_instance.get_book_info.return_value = None
             MockHandler.return_value = mock_handler_instance
@@ -85,7 +76,7 @@ class TestBookInfoGET:
             
     def test_get_bookinfo_database_connection_failed(self, client):
         """Test 500 error when database connection fails"""
-        with patch('bookApp.source.app.get_db_connection', return_value=None):
+        with patch('bookApp.core.db.get_db_connection', return_value=None):
             response = client.get('/bookinfo?id=1')
             
             assert response.status_code == 500
@@ -101,7 +92,7 @@ class TestBookInfoPOST:
         """Test successful book info update"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookInfoHandler') as MockHandler:
+        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
             mock_handler_instance = Mock()
             mock_handler_instance.update_book_info.return_value = True
             MockHandler.return_value = mock_handler_instance
@@ -163,7 +154,7 @@ class TestBookInfoPOST:
         """Test when book update fails"""
         mock_get_connection, mock_conn = mock_db_connection
         
-        with patch('bookApp.source.app.BookInfoHandler') as MockHandler:
+        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
             mock_handler_instance = Mock()
             mock_handler_instance.update_book_info.return_value = False
             MockHandler.return_value = mock_handler_instance
@@ -179,7 +170,7 @@ class TestBookInfoPOST:
             
     def test_update_bookinfo_database_connection_failed(self, client):
         """Test 500 error when database connection fails for update"""
-        with patch('bookApp.source.app.get_db_connection', return_value=None):
+        with patch('bookApp.core.db.get_db_connection', return_value=None):
             response = client.post('/bookinfo?id=1',
                                    json={'title': 'Test'},
                                    content_type='application/json')
