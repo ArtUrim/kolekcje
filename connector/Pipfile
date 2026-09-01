@@ -17,6 +17,3 @@ pytest = "*"
 pytest = "*"
 pytest-mock = "*"
 ipdb = "*"
-
-[requires]
-python_version = "3.11"
