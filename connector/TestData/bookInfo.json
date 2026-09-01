@@ -1,0 +1,56 @@
+{
+  "book": {
+    "authors": "Pawe\u0142 Pompa",
+    "authors_details": [
+      {
+        "birth_date": null,
+        "death_date": null,
+        "description": null,
+        "id": 2,
+        "name": "Pawe\u0142 Pompa",
+        "nationality_id": "pl_",
+        "note": null
+      }
+    ],
+    "description": null,
+    "first_polish_release_date": 2022,
+    "format": "hardback",
+    "genres": "j\u0119zyki, orientalia",
+    "genres_details": [
+      {
+        "id": 10,
+        "name": "j\u0119zyki"
+      },
+      {
+        "id": 8,
+        "name": "orientalia"
+      }
+    ],
+    "id": 1,
+    "isbn": "6155849576385",
+    "labels": null,
+    "labels_details": [],
+    "language_id": "pl_",
+    "language_name": "polski",
+    "note": null,
+    "original_title": null,
+    "pages": 298,
+    "publishers": "inne tryby",
+    "publishers_details": [
+      {
+        "description": null,
+        "id": 5,
+        "name": "inne tryby",
+        "note": null,
+        "webpage": null
+      }
+    ],
+    "release_date": 2022,
+    "series_id": 1,
+    "series_name": "paczki",
+    "size": null,
+    "title": "Mocz powodowa\u0107 orze\u0142 ni\u017c",
+    "translator": null
+  },
+  "status": "success"
+}

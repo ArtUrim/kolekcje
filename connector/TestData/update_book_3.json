@@ -1,0 +1,44 @@
+{
+   "isbn": 5140786859140,
+   "title": "Godno\u015b\u0107",
+   "publishYear": null,
+   "firstPublishYear": null,
+   "format": "paperback",
+   "size": "none",
+   "pages": 1234,
+   "description": "",
+   "notes": "",
+   "originalTitle": "",
+   "translator": "",
+   "language": "polski",
+   "genre": [
+      {
+         "title": "orientalia",
+         "isCustom": false
+      },
+      {
+         "title": "poezja",
+         "isCustom": false
+      },
+      {
+         "title": "s\u0142ownik",
+         "isCustom": false
+      }
+   ],
+   "publisher": [
+      {
+         "title": "diatryby",
+         "isCustom": true
+      }
+   ],
+   "author": [
+      {
+         "title": "Nicole Szpila",
+         "isCustom": true
+      }
+   ],
+   "series": {
+      "title": "k\u0142aczki",
+      "isCustom": true
+   }
+}
