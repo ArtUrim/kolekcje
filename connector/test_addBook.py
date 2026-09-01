@@ -116,10 +116,12 @@ class TestBookDatabase:
         """Test successful book insertion"""
         mock_conn, mock_cursor = mock_connection
         mock_cursor.fetchone.side_effect = [
-            (1,),  # publisher exists
-            (2,),  # series exists  
-            (3,),  # author exists
-            (4,)   # genre exists
+            (1,),  # series exists
+            (1,),  # language exists
+            (1,),  # author language exists
+            (1,),  # author exists
+            (1,),  # genre exists
+            (1,)   # publisher exists
         ]
         mock_cursor.lastrowid = 100
         
@@ -152,7 +154,7 @@ class TestBookDatabase:
         """Test successful book insertion from JSON file"""
         mock_conn, mock_cursor = mock_connection
         mock_cursor.fetchone.side_effect = [
-            (1,), (2,), (3,), (4,)  # All entities exist
+            (1,), (1,), (1,), (1,), (1,), (1,)  # All entities exist
         ]
         mock_cursor.lastrowid = 200
         mock_json_load.side_effect = [schema_data, valid_book_data]
@@ -224,7 +226,7 @@ class TestBookDatabase:
     def test_insert_book_with_none_values(self, book_db, mock_connection):
         """Test book insertion with None values"""
         mock_conn, mock_cursor = mock_connection
-        mock_cursor.fetchone.side_effect = [(1,), (2,), (3,)]
+        mock_cursor.fetchone.side_effect = [(1,), (1,), (1,), (1,)]
         mock_cursor.lastrowid = 300
         
         book_data_with_nones = {
@@ -245,7 +247,7 @@ class TestBookDatabase:
     def test_insert_book_without_optional_fields(self, book_db, mock_connection):
         """Test book insertion without optional fields like series and genre"""
         mock_conn, mock_cursor = mock_connection
-        mock_cursor.fetchone.side_effect = [(1,), (2,)]  # publisher, author
+        mock_cursor.fetchone.side_effect = [(1,), (1,), (1,), (1,)]  # language, author language, author, publisher
         mock_cursor.lastrowid = 400
         
         minimal_book_data = {
@@ -264,7 +266,7 @@ class TestBookDatabase:
     def test_format_mapping_unknown_format(self, book_db, mock_connection, valid_book_data):
         """Test format mapping with unknown format"""
         mock_conn, mock_cursor = mock_connection
-        mock_cursor.fetchone.side_effect = [(1,), (2,), (3,), (2,)]
+        mock_cursor.fetchone.side_effect = [(1,), (1,), (1,), (1,), (1,), (1,)]
         mock_cursor.lastrowid = 500
         
         valid_book_data["format"] = "unknown_format"
@@ -275,7 +277,7 @@ class TestBookDatabase:
     def test_first_publish_year_extraction_old(self, book_db, mock_connection, valid_book_data):
         """Test publish year extraction from different formats"""
         mock_conn, mock_cursor = mock_connection
-        mock_cursor.fetchone.side_effect = [(1,), (2,), (3,), (7,)]
+        mock_cursor.fetchone.side_effect = [(1,), (1,), (1,), (1,), (1,), (1,)]
         mock_cursor.lastrowid = 600
         
         # Test with different year formats
@@ -289,7 +291,7 @@ class TestBookDatabase:
     def test_publish_year_extraction_old(self, book_db, mock_connection, valid_book_data):
         """Test publish year extraction from different formats"""
         mock_conn, mock_cursor = mock_connection
-        mock_cursor.fetchone.side_effect = [(1,), (2,), (3,), (7,)]
+        mock_cursor.fetchone.side_effect = [(1,), (1,), (1,), (1,), (1,), (1,)]
         mock_cursor.lastrowid = 600
         
         # Test with different year formats
@@ -303,7 +305,7 @@ class TestBookDatabase:
     def test_publish_year_extraction(self, book_db, mock_connection, valid_book_data):
         """Test publish year extraction from different formats"""
         mock_conn, mock_cursor = mock_connection
-        mock_cursor.fetchone.side_effect = [(1,), (2,), (3,), (7,)]
+        mock_cursor.fetchone.side_effect = [(1,), (1,), (1,), (1,), (1,), (1,)]
         mock_cursor.lastrowid = 600
         
         # Test with different year formats
@@ -318,10 +320,12 @@ class TestBookDatabase:
         """Test when genre doesn't exist in database"""
         mock_conn, mock_cursor = mock_connection
         mock_cursor.fetchone.side_effect = [
-            (1,),  # publisher exists
-            (2,),  # series exists
-            (3,),  # author exists
-            None   # genre doesn't exist
+            (1,),  # series exists
+            (1,),  # language exists
+            (1,),  # author language exists
+            (1,),  # author exists
+            None,  # genre doesn't exist
+            (1,)   # publisher exists
         ]
         mock_cursor.lastrowid = 700
         
@@ -331,7 +335,7 @@ class TestBookDatabase:
     def test_pages_conversion_to_int(self, book_db, mock_connection, valid_book_data):
         """Test pages field conversion to integer"""
         mock_conn, mock_cursor = mock_connection
-        mock_cursor.fetchone.side_effect = [(1,), (2,), (3,), (1,)]
+        mock_cursor.fetchone.side_effect = [(1,), (1,), (1,), (1,), (1,), (1,)]
         mock_cursor.lastrowid = 800
         
         valid_book_data["pages"] = "250"  # String that should convert to int
@@ -363,7 +367,7 @@ class TestBookDatabase:
     def test_empty_string_fields(self, book_db, mock_connection):
         """Test handling of empty string fields"""
         mock_conn, mock_cursor = mock_connection
-        mock_cursor.fetchone.side_effect = [(1,), (2,)]
+        mock_cursor.fetchone.side_effect = [(1,), (1,), (1,), (1,)]
         mock_cursor.lastrowid = 900
         
         book_data_empty_strings = {
