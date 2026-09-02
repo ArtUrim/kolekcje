@@ -1,117 +1,140 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schemaBookNew.json",
+  "title": "New book payload",
+  "description": "JSON description of a book for insert_book / insert_book_from_json_file",
   "type": "object",
   "required": ["title"],
+  "additionalProperties": true,
   "properties": {
-    "isbn": {
-    "type": "integer",
-    "minimum": 0,
-    "pattern": "^\\d{10}$|^\\d{13}$"
-    },
     "title": {
-    "type": "string",
-    "minLength": 1
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
     },
     "subtitle": {
-    "type": "string",
-    "maxLength": 512
+      "type": ["string", "null"],
+      "maxLength": 512
     },
-    "author": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["title", "isCustom"],
-        "properties": {
-          "id": {
-            "type": ["integer", "null"],
-            "minimum": 1
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1
-          },
-          "isCustom": {
-            "type": "boolean"
-          }
-        }
-      }
+    "isbn": {
+      "type": ["integer", "string", "null"],
+      "maxLength": 17
     },
     "publishYear": {
-    "type": "integer",
-    "minimum": 0,
-    "pattern": "^\\d{4}$"
+      "$ref": "#/definitions/year"
     },
     "firstPublishYear": {
-    "type": "integer",
-    "minimum": 0,
-    "pattern": "^\\d{4}$"
+      "$ref": "#/definitions/year"
     },
     "format": {
-    "type": "string",
-    "enum": ["unknown", "paperback", "hardback", "ebook"]
+      "type": ["string", "null"],
+      "enum": [
+        "unknown",
+        "hardback",
+        "hardcover",
+        "paperback",
+        "papier",
+        "ebook",
+        "e-book",
+        "jacket",
+        "notebook",
+        "",
+        null
+      ]
     },
     "pages": {
-    "type": "integer",
-    "minimum": 0
+      "type": ["integer", "string", "null"],
+      "minimum": 0
     },
     "description": {
-    "type": "string"
+      "type": ["string", "null"]
     },
     "notes": {
-    "type": "string"
-    },
-    "series": {
-    "type": "string"
-    },
-    "genre": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["title", "isCustom"],
-        "properties": {
-          "id": {
-            "type": ["integer", "null"],
-            "minimum": 1
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1
-          },
-          "isCustom": {
-            "type": "boolean"
-          }
-        }
-      }
+      "type": ["string", "null"]
     },
     "originalTitle": {
-    "type": "string"
+      "type": ["string", "null"],
+      "maxLength": 512
     },
     "translator": {
-    "type": "string"
+      "type": ["string", "null"],
+      "maxLength": 512
     },
     "language": {
-    "type": "string",
-    "pattern": "^[a-zA-Z]{2}[a-z_]$"
+      "type": ["string", "null"]
+    },
+    "size": {
+      "type": ["string", "null"],
+      "enum": [
+        "none",
+        "mini",
+        "normal",
+        "scientific",
+        "comics",
+        "huge",
+        "small",
+        "unusual",
+        "",
+        null
+      ]
+    },
+    "author": {
+      "$ref": "#/definitions/namedEntityList"
     },
     "publisher": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["title", "isCustom"],
-        "properties": {
-          "id": {
-            "type": ["integer", "null"],
-            "minimum": 1
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1
-          },
-          "isCustom": {
-            "type": "boolean"
-          }
+      "$ref": "#/definitions/namedEntityList"
+    },
+    "genre": {
+      "$ref": "#/definitions/namedEntityList"
+    },
+    "label": {
+      "$ref": "#/definitions/namedEntityList"
+    },
+    "series": {
+      "oneOf": [
+        { "type": "string", "maxLength": 255 },
+        { "type": "null" },
+        { "$ref": "#/definitions/namedEntity" }
+      ]
+    }
+  },
+  "definitions": {
+    "year": {
+      "type": ["integer", "string", "null"],
+      "minimum": 0,
+      "maximum": 32767
+    },
+    "namedEntity": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["title"],
+      "properties": {
+        "id": {
+          "type": ["integer", "null"]
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "isCustom": {
+          "type": "boolean"
         }
       }
+    },
+    "namedEntityList": {
+      "oneOf": [
+        { "type": "string", "maxLength": 255 },
+        { "type": "null" },
+        {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "type": "string", "maxLength": 255 },
+              { "$ref": "#/definitions/namedEntity" }
+            ]
+          }
+        }
+      ]
     }
   }
 }

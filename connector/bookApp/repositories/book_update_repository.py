@@ -1,9 +1,9 @@
 import mariadb
 from typing import Dict, Any, List, Optional, Tuple
 
-from isbn import validate_isbn, normalize_isbn
+from ..core.isbn import validate_isbn, normalize_isbn
 
-class BookUpdateDatabase:
+class BookUpdateRepository:
     def __init__(self, connection: mariadb.connections.Connection):
         self.connection = connection
 

@@ -39,7 +39,7 @@ services:
     working_dir: /pg
     volumes:
       - ./connector:/pg
-    entrypoint: ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5000", "app:app"]
+    entrypoint: ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5000", "bookApp.app:create_app()"]
     # entrypoint: ["flask", "run", "--debug", "--host=0.0.0.0"]
     ports:
       - "5000:5000"

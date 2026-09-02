@@ -1,5 +1,5 @@
 import pytest
-from book_query_builder import BookQueryBuilder
+from ..repositories.book_query_builder import BookQueryBuilder
 
 class TestBookQueryBuilder:
 
@@ -112,7 +112,8 @@ class TestBookQueryBuilder:
         builder = BookQueryBuilder({})
         conditions, parameters = builder._build_sort_pagination()
         
-        assert len(conditions) == 0
+        assert len(conditions) == 1
+        assert "ORDER BY b.id ASC" in conditions[0]
         assert len(parameters) == 0
 
     def test_build_sort_pagination_sorting_only(self):
@@ -128,8 +129,9 @@ class TestBookQueryBuilder:
         builder = BookQueryBuilder({'itemsPerPage': '10', 'page': '3'})
         conditions, parameters = builder._build_sort_pagination()
         
-        assert len(conditions) == 1
-        assert "LIMIT ? OFFSET ?" in conditions[0]
+        assert len(conditions) == 2
+        assert "ORDER BY b.id ASC" in conditions[0]
+        assert "LIMIT ? OFFSET ?" in conditions[1]
         assert parameters == [10, 20]
 
     def test_build_sort_pagination_combined(self):

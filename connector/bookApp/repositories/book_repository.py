@@ -7,9 +7,9 @@ from jsonschema import validate, ValidationError
 
 import logging
 
-from isbn import validate_isbn, normalize_isbn
+from ..core.isbn import validate_isbn, normalize_isbn
 
-class BookDatabase:
+class BookRepository:
     def __init__(self, connection: mariadb.connections.Connection):
         self.connection = connection
 
@@ -304,7 +304,11 @@ class BookDatabase:
             'polski': 'pl_',
             'polish': 'pl_',
             'angielski': 'en_',
-            'english': 'en_'
+            'english': 'en_',
+            'włoski': 'it_',
+            'italian': 'it_',
+            'rosyjski': 'ru_',
+            'koreański': 'ko_'
         }
         if lang_str in language_mapping:
             return language_mapping[lang_str]
@@ -484,11 +488,15 @@ class BookDatabase:
                     print(f"  {context_path}: {context_error.message}")
             raise
 
-    def insert_book_from_json_file(self, book_date: Dict[str, Any], schema_path: str = 'schemaBookNew.json') -> int:
+    def insert_book_from_json_file(self, json_file_path: str, schema_path: str = 'schemaBookNew.json') -> int:
         """Insert book data from JSON file with schema validation and better error handling"""
         try:
             # Load the JSON schema
             schema = self._load_schema(schema_path)
+
+            # Load and parse the book data
+            with open(json_file_path, 'r', encoding='utf-8') as file:
+                book_data = json.load(file)
 
             # Validate the book data against the schema
             self._validate_book_data(book_data, schema)
@@ -588,7 +596,7 @@ if __name__ == "__main__":
     try:
         # Initialize database connection
         connection = mariadb.connect(**db_params)
-        db = BookDatabase(connection)
+        db = BookRepository(connection)
 
         # Example of processing the data1.json format
         sample_old_data = {
@@ -622,12 +630,8 @@ if __name__ == "__main__":
 
         # Process each JSON file
         for json_file in json_files:
-
-            # Load and parse the book data
-            with open(json_file, 'r', encoding='utf-8') as file:
-                book_data = json.load(file)
             try:
-                book_id = db.insert_book_from_json_file(book_data)
+                book_id = db.insert_book_from_json_file(json_file)
                 print(f"Successfully inserted book from {json_file} with ID: {book_id}")
             except Exception as e:
                 print(f"Error processing {json_file}: {e}")

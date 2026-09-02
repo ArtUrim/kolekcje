@@ -31,7 +31,7 @@ services:
     working_dir: /pg
     tty: true
     stdin_open: true
-    entrypoint: ["gunicorn", "--workers", "2", "--worker-class", "sync", "--bind", "0.0.0.0:5000", "--timeout", "120", "--log-level", "info", "--access-logfile", "-", "app:app"]
+    entrypoint: ["gunicorn", "--workers", "2", "--worker-class", "sync", "--bind", "0.0.0.0:5000", "--timeout", "120", "--log-level", "info", "--access-logfile", "-", "bookApp.app:create_app()"]
     ports:
       - "5000:5000"
     networks:

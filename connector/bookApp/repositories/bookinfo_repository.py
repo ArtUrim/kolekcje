@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class BookInfoHandler:
+class BookInfoRepository:
     """Handler for managing book information updates and queries."""
 
     def __init__(self, db_connection):

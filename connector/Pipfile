@@ -11,11 +11,9 @@ requests = "*"
 selenium = "*"
 flask = "*"
 jsonschema = "*"
+pytest = "*"
 
 [dev-packages]
 pytest = "*"
 pytest-mock = "*"
 ipdb = "*"
-
-[requires]
-python_version = "3.11"

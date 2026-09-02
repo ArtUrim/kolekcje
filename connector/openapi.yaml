@@ -16,15 +16,39 @@ paths:
       summary: Get books with filtering, sorting, and pagination
       description: Retrieve books from the collection with optional filtering by author, title, publisher, or series, plus sorting and pagination support
       parameters:
-        - name: author
+        - name: fields
           in: query
-          description: Filter books by author name (partial match)
+          description: "Comma-separated list of fields to return. Valid fields: id, isbn, title, subtitle, release_date, first_polish_release_date, format, pages, description, note, original_title, translator, language_id, language, size, author, publisher, series_name, genres, labels"
+          required: false
+          schema:
+            type: string
+        - name: id
+          in: query
+          description: Filter books by exact ID
+          required: false
+          schema:
+            type: integer
+        - name: isbn
+          in: query
+          description: Filter books by ISBN (partial match)
           required: false
           schema:
             type: string
         - name: title
           in: query
           description: Filter books by title (partial match)
+          required: false
+          schema:
+            type: string
+        - name: subtitle
+          in: query
+          description: Filter books by subtitle (partial match)
+          required: false
+          schema:
+            type: string
+        - name: author
+          in: query
+          description: Filter books by author name (partial match)
           required: false
           schema:
             type: string
@@ -40,13 +64,68 @@ paths:
           required: false
           schema:
             type: string
+        - name: genres
+          in: query
+          description: Filter books by genre name (partial match)
+          required: false
+          schema:
+            type: string
+        - name: label
+          in: query
+          description: Filter books by label name (partial match)
+          required: false
+          schema:
+            type: string
+        - name: release_date
+          in: query
+          description: Filter books by release date (partial match)
+          required: false
+          schema:
+            type: string
+        - name: first_polish_release_date
+          in: query
+          description: Filter books by first Polish release date (partial match)
+          required: false
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Filter books by format (partial match)
+          required: false
+          schema:
+            type: string
+        - name: original_title
+          in: query
+          description: Filter books by original title (partial match)
+          required: false
+          schema:
+            type: string
+        - name: translator
+          in: query
+          description: Filter books by translator (partial match)
+          required: false
+          schema:
+            type: string
+        - name: language
+          in: query
+          description: Filter books by language name (partial match)
+          required: false
+          schema:
+            type: string
         - name: sortBy
           in: query
           description: Field to sort by
           required: false
           schema:
             type: string
-            enum: [title, author, publisher, release, serie]
+            enum: [title, subtitle, author, publisher, release, serie, format, pages, first_polish_release_date, translator, original_title, size, language]
+        - name: sortDesc
+          in: query
+          description: Sort order (desc for descending, otherwise ascending)
+          required: false
+          schema:
+            type: string
+            enum: [desc]
         - name: orderDesc
           in: query
           description: Sort order (desc for descending, otherwise ascending)
@@ -102,6 +181,12 @@ paths:
       responses:
         '204':
           description: Book successfully added
+        '400':
+          description: Bad Request - Invalid JSON data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '415':
           description: Unsupported Media Type
           content:
@@ -110,6 +195,252 @@ paths:
                 $ref: '#/components/schemas/Error'
         '500':
           $ref: '#/components/responses/DatabaseError'
+
+  /books/validate:
+    get:
+      summary: Validate a book against the collection
+      description: Check whether a book already exists in the collection by matching ISBN, title, or other criteria. Returns 409 if a match is found, 204 if no match exists.
+      parameters:
+        - name: isbn
+          in: query
+          description: ISBN to validate (10 or 13 digits with valid checksum)
+          required: false
+          schema:
+            type: string
+        - name: title
+          in: query
+          description: Book title to match
+          required: false
+          schema:
+            type: string
+        - name: original_title
+          in: query
+          description: Original title to match
+          required: false
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No matching book found
+        '400':
+          description: Invalid ISBN or validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                    example: Invalid ISBN
+                  detail:
+                    type: string
+                    description: Details about the validation failure
+        '403':
+          description: No search parameters provided
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: string
+                    example: empty hint list
+        '409':
+          description: A matching book already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                    description: Book title
+                  authors:
+                    type: string
+                    description: Comma-separated list of author names
+                  release_year:
+                    type: integer
+                    description: Book release year
+                  original_title:
+                    type: string
+                    description: Original title
+                  language:
+                    type: string
+                    description: Language name
+                  publishers:
+                    type: string
+                    description: Comma-separated list of publisher names
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /books/{book_id}:
+    get:
+      summary: Get a book by ID
+      description: Retrieve detailed information for a specific book by its ID
+      parameters:
+        - name: book_id
+          in: path
+          description: Book ID
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Successfully retrieved book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookInfo'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    put:
+      summary: Update a book by ID
+      description: Update detailed information for a specific book by its ID
+      parameters:
+        - name: book_id
+          in: path
+          description: Book ID
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookUpdate'
+      responses:
+        '200':
+          description: Book successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  book_id:
+                    type: integer
+                    description: ID of the updated book
+        '400':
+          description: Validation error in request data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    delete:
+      summary: Delete a book by ID
+      description: Delete a specific book and its associated relations by its ID
+      parameters:
+        - name: book_id
+          in: path
+          description: Book ID
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Book successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  book_id:
+                    type: integer
+                    description: ID of the deleted book
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /keepalive:
+    get:
+      summary: Keep-alive check
+      description: Health check endpoint that returns an empty 204 response
+      responses:
+        '204':
+          description: Service is alive
+    post:
+      summary: Keep-alive check
+      description: Health check endpoint that returns an empty 204 response
+      responses:
+        '204':
+          description: Service is alive
+
+  /restart-router:
+    post:
+      summary: Restart the router
+      description: Create a restart trigger file for the router. Requires admin role via the X-App-Role header.
+      parameters:
+        - name: X-App-Role
+          in: header
+          description: User role injected by Nginx. Must be 'admin' to restart the router.
+          required: true
+          schema:
+            type: string
+            example: admin
+      responses:
+        '200':
+          description: Restart trigger created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    description: Name of the created trigger file
+                    example: task_1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d.trigger
+        '403':
+          description: Unauthorized - role is not admin
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unauthorized: Subnet access restricted"
+                  your_role:
+                    type: string
+                    description: The role provided in the X-App-Role header
+                    example: standard
+        '500':
+          description: Failed to create restart trigger
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    description: Error message
 
   /authors:
     get:
@@ -365,72 +696,192 @@ components:
   schemas:
     Book:
       type: object
+      description: Book row from GET /book. Returned properties depend on the fields query parameter.
       properties:
+        id:
+          type: integer
+        isbn:
+          type: string
+          nullable: true
         title:
           type: string
-          description: Book title
-        authors:
+        subtitle:
           type: string
-          description: Comma-separated list of author names
+          nullable: true
+        release_date:
+          description: Release year
+          nullable: true
+        first_polish_release_date:
+          nullable: true
+        format:
+          type: string
+        pages:
+          type: integer
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        note:
+          type: string
+          nullable: true
+        original_title:
+          type: string
+          nullable: true
+        translator:
+          type: string
+          nullable: true
+        language_id:
+          type: string
+        language:
+          type: string
+          nullable: true
+        size:
+          type: string
+          nullable: true
+        author:
+          type: string
+          description: Comma-separated author names
         publisher:
           type: string
-          description: Publisher name
-        release_date:
-          type: string
-          format: date
-          description: Book release date
+          description: Comma-separated publisher names
         series_name:
           type: string
-          description: Series name
+          nullable: true
+        genres:
+          type: string
+          nullable: true
+        labels:
+          type: string
           nullable: true
       example:
+        id: 1
         title: "The Great Gatsby"
-        authors: "F. Scott Fitzgerald"
+        author: "F. Scott Fitzgerald"
         publisher: "Scribner"
-        release_date: "1925-04-10"
+        release_date: 1925
         series_name: null
+
+    NamedEntity:
+      type: object
+      description: Catalog entity identified by id and/or name
+      properties:
+        id:
+          type: integer
+          nullable: true
+        title:
+          type: string
+          description: Display name (preferred)
+        name:
+          type: string
+          description: Alternate name field
+        isCustom:
+          type: boolean
+          description: If true, create the entity when it does not exist
+
+    NamedEntityList:
+      description: One or more catalog entities (authors, publishers, genres, labels)
+      oneOf:
+        - type: string
+        - type: "null"
+        - type: array
+          items:
+            oneOf:
+              - type: string
+              - $ref: '#/components/schemas/NamedEntity'
 
     NewBook:
       type: object
       required:
         - title
+      additionalProperties: true
+      description: Payload for POST /addbook. Field names match insert_book / schemaBookNew.json.
       properties:
         title:
           type: string
+          minLength: 1
+          maxLength: 512
           description: Book title
-        authors:
-          type: array
-          items:
-            type: string
-          description: List of author names
+        subtitle:
+          type: string
+          nullable: true
+          maxLength: 512
+        isbn:
+          description: ISBN (10 or 13 digits with valid checksum)
+          oneOf:
+            - type: integer
+            - type: string
+            - type: "null"
+        publishYear:
+          description: Release year
+          oneOf:
+            - type: integer
+            - type: string
+            - type: "null"
+        firstPublishYear:
+          description: First Polish release year
+          oneOf:
+            - type: integer
+            - type: string
+            - type: "null"
+        format:
+          type: string
+          nullable: true
+          enum: [unknown, hardback, hardcover, paperback, papier, ebook, e-book, jacket, notebook, "", null]
+        pages:
+          oneOf:
+            - type: integer
+            - type: string
+            - type: "null"
+        description:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        originalTitle:
+          type: string
+          nullable: true
+          maxLength: 512
+        translator:
+          type: string
+          nullable: true
+          maxLength: 512
+        language:
+          type: string
+          nullable: true
+          description: Language name or code (e.g. pl_, en_, polish)
+        size:
+          type: string
+          nullable: true
+          enum: [none, mini, normal, scientific, comics, huge, small, unusual, "", null]
+        author:
+          $ref: '#/components/schemas/NamedEntityList'
         publisher:
-          type: string
-          description: Publisher name
-        release_date:
-          type: string
-          format: date
-          description: Book release date
+          $ref: '#/components/schemas/NamedEntityList'
+        genre:
+          $ref: '#/components/schemas/NamedEntityList'
+        label:
+          $ref: '#/components/schemas/NamedEntityList'
         series:
-          type: string
-          description: Series name
-        genres:
-          type: array
-          items:
-            type: string
-          description: List of genre names
-        labels:
-          type: array
-          items:
-            type: string
-          description: List of label names
+          oneOf:
+            - type: string
+            - type: "null"
+            - $ref: '#/components/schemas/NamedEntity'
       example:
         title: "The Great Gatsby"
-        authors: ["F. Scott Fitzgerald"]
-        publisher: "Scribner"
-        release_date: "1925-04-10"
+        subtitle: "A Novel"
+        isbn: "9780743273565"
+        publishYear: 1925
+        format: "paperback"
+        pages: 180
+        originalTitle: null
+        language: "en_"
+        size: "normal"
+        author: ["F. Scott Fitzgerald"]
+        publisher: ["Scribner"]
         series: "Classic Literature"
-        genres: ["Fiction", "Classic"]
-        labels: ["American Literature", "Jazz Age"]
+        genre: ["Fiction", "Classic"]
+        label: ["American Literature", "Jazz Age"]
 
     Author:
       type: object
@@ -525,84 +976,268 @@ components:
         id:
           type: integer
           description: Book ID
+        isbn:
+          type: string
+          description: Book ISBN
+          nullable: true
         title:
           type: string
           description: Book title
-        authors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Author'
-          description: List of book authors
-        publisher:
-          $ref: '#/components/schemas/Publisher'
-          description: Book publisher
-        release_date:
+        subtitle:
           type: string
-          format: date
-          description: Book release date
-        series:
-          $ref: '#/components/schemas/Series'
-          description: Book series
+          description: Book subtitle
           nullable: true
-        genres:
+        release_date:
+          type: integer
+          description: Book release year
+          nullable: true
+        first_polish_release_date:
+          type: integer
+          description: First Polish release year
+          nullable: true
+        format:
+          type: string
+          description: Book format
+        pages:
+          type: integer
+          description: Number of pages
+          nullable: true
+        description:
+          type: string
+          description: Book description
+          nullable: true
+        note:
+          type: string
+          description: Notes about the book
+          nullable: true
+        series_id:
+          type: integer
+          description: Series ID
+          nullable: true
+        original_title:
+          type: string
+          description: Original title
+          nullable: true
+        translator:
+          type: string
+          description: Translator name
+          nullable: true
+        language_id:
+          type: string
+          description: Language code
+        size:
+          type: string
+          description: Book size
+          nullable: true
+        series_name:
+          type: string
+          description: Series name
+          nullable: true
+        language_name:
+          type: string
+          description: Language name
+          nullable: true
+        authors:
+          type: string
+          description: Comma-separated list of author names
+          nullable: true
+        authors_details:
           type: array
           items:
-            $ref: '#/components/schemas/Genre'
-          description: List of book genres
+            $ref: '#/components/schemas/AuthorDetail'
+          description: Detailed list of book authors
+        publishers:
+          type: string
+          description: Comma-separated list of publisher names
+          nullable: true
+        publishers_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublisherDetail'
+          description: Detailed list of book publishers
         labels:
+          type: string
+          description: Comma-separated list of label names
+          nullable: true
+        labels_details:
           type: array
           items:
             $ref: '#/components/schemas/Label'
-          description: List of book labels
+          description: Detailed list of book labels
+        genres:
+          type: string
+          description: Comma-separated list of genre names
+          nullable: true
+        genres_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/Genre'
+          description: Detailed list of book genres
       example:
         id: 1
+        isbn: "9780743273565"
         title: "The Great Gatsby"
-        authors: [{"id": 1, "name": "F. Scott Fitzgerald"}]
-        publisher: {"id": 1, "name": "Scribner"}
-        release_date: "1925-04-10"
-        series: null
-        genres: [{"id": 1, "name": "Fiction"}]
-        labels: [{"id": 1, "name": "Classic Literature"}]
+        subtitle: "A Novel"
+        release_date: 1925
+        first_polish_release_date: null
+        format: "paperback"
+        pages: 180
+        description: "A story of the mysteriously wealthy Jay Gatsby."
+        note: null
+        series_id: null
+        original_title: null
+        translator: null
+        language_id: "en_"
+        size: "normal"
+        series_name: null
+        language_name: "English"
+        authors: "F. Scott Fitzgerald"
+        authors_details: [{"id": 1, "name": "F. Scott Fitzgerald"}]
+        publishers: "Scribner"
+        publishers_details: [{"id": 1, "name": "Scribner"}]
+        labels: "Classic Literature"
+        labels_details: [{"id": 1, "name": "Classic Literature"}]
+        genres: "Fiction"
+        genres_details: [{"id": 1, "name": "Fiction"}]
+
+    AuthorDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Author ID
+        name:
+          type: string
+          description: Author name
+        nationality_id:
+          type: string
+          description: Nationality code
+          nullable: true
+        description:
+          type: string
+          description: Author description
+          nullable: true
+        birth_date:
+          type: string
+          description: Author birth date
+          nullable: true
+        death_date:
+          type: string
+          description: Author death date
+          nullable: true
+        note:
+          type: string
+          description: Notes about the author
+          nullable: true
+
+    PublisherDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Publisher ID
+        name:
+          type: string
+          description: Publisher name
+        description:
+          type: string
+          description: Publisher description
+          nullable: true
+        note:
+          type: string
+          description: Notes about the publisher
+          nullable: true
+        webpage:
+          type: string
+          description: Publisher webpage
+          nullable: true
 
     BookInfoUpdate:
       type: object
+      additionalProperties: true
+      description: >
+        Payload for POST /bookinfo. The current implementation accepts JSON and
+        returns success if the book exists; field-level updates are not applied
+        (use PUT /books/{book_id} for real updates).
+      properties:
+        title:
+          type: string
+      example:
+        title: "The Great Gatsby - Updated Edition"
+
+    BookUpdate:
+      type: object
+      description: Payload for updating a book by ID (PUT /books/{book_id}). All fields are optional; only provided fields are updated.
       properties:
         title:
           type: string
           description: Book title
-        authors:
-          type: array
-          items:
-            type: string
-          description: List of author names
-        publisher:
+        subtitle:
           type: string
-          description: Publisher name
-        release_date:
+          description: Book subtitle
+          nullable: true
+        originalTitle:
           type: string
-          format: date
-          description: Book release date
+          description: Original title
+          nullable: true
+        publishYear:
+          type: integer
+          description: Release year
+        firstPublishYear:
+          type: integer
+          description: First Polish release year
+        format:
+          type: string
+          description: Book format (aliases hardcover/papier/e-book are accepted and normalized)
+          enum: [paperback, hardback, hardcover, papier, ebook, e-book, notebook, jacket, unknown]
+        notes:
+          type: string
+          description: Notes about the book
+          nullable: true
+        pages:
+          type: integer
+          description: Number of pages
+        description:
+          type: string
+          description: Book description
+          nullable: true
+        translator:
+          type: string
+          description: Translator name
+          nullable: true
+        isbn:
+          type: string
+          description: ISBN (10 or 13 digits with valid checksum)
+        size:
+          type: string
+          description: Book size
+          enum: [none, mini, normal, scientific, comics, huge, small, unusual]
+        language:
+          type: string
+          description: Language code (e.g. pl_, en_)
         series:
           type: string
           description: Series name
-        genres:
-          type: array
-          items:
-            type: string
-          description: List of genre names
-        labels:
-          type: array
-          items:
-            type: string
-          description: List of label names
+          nullable: true
+        author:
+          $ref: '#/components/schemas/NamedEntityList'
+        publisher:
+          $ref: '#/components/schemas/NamedEntityList'
+        genre:
+          $ref: '#/components/schemas/NamedEntityList'
+        label:
+          $ref: '#/components/schemas/NamedEntityList'
       example:
         title: "The Great Gatsby - Updated Edition"
-        authors: ["F. Scott Fitzgerald"]
-        publisher: "Scribner"
-        release_date: "1925-04-10"
-        series: "Classic Literature Series"
-        genres: ["Fiction", "Classic"]
-        labels: ["American Literature", "Jazz Age", "Award Winner"]
+        subtitle: "A Novel"
+        publishYear: 1925
+        format: "paperback"
+        pages: 180
+        isbn: "9780743273565"
+        author: ["F. Scott Fitzgerald"]
+        publisher: ["Scribner"]
+        genre: ["Fiction", "Classic"]
+        label: ["American Literature"]
 
     Error:
       type: object
@@ -663,3 +1298,5 @@ tags:
     description: Operations related to genres
   - name: Labels
     description: Operations related to labels
+  - name: System
+    description: System health and router management operations
