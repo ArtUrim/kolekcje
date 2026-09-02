@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft/07/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "schemaBookNew.json",
   "title": "New book payload",
   "description": "JSON description of a book for insert_book / insert_book_from_json_file",
@@ -17,7 +17,8 @@
       "maxLength": 512
     },
     "isbn": {
-      "type": ["integer", "string", "null"]
+      "type": ["integer", "string", "null"],
+      "maxLength": 17
     },
     "publishYear": {
       "$ref": "#/definitions/year"
@@ -42,7 +43,8 @@
       ]
     },
     "pages": {
-      "type": ["integer", "string", "null"]
+      "type": ["integer", "string", "null"],
+      "minimum": 0
     },
     "description": {
       "type": ["string", "null"]
@@ -90,7 +92,7 @@
     },
     "series": {
       "oneOf": [
-        { "type": "string" },
+        { "type": "string", "maxLength": 255 },
         { "type": "null" },
         { "$ref": "#/definitions/namedEntity" }
       ]
@@ -98,20 +100,21 @@
   },
   "definitions": {
     "year": {
-      "type": ["integer", "string", "null"]
+      "type": ["integer", "string", "null"],
+      "minimum": 0,
+      "maximum": 32767
     },
     "namedEntity": {
       "type": "object",
       "additionalProperties": true,
+      "required": ["title"],
       "properties": {
         "id": {
           "type": ["integer", "null"]
         },
         "title": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
+          "type": "string",
+          "maxLength": 255
         },
         "isCustom": {
           "type": "boolean"
@@ -120,13 +123,13 @@
     },
     "namedEntityList": {
       "oneOf": [
-        { "type": "string" },
+        { "type": "string", "maxLength": 255 },
         { "type": "null" },
         {
           "type": "array",
           "items": {
             "oneOf": [
-              { "type": "string" },
+              { "type": "string", "maxLength": 255 },
               { "$ref": "#/definitions/namedEntity" }
             ]
           }

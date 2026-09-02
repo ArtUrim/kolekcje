@@ -170,7 +170,7 @@ class TestAddBookEndpoint:
         
         book_data = {
             'title': 'Test Book with Bad ISBN',
-            'isbn': 'invalid-isbn-format'
+            'isbn': 'bad-isbn'
         }
         
         response = client.post(

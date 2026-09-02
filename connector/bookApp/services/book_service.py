@@ -19,7 +19,7 @@ class BookService:
         if self.connection is None:
             logging.warning(f"Connection to DB not successful")
             return None
-        return BookRepository(self.connection).insert_book(book_data)
+        return BookRepository(self.connection).insert_book_from_dict(book_data)
 
     def search_books(self, params):
         return BookQueryRepository(self.connection).search(params)
