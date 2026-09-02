@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema#",
+  "$id": "schemaBookNew.json",
+  "title": "New book payload",
+  "description": "JSON description of a book for insert_book / insert_book_from_json_file",
+  "type": "object",
+  "required": ["title"],
+  "additionalProperties": true,
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "subtitle": {
+      "type": ["string", "null"],
+      "maxLength": 512
+    },
+    "isbn": {
+      "type": ["integer", "string", "null"]
+    },
+    "publishYear": {
+      "$ref": "#/definitions/year"
+    },
+    "firstPublishYear": {
+      "$ref": "#/definitions/year"
+    },
+    "format": {
+      "type": ["string", "null"],
+      "enum": [
+        "unknown",
+        "hardback",
+        "hardcover",
+        "paperback",
+        "papier",
+        "ebook",
+        "e-book",
+        "jacket",
+        "notebook",
+        "",
+        null
+      ]
+    },
+    "pages": {
+      "type": ["integer", "string", "null"]
+    },
+    "description": {
+      "type": ["string", "null"]
+    },
+    "notes": {
+      "type": ["string", "null"]
+    },
+    "originalTitle": {
+      "type": ["string", "null"],
+      "maxLength": 512
+    },
+    "translator": {
+      "type": ["string", "null"],
+      "maxLength": 512
+    },
+    "language": {
+      "type": ["string", "null"]
+    },
+    "size": {
+      "type": ["string", "null"],
+      "enum": [
+        "none",
+        "mini",
+        "normal",
+        "scientific",
+        "comics",
+        "huge",
+        "small",
+        "unusual",
+        "",
+        null
+      ]
+    },
+    "author": {
+      "$ref": "#/definitions/namedEntityList"
+    },
+    "publisher": {
+      "$ref": "#/definitions/namedEntityList"
+    },
+    "genre": {
+      "$ref": "#/definitions/namedEntityList"
+    },
+    "label": {
+      "$ref": "#/definitions/namedEntityList"
+    },
+    "series": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "null" },
+        { "$ref": "#/definitions/namedEntity" }
+      ]
+    }
+  },
+  "definitions": {
+    "year": {
+      "type": ["integer", "string", "null"]
+    },
+    "namedEntity": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": ["integer", "null"]
+        },
+        "title": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "isCustom": {
+          "type": "boolean"
+        }
+      }
+    },
+    "namedEntityList": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "null" },
+        {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "type": "string" },
+              { "$ref": "#/definitions/namedEntity" }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
