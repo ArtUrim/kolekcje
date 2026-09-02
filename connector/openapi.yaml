@@ -696,72 +696,192 @@ components:
   schemas:
     Book:
       type: object
+      description: Book row from GET /book. Returned properties depend on the fields query parameter.
       properties:
+        id:
+          type: integer
+        isbn:
+          type: string
+          nullable: true
         title:
           type: string
-          description: Book title
-        authors:
+        subtitle:
           type: string
-          description: Comma-separated list of author names
+          nullable: true
+        release_date:
+          description: Release year
+          nullable: true
+        first_polish_release_date:
+          nullable: true
+        format:
+          type: string
+        pages:
+          type: integer
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        note:
+          type: string
+          nullable: true
+        original_title:
+          type: string
+          nullable: true
+        translator:
+          type: string
+          nullable: true
+        language_id:
+          type: string
+        language:
+          type: string
+          nullable: true
+        size:
+          type: string
+          nullable: true
+        author:
+          type: string
+          description: Comma-separated author names
         publisher:
           type: string
-          description: Publisher name
-        release_date:
-          type: string
-          format: date
-          description: Book release date
+          description: Comma-separated publisher names
         series_name:
           type: string
-          description: Series name
+          nullable: true
+        genres:
+          type: string
+          nullable: true
+        labels:
+          type: string
           nullable: true
       example:
+        id: 1
         title: "The Great Gatsby"
-        authors: "F. Scott Fitzgerald"
+        author: "F. Scott Fitzgerald"
         publisher: "Scribner"
-        release_date: "1925-04-10"
+        release_date: 1925
         series_name: null
+
+    NamedEntity:
+      type: object
+      description: Catalog entity identified by id and/or name
+      properties:
+        id:
+          type: integer
+          nullable: true
+        title:
+          type: string
+          description: Display name (preferred)
+        name:
+          type: string
+          description: Alternate name field
+        isCustom:
+          type: boolean
+          description: If true, create the entity when it does not exist
+
+    NamedEntityList:
+      description: One or more catalog entities (authors, publishers, genres, labels)
+      oneOf:
+        - type: string
+        - type: "null"
+        - type: array
+          items:
+            oneOf:
+              - type: string
+              - $ref: '#/components/schemas/NamedEntity'
 
     NewBook:
       type: object
       required:
         - title
+      additionalProperties: true
+      description: Payload for POST /addbook. Field names match insert_book / schemaBookNew.json.
       properties:
         title:
           type: string
+          minLength: 1
+          maxLength: 512
           description: Book title
-        authors:
-          type: array
-          items:
-            type: string
-          description: List of author names
+        subtitle:
+          type: string
+          nullable: true
+          maxLength: 512
+        isbn:
+          description: ISBN (10 or 13 digits with valid checksum)
+          oneOf:
+            - type: integer
+            - type: string
+            - type: "null"
+        publishYear:
+          description: Release year
+          oneOf:
+            - type: integer
+            - type: string
+            - type: "null"
+        firstPublishYear:
+          description: First Polish release year
+          oneOf:
+            - type: integer
+            - type: string
+            - type: "null"
+        format:
+          type: string
+          nullable: true
+          enum: [unknown, hardback, hardcover, paperback, papier, ebook, e-book, jacket, notebook, "", null]
+        pages:
+          oneOf:
+            - type: integer
+            - type: string
+            - type: "null"
+        description:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        originalTitle:
+          type: string
+          nullable: true
+          maxLength: 512
+        translator:
+          type: string
+          nullable: true
+          maxLength: 512
+        language:
+          type: string
+          nullable: true
+          description: Language name or code (e.g. pl_, en_, polish)
+        size:
+          type: string
+          nullable: true
+          enum: [none, mini, normal, scientific, comics, huge, small, unusual, "", null]
+        author:
+          $ref: '#/components/schemas/NamedEntityList'
         publisher:
-          type: string
-          description: Publisher name
-        release_date:
-          type: string
-          format: date
-          description: Book release date
+          $ref: '#/components/schemas/NamedEntityList'
+        genre:
+          $ref: '#/components/schemas/NamedEntityList'
+        label:
+          $ref: '#/components/schemas/NamedEntityList'
         series:
-          type: string
-          description: Series name
-        genres:
-          type: array
-          items:
-            type: string
-          description: List of genre names
-        labels:
-          type: array
-          items:
-            type: string
-          description: List of label names
+          oneOf:
+            - type: string
+            - type: "null"
+            - $ref: '#/components/schemas/NamedEntity'
       example:
         title: "The Great Gatsby"
-        authors: ["F. Scott Fitzgerald"]
-        publisher: "Scribner"
-        release_date: "1925-04-10"
+        subtitle: "A Novel"
+        isbn: "9780743273565"
+        publishYear: 1925
+        format: "paperback"
+        pages: 180
+        originalTitle: null
+        language: "en_"
+        size: "normal"
+        author: ["F. Scott Fitzgerald"]
+        publisher: ["Scribner"]
         series: "Classic Literature"
-        genres: ["Fiction", "Classic"]
-        labels: ["American Literature", "Jazz Age"]
+        genre: ["Fiction", "Classic"]
+        label: ["American Literature", "Jazz Age"]
 
     Author:
       type: object
@@ -1034,43 +1154,16 @@ components:
 
     BookInfoUpdate:
       type: object
+      additionalProperties: true
+      description: >
+        Payload for POST /bookinfo. The current implementation accepts JSON and
+        returns success if the book exists; field-level updates are not applied
+        (use PUT /books/{book_id} for real updates).
       properties:
         title:
           type: string
-          description: Book title
-        authors:
-          type: array
-          items:
-            type: string
-          description: List of author names
-        publisher:
-          type: string
-          description: Publisher name
-        release_date:
-          type: string
-          format: date
-          description: Book release date
-        series:
-          type: string
-          description: Series name
-        genres:
-          type: array
-          items:
-            type: string
-          description: List of genre names
-        labels:
-          type: array
-          items:
-            type: string
-          description: List of label names
       example:
         title: "The Great Gatsby - Updated Edition"
-        authors: ["F. Scott Fitzgerald"]
-        publisher: "Scribner"
-        release_date: "1925-04-10"
-        series: "Classic Literature Series"
-        genres: ["Fiction", "Classic"]
-        labels: ["American Literature", "Jazz Age", "Award Winner"]
 
     BookUpdate:
       type: object
@@ -1095,8 +1188,8 @@ components:
           description: First Polish release year
         format:
           type: string
-          description: Book format (paperback, hardback, ebook, notebook, jacket, unknown)
-          enum: [paperback, hardback, ebook, notebook, jacket, unknown]
+          description: Book format (aliases hardcover/papier/e-book are accepted and normalized)
+          enum: [paperback, hardback, hardcover, papier, ebook, e-book, notebook, jacket, unknown]
         notes:
           type: string
           description: Notes about the book
@@ -1127,65 +1220,13 @@ components:
           description: Series name
           nullable: true
         author:
-          type: array
-          items:
-            oneOf:
-              - type: string
-              - type: integer
-              - type: object
-                properties:
-                  id:
-                    type: integer
-                  title:
-                    type: string
-                  isCustom:
-                    type: boolean
-          description: List of authors (names, IDs, or objects)
+          $ref: '#/components/schemas/NamedEntityList'
         publisher:
-          type: array
-          items:
-            oneOf:
-              - type: string
-              - type: integer
-              - type: object
-                properties:
-                  id:
-                    type: integer
-                  title:
-                    type: string
-                  isCustom:
-                    type: boolean
-          description: List of publishers (names, IDs, or objects)
+          $ref: '#/components/schemas/NamedEntityList'
         genre:
-          type: array
-          items:
-            oneOf:
-              - type: string
-              - type: integer
-              - type: object
-                properties:
-                  id:
-                    type: integer
-                  title:
-                    type: string
-                  isCustom:
-                    type: boolean
-          description: List of genres (names, IDs, or objects)
+          $ref: '#/components/schemas/NamedEntityList'
         label:
-          type: array
-          items:
-            oneOf:
-              - type: string
-              - type: integer
-              - type: object
-                properties:
-                  id:
-                    type: integer
-                  title:
-                    type: string
-                  isCustom:
-                    type: boolean
-          description: List of labels (names, IDs, or objects)
+          $ref: '#/components/schemas/NamedEntityList'
       example:
         title: "The Great Gatsby - Updated Edition"
         subtitle: "A Novel"
