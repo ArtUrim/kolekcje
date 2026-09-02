@@ -304,7 +304,11 @@ class BookRepository:
             'polski': 'pl_',
             'polish': 'pl_',
             'angielski': 'en_',
-            'english': 'en_'
+            'english': 'en_',
+            'włoski': 'it_',
+            'italian': 'it_',
+            'rosyjski': 'ru_',
+            'koreański': 'ko_'
         }
         if lang_str in language_mapping:
             return language_mapping[lang_str]
