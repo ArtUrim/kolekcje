@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>kolekcje - Raspberry Pi Installation Guide</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 42em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    .github-link {
+        margin-top: 3em;
+        padding-top: 2em;
+        border-top: 1px solid #e6e6e6;
+        text-align: center;
+    }
+    .github-link a {
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .github-link a:hover {
+        text-decoration: underline;
+    }
+    .nav-link {
+        display: inline-block;
+        margin-top: 2em;
+        padding: 8px 16px;
+        background-color: #007bff;
+        color: white !important;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    .nav-link:hover {
+        background-color: #0056b3;
+    }
+    .note {
+        background-color: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 1em;
+        margin: 1em 0;
+    }
+    .warning {
+        background-color: #f8d7da;
+        border-left: 4px solid #dc3545;
+        padding: 1em;
+        margin: 1em 0;
+    }
+    .tip {
+        background-color: #d4edda;
+        border-left: 4px solid #28a745;
+        padding: 1em;
+        margin: 1em 0;
+    }
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">kolekcje - Raspberry Pi Installation Guide</h1>
+</header>
+
+<nav>
+<a href="../index.html" class="nav-link">← Back to Main Page</a>
+</nav>
+
+<h1 id="raspberry-pi-installation-guide">Raspberry Pi Installation Guide</h1>
+<p>This comprehensive guide describes how to configure your Raspberry Pi running <strong>moode.audio</strong> to also serve the <strong>kolekcje</strong> web application.</p>
+
+<p>This setup integrates the <strong>kolekcje</strong> frontend directly into moode.audio's built-in <strong>Nginx</strong> server, runs the backend services containerized, and configures a smart-shutdown daemon.</p>
+
+<div class="note">
+<strong>Note:</strong> This guide is specifically designed for Raspberry Pi users running moode.audio with an existing nginx server. For standard Docker deployment, see the <a href="../index.html#setup">main documentation</a>.
+</div>
+
+<h2 id="architecture-overview">Architecture Overview</h2>
+<ul>
+<li><strong>Frontend:</strong> Served as pre-rendered static files by moode.audio's host <strong>Nginx</strong> from <code>/kolekcje/front</code></li>
+<li><strong>Backend &amp; Database:</strong> The database and connector run inside containerized environments (Docker/Podman)</li>
+<li><strong>System Controls:</strong> A <strong>smart-shutdown</strong> system daemon is enabled on the host to manage clean power-offs</li>
+</ul>
+
+<figure>
+<img src="../architecture.jpeg" alt="Overall architecture" />
+<figcaption aria-hidden="true">Overall architecture</figcaption>
+</figure>
+
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Raspberry Pi with moode.audio installed and configured</li>
+<li>Existing nginx server running on moode.audio</li>
+<li>Docker and Docker Compose installed on the Raspberry Pi</li>
+<li>Local DNS server (router or pi.hole) configured for <code>moode.lan</code> and <code>kolekcje.lan</code> domains</li>
+<li>SSH access to your Raspberry Pi</li>
+</ul>
+
+<h2 id="step-1-prepare-the-frontend-nuxt-prerender">Step 1: Prepare the Frontend (Nuxt Prerender)</h2>
+<p>Before moving files to the Raspberry Pi, you need to generate the static files of the <strong>kolekcje</strong> frontend.</p>
+
+<ol type="1">
+<li><p>Navigate to your frontend source directory on your local machine:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /path/to/kolekcje/front</span></code></pre></div></li>
+
+<li><p>Build and pre-render the static files:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npx</span> nuxt build --prerender</span></code></pre></div>
+<p><em>Note: This command generates static assets inside the local <code>.output/public</code> (or <code>dist</code>) directory.</em></p></li>
+
+<li><p>Transfer these files to your Raspberry Pi:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the target directory on your Raspberry Pi</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ssh</span> ${USER}@moode.lan "sudo mkdir -p /kolekcje/front &amp;&amp; sudo chown -R ${USER}:${USER} /kolekcje"</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Sync the prerendered files to the target folder</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">rsync</span> -avz .output/public/ ${USER}@moode.lan:/kolekcje/front/</span></code></pre></div></li>
+</ol>
+
+<h2 id="step-2-configure-built-in-nginx">Step 2: Configure Built-in Nginx</h2>
+<p>Rather than deploying a containerized reverse-proxy, we configure moode.audio's native Nginx instance to serve <strong>kolekcje</strong> alongside its own web UI.</p>
+
+<ol type="1">
+<li><p>SSH into your Raspberry Pi:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ssh</span> ${USER}@moode.lan</span></code></pre></div></li>
+
+<li><p>Modify file <code>/etc/nginx/nginx.conf</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode diff"><code class="sourceCode diff"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">--- Old/etc/nginx/nginx.conf</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="dt">+++ New/etc/nginx/nginx.conf</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -33,34 +33,34 @@</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="gi">+ 	# access_log off;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="gi">+ 	access_log /var/log/nginx/access.log;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="dt">-</span> 	access_log off;</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="dt">-</span> 	#access_log /var/log/nginx/access.log;</span></code></pre></div>
+<div class="note">
+<strong>Important:</strong> This change is required for the smart-shutdown service. The activity on the webpages is monitored by watching for new entries in the <strong>nginx</strong> logs.
+</div></li>
+
+<li><p>Modify configuration of the <strong>moode</strong> service in nginx to grab only traffic for a specific host (<code>moode.lan</code> or <code>moode.local</code>):</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode diff"><code class="sourceCode diff"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">--- Old/etc/nginx/sites-available/moode-http.conf</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">+++ New/etc/nginx/sites-available/moode-http.conf</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -7 +7 @@</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="gi">+ 	server_name moode.lan moode.local;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="dt">-</span> 	server_name _; # Matches any hostname</span></code></pre></div>
+<div class="warning">
+<strong>Note:</strong> This change requires your local DNS server (on router or pi.hole) to have specific rules for the FQDNs: <code>moode.lan</code> and <code>kolekcje.lan</code> (or the <code>.local</code> variants).
+</div></li>
+
+<li><p>Create a configuration for the new <strong>kolekcje</strong> subservice. Copy these two files:</p>
+<ul>
+<li><code>nginx/etc/nginx/kolekcje-locations.conf</code> → <code>/etc/nginx/</code></li>
+<li><code>nginx/etc/nginx/sites-available/kolekcje-http.conf</code> → <code>/etc/nginx/sites-available/</code></li>
+</ul></li>
+
+<li><p>Enable the configuration and test Nginx:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Enable site</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">sudo</span> ln -sf /etc/nginx/sites-available/kolekcje-http.conf /etc/nginx/sites-enabled/</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify syntax</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ex">sudo</span> nginx -t</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Reload Nginx to apply changes</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="ex">sudo</span> systemctl reload nginx</span></code></pre></div></li>
+</ol>
+
+<h2 id="step-3-run-connector-and-db-from-containerized-environment">Step 3: Run Connector &amp; DB from Containerized Environment</h2>
+<p>Prepare the containerized backend services using Docker/Podman on the Raspberry Pi.</p>
+
+<ol type="1">
+<li><p>Ensure Docker and Docker Compose are installed, following the <a href="https://docs.docker.com/engine/install/debian/">official Docker installation guide</a>.</p></li>
+
+<li><p>Create a deployment directory:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mkdir</span> -p ~/kolekcje</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/kolekcje</span></code></pre></div></li>
+
+<li><p>Copy the <code>compose-moode.yml</code> file to the newly created directory:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cp</span> /path/to/kolekcje/compose-moode.yml ~/kolekcje/</span></code></pre></div></li>
+
+<li><p>Start the services:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose -f compose-moode.yml up -d</span></code></pre></div></li>
+</ol>
+
+<h3 id="database-backup">Database Backup</h3>
+<p>Good practices recommend making a database backup periodically. The command for this in our environment:</p>
+
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> exec mariadb mariadb-dump -u example -p'example' katalog > dbKolekcjeBck_$(date +"%d%m%Y_%H:%M").sql</span></code></pre></div>
+
+<div class="tip">
+<strong>Tip:</strong> Consider adding this command to a cron job for automated daily backups.
+</div>
+
+<h2 id="step-4-enable-smart-shutdown-service">Step 4: Enable Smart-Shutdown Service</h2>
+<p>To ensure safe system cut-offs, configure and enable the <strong>smart-shutdown</strong> daemon on the host.</p>
+
+<ol type="1">
+<li><p>Copy the systemd service template <code>systemctl/smart-shutdown.service</code> to <code>/etc/systemd/system/</code> directory:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sudo</span> cp systemctl/smart-shutdown.service /etc/systemd/system/</span></code></pre></div></li>
+
+<li><p>Copy the Python script <code>systemctl/smart_shutdown.py</code> to <code>/usr/local/bin/</code>:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sudo</span> cp systemctl/smart_shutdown.py /usr/local/bin/</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Add executable permissions to the script</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="ex">sudo</span> chmod +x /usr/local/bin/smart_shutdown.py</span></code></pre></div>
+<div class="note">
+<strong>Configuration Required:</strong> Edit the script to configure the Tasmota smart socket IP address and other settings according to your hardware setup.
+</div></li>
+
+<li><p>Enable and start the systemd service:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sudo</span> systemctl enable smart-shutdown.service</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">sudo</span> systemctl daemon-reload</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sudo</span> systemctl start smart-shutdown.service</span></code></pre></div></li>
+</ol>
+
+<h3 id="how-smart-shutdown-works">How Smart Shutdown Works</h3>
+<p>The smart-shutdown daemon monitors two types of activity:</p>
+<ul>
+<li><strong>HTTP Traffic:</strong> Watches nginx access logs for web requests to kolekcje</li>
+<li><strong>Audio Playback:</strong> Monitors MPD status and HiFiBerry hardware for active audio playback</li>
+</ul>
+
+<p>If both HTTP and audio activity remain idle for the configured threshold (default: 30 minutes), the system will:</p>
+<ol type="1">
+<li>Send a command to a Tasmota smart plug to delay shutdown by 5 minutes</li>
+<li>Execute a clean system shutdown</li>
+</ol>
+
+<div class="tip">
+<strong>Test Mode:</strong> Run the script with <code>-t</code> flag to test without actually shutting down:
+<code>python3 /usr/local/bin/smart_shutdown.py -t</code>
+</div>
+
+<h2 id="verification">Verification</h2>
+<p>To verify that your deployment was successful:</p>
+
+<ul>
+<li>Navigate to <a href="http://moode.lan">http://moode.lan</a> (or your Raspberry Pi IP) to verify moode.audio is operating normally</li>
+<li>Navigate to <a href="http://kolekcje.lan">http://kolekcje.lan</a> to verify that your static Nuxt frontend is rendering and communicating with the backend container correctly</li>
+</ul>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<h3 id="nginx-configuration-errors">Nginx Configuration Errors</h3>
+<p>If nginx fails to reload, check the configuration syntax:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sudo</span> nginx -t</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="ex">sudo</span> journalctl -u nginx</span></code></pre></div>
+
+<h3 id="backend-not-responding">Backend Not Responding</h3>
+<p>If the frontend loads but cannot connect to the API:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if containers are running</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> ps</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check container logs</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> logs connector</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> logs mariadb</span></code></pre></div>
+
+<h3 id="smart-shutdown-not-working">Smart Shutdown Not Working</h3>
+<p>Check the service status and logs:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sudo</span> systemctl status smart-shutdown.service</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">sudo</span> journalctl -u smart-shutdown.service -f</span></code></pre></div>
+
+<h2 id="current-version">Current Version</h2>
+<p><strong>Version</strong>: 0.9.2</p>
+
+<h3 id="key-components">Key Components</h3>
+<ul>
+<li><strong>Frontend:</strong> Vue.js 3 with Nuxt.js (prerendered static build)</li>
+<li><strong>Backend:</strong> Flask 3.1 with Gunicorn WSGI server</li>
+<li><strong>Database:</strong> MariaDB with connector v1.1.11</li>
+<li><strong>Web Server:</strong> nginx (integrated with moode.audio)</li>
+</ul>
+
+<!-- GitHub repository link -->
+<div class="github-link">
+    <p><a href="https://github.com/ArtUrim/kolekcje" target="_blank" rel="noopener noreferrer">View on GitHub</a></p>
+    <p><a href="../index.html" class="nav-link">← Back to Main Page</a></p>
+</div>
+
+</body>
+</html>
