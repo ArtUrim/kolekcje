@@ -248,7 +248,18 @@
     .github-link a:hover {
         text-decoration: underline;
     }
-  </style>
+    .raspi-section {
+        margin-top: 2em;
+        padding: 15px;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        background-color: #f0f7ff;
+    }
+    .raspi-section h3 {
+        margin-top: 0;
+        color: #007bff;
+    }
+</style>
 </head>
 <body>
 <header id="title-block-header">
@@ -256,8 +267,7 @@
 </header>
 <h1 id="kolekcje---collections-management-application">Kolekcje -
 Collections Management Application</h1>
-<p>A Vue.js/Nuxt.js application for organizing personal collections
-including books, music albums, and movies.</p>
+<p>A web application for organizing personal collections.</p>
 <h2 id="about">About</h2>
 <p>Kolekcje is a comprehensive collection management system that helps
 users organize and track their personal collections. The application
@@ -274,25 +284,30 @@ design for managing your book collections with easy navigation and
 search functionality.</em></p>
 <h3 id="features">Features</h3>
 <ul>
-<li><strong>Book Management</strong>: Add, search, and organize your
-book collection</li>
-<li><strong>Advanced Search</strong>: Search by title, author,
-publisher, or series</li>
-<li><strong>Detailed Book Information</strong>: Track ISBN, publication
-details, genres, series, and personal notes</li>
-<li><strong>Multi-language Support</strong>: Available in multiple
-languages</li>
-<li><strong>Responsive Design</strong>: Works seamlessly on desktop and
-mobile devices</li>
+<li><strong>Book Management</strong>: Add, search, edit, clone, and organize your book collection with comprehensive metadata support</li>
+<li><strong>Advanced Search & Filtering</strong>: Filter by title, author, publisher, series, language, format, and more</li>
+<li><strong>Detailed Book Information</strong>: Track ISBN, subtitle, publication dates, original title, translator, format (hardback, paperback, ebook, etc.), page count, genres, series, labels, and personal notes</li>
+<li><strong>Multi-language Interface</strong>: Available in English, Polish, and Italian with easy extension to additional languages via Vue i18n</li>
+<li><strong>Responsive Design</strong>: Works seamlessly on desktop and mobile devices with adaptive layout</li>
+<li><strong>Data Validation</strong>: JSON Schema validation ensures data integrity when adding or updating books</li>
+<li><strong>Flexible Table Views</strong>: Customizable column selection and table presets for personalized viewing experience</li>
+<li><strong>Expandable Text Fields</strong>: Smart text display with expand/collapse functionality for long descriptions and notes</li>
 </ul>
 <h3 id="current-version">Current Version</h3>
-<p><strong>Version</strong>: 0.9.2</p>
+<p><strong>Version</strong>: 0.9.7</p>
 <h2 id="architecture">Architecture</h2>
 <figure>
 <img src="architecture.jpeg" alt="Overall architecture" />
 <figcaption aria-hidden="true">Overall architecture</figcaption>
 </figure>
-<p>Currently, the <em>in-memory cache</em> (<strong>Redis</strong>) is planned to be added in future for enhanced performance.</p>
+<p>The application follows a modern three-tier architecture:</p>
+<ul>
+<li><strong>Reverse Proxy Layer</strong>: nginx handles HTTP traffic routing and load balancing between frontend and backend services</li>
+<li><strong>Frontend Layer</strong>: Nuxt.js (Vue.js 3) serves the user interface with server-side rendering capabilities</li>
+<li><strong>Backend Layer</strong>: Flask RESTful API manages business logic and data operations</li>
+<li><strong>Data Layer</strong>: MariaDB provides persistent storage for collection data</li>
+</ul>
+<p><strong>Future Enhancement</strong>: Redis caching layer is planned to be added for enhanced performance.</p>
 <h2 id="technology-stack">Technology Stack</h2>
 <h3 id="frontend">Frontend</h3>
 <ul>
@@ -302,17 +317,25 @@ mobile devices</li>
 </ul>
 <h3 id="backend">Backend</h3>
 <ul>
-<li><strong>API</strong>: Python with Flask framework</li>
-<li><strong>Database</strong>: MariaDB for data persistence</li>
-<li><strong>Reverse Proxy</strong>: nginx for HTTP traffic routing and
-load balancing</li>
-<li><strong>Architecture</strong>: RESTful API design with nginx routing
-requests between frontend and backend services</li>
+<li><strong>API Framework</strong>: Python Flask 3.1 with Gunicorn WSGI server</li>
+<li><strong>Database Driver</strong>: MariaDB connector (v1.1.11)</li>
+<li><strong>Data Validation</strong>: jsonschema for book data validation</li>
+<li><strong>Testing</strong>: pytest framework with comprehensive test coverage</li>
 </ul>
 <h2 id="database">Database</h2>
-<p>The structure of the database is designed to efficiently store and manage data related to books, music albums, and movies, with tables for users, collections, and items, ensuring data integrity and scalability.</p>
+<p>The MariaDB database is designed to efficiently store and manage collection data with a normalized schema ensuring data integrity and scalability. The schema supports books, music albums, and movies with the following key entities:</p>
+<ul>
+<li><strong>Books</strong>: Core table storing ISBN, title, subtitle, release dates, format, pages, descriptions, and notes</li>
+<li><strong>Authors</strong>: Multi-language support with nationality, birth/death dates, and descriptions</li>
+<li><strong>Publishers</strong>: Publisher information with webpages and descriptions</li>
+<li><strong>Series</strong>: Book series tracking with descriptions and notes</li>
+<li><strong>Genres</strong>: Categorization system for collections</li>
+<li><strong>Labels</strong>: Custom labeling for personal organization</li>
+<li><strong>Language Support</strong>: ISO language codes for multi-language collections</li>
+</ul>
+<p>The database uses many-to-many relationships (via junction tables like <code>bookAuthors</code>, <code>bookGenres</code>, <code>bookPublishers</code>, <code>bookLabel</code>) to support multiple authors, genres, publishers, and labels per book.</p>
 <figure>
-<img src="katalog.png" alt="Database structure" />
+<img src="katalog.webp" alt="Database structure" />
 <figcaption aria-hidden="true">Database structure</figcaption>
 </figure>
 <h2 id="api-documentation">API Documentation</h2>
@@ -325,9 +348,40 @@ requests between frontend and backend services</li>
 </div>
 
 <h2 id="setup">Setup</h2>
-<p>Make sure to install dependencies:</p>
+<h3 id="docker-deployment">Docker Deployment</h3>
+<p>The application can be deployed using Docker Compose with all required services:</p>
 <div class="sourceCode" id="cb1"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose up</span></code></pre></div>
+<p>This command starts the following services:</p>
+<ul>
+<li><strong>MariaDB</strong>: Database server for data persistence</li>
+<li><strong>Nuxt.js Frontend</strong>: Vue.js 3 application with SSR capabilities</li>
+<li><strong>Flask Connector</strong>: Python RESTful API backend</li>
+<li><strong>nginx</strong>: Reverse proxy for routing HTTP traffic</li>
+<li><strong>Adminer</strong>: Database management interface (available on port 8080)</li>
+</ul>
+
+<h3 id="raspberry-pi-installation">Raspberry Pi co-installation</h3>
+<div class="raspi-section">
+    <p>For Raspberry Pi users running systems like moode.audio (serving http via nginx),
+	 Kolekcje can be integrated directly into the facilities. See the detailed <a href="raspi/index.html">Raspberry Pi Installation Guide</a> for step-by-step instructions including:</p>
+    <ul>
+        <li>Frontend pre-rendering and deployment</li>
+        <li>nginx configuration for multi-service hosting</li>
+        <li>Containerized backend services setup</li>
+        <li>Smart-shutdown daemon configuration</li>
+        <li>Troubleshooting tips</li>
+    </ul>
+    <p><strong>Version</strong>: 0.9.2 - Compatible with current codebase</p>
+</div>
+
+<h3 id="development-setup">Development Setup</h3>
+<p>For local development, navigate to the frontend directory and install dependencies:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> front</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> run dev</span></code></pre></div>
+<p>The development server will start on <code>http://localhost:3000</code>.</p>
 
 <!-- GitHub repository link -->
 <div class="github-link">
