@@ -20,7 +20,7 @@
 		"searchPublisher": "Szukaj po wydawcy",
 		"searchSeries": "Szukaj po serii",
 		"nobooks": "Nie znaleziono żadnych książek",
-		"retrying": "Utracono połączenie. Ponawianie próby...",
+		"retrying": "Brak połączenie. Ponawianie próby nawiązania...",
 		"headers": {
 			"title": "Tytuł",
 			"authors": "Autor(zy)",
