@@ -267,8 +267,7 @@
 </header>
 <h1 id="kolekcje---collections-management-application">Kolekcje -
 Collections Management Application</h1>
-<p>A Vue.js/Nuxt.js application for organizing personal collections
-including books, music albums, and movies.</p>
+<p>A web application for organizing personal collections.</p>
 <h2 id="about">About</h2>
 <p>Kolekcje is a comprehensive collection management system that helps
 users organize and track their personal collections. The application
@@ -290,13 +289,12 @@ search functionality.</em></p>
 <li><strong>Detailed Book Information</strong>: Track ISBN, subtitle, publication dates, original title, translator, format (hardback, paperback, ebook, etc.), page count, genres, series, labels, and personal notes</li>
 <li><strong>Multi-language Interface</strong>: Available in English, Polish, and Italian with easy extension to additional languages via Vue i18n</li>
 <li><strong>Responsive Design</strong>: Works seamlessly on desktop and mobile devices with adaptive layout</li>
-<li><strong>External Data Integration</strong>: Automatic book metadata lookup via ISBN databases, DuckDuckGo, and Goodreads</li>
 <li><strong>Data Validation</strong>: JSON Schema validation ensures data integrity when adding or updating books</li>
 <li><strong>Flexible Table Views</strong>: Customizable column selection and table presets for personalized viewing experience</li>
 <li><strong>Expandable Text Fields</strong>: Smart text display with expand/collapse functionality for long descriptions and notes</li>
 </ul>
 <h3 id="current-version">Current Version</h3>
-<p><strong>Version</strong>: 0.9.2</p>
+<p><strong>Version</strong>: 0.9.7</p>
 <h2 id="architecture">Architecture</h2>
 <figure>
 <img src="architecture.jpeg" alt="Overall architecture" />
@@ -322,13 +320,6 @@ search functionality.</em></p>
 <li><strong>API Framework</strong>: Python Flask 3.1 with Gunicorn WSGI server</li>
 <li><strong>Database Driver</strong>: MariaDB connector (v1.1.11)</li>
 <li><strong>Data Validation</strong>: jsonschema for book data validation</li>
-<li><strong>External Services Integration</strong>: 
-  <ul>
-    <li>DuckDuckGo search API for book information lookup</li>
-    <li>ISBN database integration for automatic metadata retrieval</li>
-    <li>Goodreads API support for book details</li>
-  </ul>
-</li>
 <li><strong>Testing</strong>: pytest framework with comprehensive test coverage</li>
 </ul>
 <h2 id="database">Database</h2>
