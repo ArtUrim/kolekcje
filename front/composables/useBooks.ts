@@ -98,7 +98,7 @@ export const useBooks = () => {
         queryParams.append('fields', options.fields);
       }
       
-      const data = await useAPI<{ books: Book[]; count: number }>(`/book?${queryParams.toString()}`);
+      const data = await useAPI<{ books: Book[]; count: number }>(`/books?${queryParams.toString()}`);
 
       if (data) {
         // Safe deduplication, accounting for the possibility that 'id' was not requested

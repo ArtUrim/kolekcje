@@ -61,11 +61,11 @@ def get_labels():
     return _list_items('labels')
 
 
-@catalog_bp.route('/series/add', methods=['POST'])
+@catalog_bp.route('/series', methods=['POST'])
 def add_series():
     return _add_item('series', 'Series added successfully')
 
 
-@catalog_bp.route('/publisher/add', methods=['POST'])
+@catalog_bp.route('/publishers', methods=['POST'])
 def add_publisher():
     return _add_item('publisher', 'Publisher added successfully')
