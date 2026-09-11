@@ -519,7 +519,7 @@ export default {
 
 			try {
 				const bookData = this.buildBookData();
-				const url = this.isEditMode ? `/api/books/${this.bookId}` : '/api/addbook';
+				const url = this.isEditMode ? `/api/books/${this.bookId}` : '/api/books';
 				const method = this.isEditMode ? 'PUT' : 'POST';
 
 				const response = await fetch(url, {

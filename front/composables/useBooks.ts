@@ -1,4 +1,4 @@
-// How often to retry a failed /book request.
+// How often to retry a failed /books request.
 const RETRY_INTERVAL_MS = 5000;
 // Maximum time to keep retrying before giving up.
 const MAX_RETRY_DURATION_MS = 10 * 60 * 1000;
@@ -98,7 +98,7 @@ export const useBooks = () => {
         queryParams.append('fields', options.fields);
       }
       
-      const data = await useAPI<{ books: Book[]; count: number }>(`/book?${queryParams.toString()}`);
+      const data = await useAPI<{ books: Book[]; count: number }>(`/books?${queryParams.toString()}`);
 
       if (data) {
         // Safe deduplication, accounting for the possibility that 'id' was not requested

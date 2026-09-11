@@ -1,1 +1,50 @@
-Nothing should be ignored based on the provided file changes. The changes consist only of source code files (.py, .json) and test files, with no build artifacts, dependencies, or temporary files that need to be ignored.
+```
+# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+build/
+target/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment files
+.env
+.env.local
+.env.*
+
+# Logs
+*.log
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+.nyc_output/
+coverage/
+
+# Package manager
+package-lock.json
+yarn.lock
+
+# Temporary files
+*.tmp
+*.temp
+```
