@@ -1,5 +1,5 @@
 """
-Unit tests for /addbook POST endpoint
+Unit tests for /books POST endpoint (book creation)
 Tests the book creation functionality with mocked database calls
 """
 import pytest
@@ -19,7 +19,7 @@ def mock_db_connection():
 
 
 class TestAddBookEndpoint:
-    """Test class for /addbook POST endpoint"""
+    """Test class for POST /books endpoint"""
 
     def test_add_book_success_minimal_data(self, client, mock_db_connection):
         """Test successful book addition with minimal required data"""
@@ -33,7 +33,7 @@ class TestAddBookEndpoint:
         }
         
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
@@ -85,7 +85,7 @@ class TestAddBookEndpoint:
         ]
         
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
@@ -101,7 +101,7 @@ class TestAddBookEndpoint:
         }
         
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
@@ -120,7 +120,7 @@ class TestAddBookEndpoint:
         }
         
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
@@ -136,7 +136,7 @@ class TestAddBookEndpoint:
         }
         
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='text/plain'
         )
@@ -155,7 +155,7 @@ class TestAddBookEndpoint:
             }
             
             response = client.post(
-                '/addbook',
+                '/books',
                 data=json.dumps(book_data),
                 content_type='application/json'
             )
@@ -174,7 +174,7 @@ class TestAddBookEndpoint:
         }
         
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
@@ -198,7 +198,7 @@ class TestAddBookEndpoint:
         }
         
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
@@ -218,7 +218,7 @@ class TestAddBookEndpoint:
         }
         
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
@@ -247,7 +247,7 @@ class TestAddBookEndpoint:
         }
         
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
@@ -260,7 +260,7 @@ class TestAddBookEndpoint:
         After fixing the bug in app.py, this should return 400 Bad Request.
         """
         response = client.post(
-            '/addbook',
+            '/books',
             data='not valid json{',
             content_type='application/json'
         )

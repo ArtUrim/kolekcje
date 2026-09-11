@@ -1,0 +1,13 @@
+{
+   "title": "Test Book",
+   "publisher": [
+      {
+         "title": "Publisher One",
+         "isCustom": true
+      },
+      {
+         "title": "Publisher Two",
+         "isCustom": true
+      }
+   ]
+}

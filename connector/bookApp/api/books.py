@@ -10,13 +10,14 @@ from ..services.bookinfo_service import BookInfoService, isbn_validation_error
 books_bp = Blueprint('books', __name__)
 
 
-@books_bp.route('/book', methods=['GET'])
-def get_books():
+@books_bp.route('/books', methods=['GET', 'POST'])
+def handle_books():
+    """Handle book listing (GET) and creation (POST)"""
     conn = get_db()
     if not conn:
         return jsonify({"error": "Database connection failed"}), 500
 
-    try:
+    if request.method == 'GET':
         # Get query parameters
         params = { k: request.args.get(k) for k in request.args.keys() }
 
@@ -28,21 +29,18 @@ def get_books():
             "books": books
         })
 
-    except mariadb.Error as e:
-        return jsonify({"error": f"Database error: {str(e)}"}), 500
-
-
-@books_bp.route('/addbook', methods=['POST'])
-def add_books():
-    content_type = request.headers.get('Content-Type')
-    if content_type == 'application/json':
+    elif request.method == 'POST':
+        content_type = request.headers.get('Content-Type')
+        if content_type != 'application/json':
+            return jsonify({'error': 'Unsupported Media Type'}), 415
+        
         data = None
         try:
             # Process JSON data
             data = request.get_json(silent=True)
             if data is None:
                 return jsonify( {'error': 'Bad Request: Invalid JSON data' } ), 400
-            BookService(get_db()).add_book(data)
+            BookService(conn).add_book(data)
         except Exception as e:
             logging.warning(f"Error processing addbook POST request: {e}")
             errJson =  { 'error': f"Error processing addbook POST request: {e}" }
@@ -50,80 +48,7 @@ def add_books():
                 logging.warning( f"for the book {data['title']}")
                 errJson['book'] = data['title']
             return jsonify(errJson), 415
-    else:
-        return jsonify({'error': 'Unsupported Media Type'}), 415
-    return Response( status = 204 )
-
-
-@books_bp.route('/bookinfo', methods=['GET', 'POST'])
-def book_info():
-    """Handle book information retrieval and updates"""
-    conn = get_db()
-    if not conn:
-        return jsonify({"error": "Database connection failed"}), 500
-
-    try:
-        book_service = BookInfoService(conn)
-
-        if request.method == 'GET':
-            # Get book information by ID
-            book_id = request.args.get('id')
-            if not book_id:
-                return jsonify({"error": "Book ID parameter is required"}), 400
-
-            try:
-                book_id = int(book_id)
-            except ValueError:
-                return jsonify({"error": "Invalid book ID format"}), 400
-
-            book_info = book_service.get_book_info(book_id)
-            if not book_info:
-                return jsonify({"error": "Book not found"}), 404
-
-            return jsonify({
-                "status": "success",
-                "book": book_info
-            })
-
-        # TODO
-        elif request.method == 'POST':
-            # Update book information
-            book_id = request.args.get('id')
-            if not book_id:
-                return jsonify({"error": "Book ID parameter is required"}), 400
-
-            try:
-                book_id = int(book_id)
-            except ValueError:
-                return jsonify({"error": "Invalid book ID format"}), 400
-
-            # Get JSON data from request
-            if request.headers.get('Content-Type') != 'application/json':
-                return jsonify({'error': 'Content-Type must be application/json'}), 415
-
-            data = request.get_json()
-            if not data:
-                return jsonify({"error": "No JSON data provided"}), 400
-
-            # Log the update operation
-            logging.info(f"Updating book ID: {book_id}")
-
-            # Update book information
-            success = book_service.update_book_info(book_id, data)
-
-            if success:
-                return jsonify({
-                    "status": "success",
-                    "message": "Book updated successfully"
-                })
-            else:
-                return jsonify({"error": "Failed to update book"}), 500
-
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
-    except Exception as e:
-        logging.error(f"Error in book_info endpoint: {e}")
-        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+        return Response( status = 204 )
 
 
 @books_bp.route('/books/validate', methods=['GET'])

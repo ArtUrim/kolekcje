@@ -1,5 +1,5 @@
 """
-Unit tests for /book endpoint (GET method)
+Unit tests for /books endpoint (GET method)
 Tests book retrieval with query parameters
 """
 import pytest
@@ -22,7 +22,7 @@ def mock_db_connection():
 
 
 class TestGetBooks:
-    """Test cases for GET /book endpoint"""
+    """Test cases for GET /books endpoint"""
     
     def test_get_books_success_no_params(self, client, mock_db_connection):
         """Test successful retrieval of books without query parameters"""
@@ -37,7 +37,7 @@ class TestGetBooks:
         mock_cursor.__iter__ = Mock(return_value=iter(sample_books))
         mock_cursor.fetchall.return_value = [(2,)]  # For FOUND_ROWS()
         
-        response = client.get('/book')
+        response = client.get('/books')
         
         assert response.status_code == 200
         data = response.get_json()
@@ -54,7 +54,7 @@ class TestGetBooks:
         mock_cursor.__iter__ = Mock(return_value=iter(sample_books))
         mock_cursor.fetchall.return_value = [(1,)]
         
-        response = client.get('/book?title=Test&author=Author')
+        response = client.get('/books?title=Test&author=Author')
         
         assert response.status_code == 200
         # Verify query was executed
@@ -68,7 +68,7 @@ class TestGetBooks:
         mock_cursor.__iter__ = Mock(return_value=iter([]))
         mock_cursor.fetchall.return_value = [(0,)]
         
-        response = client.get('/book?title=NonExistent')
+        response = client.get('/books?title=NonExistent')
         
         assert response.status_code == 200
         data = response.get_json()
@@ -78,7 +78,7 @@ class TestGetBooks:
     def test_get_books_database_connection_failed(self, client):
         """Test 500 error when database connection fails"""
         with patch('bookApp.core.db.get_db_connection', return_value=None):
-            response = client.get('/book')
+            response = client.get('/books')
             
             assert response.status_code == 500
             data = response.get_json()
@@ -93,7 +93,7 @@ class TestGetBooks:
         import mariadb
         mock_cursor.execute.side_effect = mariadb.Error("Database query failed")
         
-        response = client.get('/book')
+        response = client.get('/books')
         
         assert response.status_code == 500
         data = response.get_json()
@@ -114,7 +114,7 @@ class TestGetBooks:
             'year': '2023',
             'isbn': '1234567890'
         }
-        response = client.get('/book', query_string=params)
+        response = client.get('/books', query_string=params)
         
         assert response.status_code == 200
         assert mock_cursor.execute.called
@@ -127,7 +127,7 @@ class TestGetBooks:
         mock_cursor.__iter__ = Mock(return_value=iter(sample_books))
         mock_cursor.fetchall.return_value = [(1,)]
         
-        response = client.get('/book?title=Book%20%26%20More')
+        response = client.get('/books?title=Book%20%26%20More')
         
         assert response.status_code == 200
         
@@ -139,7 +139,7 @@ class TestGetBooks:
         mock_cursor.__iter__ = Mock(return_value=iter(sample_books))
         mock_cursor.fetchall.return_value = [(1,)]
         
-        response = client.get('/book')
+        response = client.get('/books')
         
         assert response.status_code == 200
         data = response.get_json()
@@ -156,7 +156,7 @@ class TestGetBooks:
         mock_cursor.__iter__ = Mock(return_value=iter(sample_books))
         mock_cursor.fetchall.return_value = [(1,)]
         
-        response = client.get('/book?id=1')
+        response = client.get('/books?id=1')
         
         assert response.status_code == 200
         data = response.get_json()
