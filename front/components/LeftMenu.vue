@@ -7,7 +7,7 @@
 		 <li><NuxtLink to="/">{{ $t('leftMenu.home') }}</NuxtLink></li>
 		 <li><NuxtLink to="/books">{{ $t('leftMenu.books') }}</NuxtLink></li>
 		<li v-if="showAddBook">
-        <NuxtLink to="/addbook" class="small-text indent-left">
+        <NuxtLink to="/books/new" class="small-text indent-left">
 		  {{ $t('leftMenu.addBook') }}
 		  </NuxtLink>
       </li>
@@ -32,7 +32,7 @@ const switchLocalePath = useSwitchLocalePath()
 const { userRole, triggerRestart } =  useNetworkAdmin();
 
 const showAddBook = computed(() => {
-  return ['/books', '/addbook'].includes(route.path)
+  return ['/books', '/books/new'].includes(route.path)
 })
 </script>
 
