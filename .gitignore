@@ -1,37 +1,55 @@
-# Nuxt dev/build outputs
-front/.output
-front/.data
-front/.nuxt
-front/.nitro
-front/.cache
-front/dist
+```yaml
+# OpenAPI/Swagger generated files
+.openapi-generator/
+.openapi-generator-ignore
+*.openapi.*
+*.swagger.*
 
-# Node dependencies
-front/node_modules
+# Compiled and build artifacts
+*.pyc
+__pycache__/
+*.o
+*.obj
+*.so
+*.dll
+*.exe
+*.class
+*.jar
+*.war
+*.zip
+*.tar.gz
+*.tar.bz2
+*.tar.xz
 
-# Logs
-logs
-*.log
-
-# Misc
-.DS_Store
-.fleet
-.idea
-
-# Flask debug file
-/connector/data.json
-
-# Local env files
+# Dependencies
+node_modules/
+venv/
+.venv/
 .env
+.env.local
 .env.*
-!.env.example
+.target/
+target/
+.gradle/
+.mypy_cache/
+.pytest_cache/
+.coverage
+coverage/
+htmlcov/
 
-**/Pipfile.lock
-**/*~
-**/.*.swp
-**/__pycache__
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+*.swo
 
-/*.md
-/references/**
-/.abacus
-/.abacusai
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+```
