@@ -1,5 +1,5 @@
 """
-Unit tests for /addbook POST endpoint
+Unit tests for /books POST endpoint
 Tests the book creation functionality with mocked database calls
 """
 import pytest
@@ -19,25 +19,25 @@ def mock_db_connection():
 
 
 class TestAddBookEndpoint:
-    """Test class for /addbook POST endpoint"""
+    """Test class for /books POST endpoint"""
 
     def test_add_book_success_minimal_data(self, client, mock_db_connection):
         """Test successful book addition with minimal required data"""
         mock_get_conn, mock_conn, mock_cursor = mock_db_connection
-        
+
         # Mock cursor behavior for lastrowid
         mock_cursor.lastrowid = 1
-        
+
         book_data = {
             'title': 'Test Book'
         }
-        
+
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
-        
+
         assert response.status_code == 204
         mock_get_conn.assert_called_once()
         mock_conn.cursor.assert_called()
@@ -47,7 +47,7 @@ class TestAddBookEndpoint:
         """Test successful book addition with complete data"""
         mock_get_conn, mock_conn, mock_cursor = mock_db_connection
         mock_cursor.lastrowid = 42
-        
+
         book_data = {
             'title': 'Complete Test Book',
             'subtitle': 'A Complete Test',
@@ -63,7 +63,7 @@ class TestAddBookEndpoint:
             'description': 'A test book description',
             'language': 'en_'
         }
-        
+
         # Mock fetchone for various lookups
         mock_cursor.fetchone.side_effect = [
             None,  # publisher not found
@@ -83,29 +83,29 @@ class TestAddBookEndpoint:
             None,  # genre not found
             (8,),  # genre insert lastrowid
         ]
-        
+
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
-        
+
         assert response.status_code == 204
 
     def test_add_book_missing_title(self, client, mock_db_connection):
         """Test book addition fails when title is missing"""
         mock_get_conn, mock_conn, mock_cursor = mock_db_connection
-        
+
         book_data = {
             'author': ['Some Author']
         }
-        
+
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
-        
+
         assert response.status_code == 415
         data = json.loads(response.data)
         assert 'error' in data
@@ -113,18 +113,18 @@ class TestAddBookEndpoint:
     def test_add_book_empty_title(self, client, mock_db_connection):
         """Test book addition fails when title is empty string"""
         mock_get_conn, mock_conn, mock_cursor = mock_db_connection
-        
+
         book_data = {
             'title': '   ',
             'author': ['Some Author']
         }
-        
+
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
-        
+
         assert response.status_code == 415
         data = json.loads(response.data)
         assert 'error' in data
@@ -134,13 +134,13 @@ class TestAddBookEndpoint:
         book_data = {
             'title': 'Test Book'
         }
-        
+
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='text/plain'
         )
-        
+
         assert response.status_code == 415
         data = json.loads(response.data)
         assert data['error'] == 'Unsupported Media Type'
@@ -149,17 +149,17 @@ class TestAddBookEndpoint:
         """Test handling of database connection failure"""
         with patch('bookApp.core.db.get_db_connection') as mock_get_conn:
             mock_get_conn.return_value = None
-            
+
             book_data = {
                 'title': 'Test Book'
             }
-            
+
             response = client.post(
-                '/addbook',
+                '/books',
                 data=json.dumps(book_data),
                 content_type='application/json'
             )
-            
+
             # When DB connection fails, the code logs a warning but still returns 204
             # This is current behavior in app.py line 115-116
             assert response.status_code == 204
@@ -167,18 +167,18 @@ class TestAddBookEndpoint:
     def test_add_book_invalid_isbn(self, client, mock_db_connection):
         """Test book addition with invalid ISBN format"""
         mock_get_conn, mock_conn, mock_cursor = mock_db_connection
-        
+
         book_data = {
             'title': 'Test Book with Bad ISBN',
             'isbn': 'bad-isbn'
         }
-        
+
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
-        
+
         assert response.status_code == 415
         data = json.loads(response.data)
         assert 'error' in data
@@ -188,21 +188,21 @@ class TestAddBookEndpoint:
         """Test book addition with existing author (no new insert)"""
         mock_get_conn, mock_conn, mock_cursor = mock_db_connection
         mock_cursor.lastrowid = 1
-        
+
         # Mock that author already exists
         mock_cursor.fetchone.return_value = (99,)  # Existing author ID
-        
+
         book_data = {
             'title': 'Test Book',
             'author': ['Existing Author']
         }
-        
+
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
-        
+
         assert response.status_code == 204
 
     def test_add_book_with_unicode_characters(self, client, mock_db_connection):
@@ -210,26 +210,26 @@ class TestAddBookEndpoint:
         mock_get_conn, mock_conn, mock_cursor = mock_db_connection
         mock_cursor.lastrowid = 1
         mock_cursor.fetchone.return_value = None
-        
+
         book_data = {
             'title': 'Книга з Україною',  # Ukrainian
             'author': ['Автор 中文名字'],  # Chinese
             'description': 'Description with émojis 📚'
         }
-        
+
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
-        
+
         assert response.status_code == 204
 
     def test_add_book_multiple_publishers(self, client, mock_db_connection):
         """Test book addition with multiple publishers"""
         mock_get_conn, mock_conn, mock_cursor = mock_db_connection
         mock_cursor.lastrowid = 1
-        
+
         # Mock for multiple publishers
         mock_cursor.fetchone.side_effect = [
             None,  # First publisher not found
@@ -237,7 +237,7 @@ class TestAddBookEndpoint:
             None,  # Second publisher not found
             (2,),  # Second publisher insert
         ]
-        
+
         book_data = {
             'title': 'Test Book',
             'publisher': [
@@ -245,26 +245,26 @@ class TestAddBookEndpoint:
                 {'title': 'Publisher Two', 'isCustom': True}
             ]
         }
-        
+
         response = client.post(
-            '/addbook',
+            '/books',
             data=json.dumps(book_data),
             content_type='application/json'
         )
-        
+
         assert response.status_code == 204
 
     def test_add_book_json_parsing_error(self, client):
         """Test handling of malformed JSON
-        
+
         After fixing the bug in app.py, this should return 400 Bad Request.
         """
         response = client.post(
-            '/addbook',
+            '/books',
             data='not valid json{',
             content_type='application/json'
         )
-        
+
         # After fixing the bug, should return 400 Bad Request for invalid JSON
         assert response.status_code == 400
         assert 'error' in response.get_json()
