@@ -485,8 +485,6 @@ paths:
                   $ref: '#/components/schemas/Publisher'
         '500':
           $ref: '#/components/responses/DatabaseError'
-
-  /publisher/add:
     post:
       summary: Add a new publisher
       description: Add a new publisher to the database
@@ -534,8 +532,6 @@ paths:
                   $ref: '#/components/schemas/Series'
         '500':
           $ref: '#/components/responses/DatabaseError'
-
-  /series/add:
     post:
       summary: Add a new series
       description: Add a new series to the database

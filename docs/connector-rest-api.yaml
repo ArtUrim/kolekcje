@@ -11,7 +11,7 @@ servers:
     description: Development server
 
 paths:
-  /book:
+  /books:
     get:
       summary: Get books with filtering, sorting, and pagination
       description: Retrieve books from the collection with optional filtering by author, title, publisher, or series, plus sorting and pagination support
@@ -167,8 +167,6 @@ paths:
                       $ref: '#/components/schemas/Book'
         '500':
           $ref: '#/components/responses/DatabaseError'
-
-  /addbook:
     post:
       summary: Add a new book to the collection
       description: Add a new book with all its associated metadata
@@ -487,8 +485,6 @@ paths:
                   $ref: '#/components/schemas/Publisher'
         '500':
           $ref: '#/components/responses/DatabaseError'
-
-  /publisher/add:
     post:
       summary: Add a new publisher
       description: Add a new publisher to the database
@@ -536,8 +532,6 @@ paths:
                   $ref: '#/components/schemas/Series'
         '500':
           $ref: '#/components/responses/DatabaseError'
-
-  /series/add:
     post:
       summary: Add a new series
       description: Add a new series to the database
@@ -606,89 +600,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Label'
-        '500':
-          $ref: '#/components/responses/DatabaseError'
-
-  /bookinfo:
-    get:
-      summary: Get detailed book information
-      description: Retrieve detailed information for a specific book by ID
-      parameters:
-        - name: id
-          in: query
-          description: Book ID to retrieve information for
-          required: true
-          schema:
-            type: integer
-            minimum: 1
-      responses:
-        '200':
-          description: Successfully retrieved book information
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: success
-                  book:
-                    $ref: '#/components/schemas/BookInfo'
-        '400':
-          description: Invalid book ID parameter
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                error: "Book ID parameter is required"
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/DatabaseError'
-    post:
-      summary: Update book information
-      description: Update detailed information for a specific book by ID
-      parameters:
-        - name: id
-          in: query
-          description: Book ID to update information for
-          required: true
-          schema:
-            type: integer
-            minimum: 1
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BookInfoUpdate'
-      responses:
-        '200':
-          description: Book successfully updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: success
-                  message:
-                    type: string
-                    example: Book updated successfully
-        '400':
-          description: Invalid request data or book ID
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '415':
-          description: Unsupported Media Type
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
         '500':
           $ref: '#/components/responses/DatabaseError'
 
@@ -1151,19 +1062,6 @@ components:
           type: string
           description: Publisher webpage
           nullable: true
-
-    BookInfoUpdate:
-      type: object
-      additionalProperties: true
-      description: >
-        Payload for POST /bookinfo. The current implementation accepts JSON and
-        returns success if the book exists; field-level updates are not applied
-        (use PUT /books/{book_id} for real updates).
-      properties:
-        title:
-          type: string
-      example:
-        title: "The Great Gatsby - Updated Edition"
 
     BookUpdate:
       type: object
