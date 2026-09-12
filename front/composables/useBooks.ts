@@ -1,4 +1,4 @@
-// How often to retry a failed /book request.
+// How often to retry a failed /books request.
 const RETRY_INTERVAL_MS = 5000;
 // Maximum time to keep retrying before giving up.
 const MAX_RETRY_DURATION_MS = 10 * 60 * 1000;

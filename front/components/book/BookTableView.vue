@@ -189,7 +189,6 @@ const fetchBookDetails = async (bookId: number, forceRefresh = false) => {
 	try {
 		const data        = await useAPI(`/books/${bookId}`)
 		const bookPayload = data
-		console.log( bookPayload )
 		const copy        = JSON.parse(JSON.stringify(bookPayload))
 
 		bookDetails.value[bookId] = {

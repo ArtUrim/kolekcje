@@ -1,6 +1,6 @@
 """
-Unit tests for /bookinfo endpoint (GET and POST methods)
-Tests book info retrieval by ID and book info updates
+Unit tests for GET /books/{book_id} endpoint
+Tests book info retrieval by ID
 """
 import pytest
 from unittest.mock import Mock, patch, MagicMock
@@ -16,7 +16,7 @@ def mock_db_connection():
 
 
 class TestBookInfoGET:
-    """Test cases for GET /bookinfo endpoint"""
+    """Test cases for GET /books/{book_id} endpoint"""
 
     def test_get_bookinfo_success(self, client, mock_db_connection):
         """Test successful retrieval of book info by ID"""
@@ -37,15 +37,6 @@ class TestBookInfoGET:
             assert response.status_code == 200
             data = response.get_json()
             assert data['id'] == 1
-
-    def test_get_bookinfo_missing_id(self, client, mock_db_connection):
-        """Test error when book ID parameter is missing"""
-        response = client.get('/bookinfo')
-
-        assert response.status_code == 404
-        data = response.get_json()
-        assert 'error' in data
-        assert 'Not found' in data['error']
 
     def test_get_bookinfo_invalid_id_format(self, client, mock_db_connection):
         """Test error when book ID is not a valid integer"""
@@ -81,101 +72,6 @@ class TestBookInfoGET:
             data = response.get_json()
             assert 'error' in data
             assert data['error'] == 'Database connection failed'
-
-
-class TestBookInfoPOST:
-    """Test cases for POST /bookinfo endpoint (update book info)"""
-
-    def test_update_bookinfo_success(self, client, mock_db_connection):
-        """Test successful book info update"""
-        mock_get_connection, mock_conn = mock_db_connection
-
-        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
-            mock_handler_instance = Mock()
-            mock_handler_instance.update_book_info.return_value = True
-            MockHandler.return_value = mock_handler_instance
-
-            update_data = {'title': 'Updated Title', 'year': 2024}
-            response = client.put('/books/1',
-                                   json=update_data,
-                                   content_type='application/json')
-
-            assert response.status_code == 200
-            data = response.get_json()
-            assert data['status'] == 'success'
-            assert data['book_id'] == 1
-
-    def test_update_bookinfo_missing_id(self, client, mock_db_connection):
-        """Test error when book ID is missing for update"""
-        response = client.post('/bookinfo',
-                               json={'title': 'Test'},
-                               content_type='application/json')
-
-        assert response.status_code == 404
-        data = response.get_json()
-        assert 'error' in data
-        assert 'Not found' in data['error']
-
-    def test_update_bookinfo_invalid_id_format(self, client, mock_db_connection):
-        """Test error when book ID is not valid for update"""
-        response = client.post('/books/xyz',
-                               json={'title': 'Test'},
-                               content_type='application/json')
-
-        assert response.status_code == 404
-        data = response.get_json()
-        assert 'error' in data
-        assert 'Not found' in data['error']
-
-    def test_update_bookinfo_wrong_content_type(self, client, mock_db_connection):
-        """Test error when Content-Type is not application/json"""
-        response = client.post('/books/1',
-                               data='title=Test',
-                               content_type='application/x-www-form-urlencoded')
-
-        assert response.status_code == 405
-        data = response.get_json()
-        assert data is None
-
-    def test_update_bookinfo_no_json_data(self, client, mock_db_connection):
-        """Test error when no JSON data is provided"""
-        # When no data is sent, get_json() returns None
-        response = client.post('/books/1',
-                               data='null',
-                               content_type='application/json')
-
-        # The route should handle this - either 400 or process with empty data
-        assert response.status_code == 405
-        data = response.get_json()
-        assert data is None
-
-    def test_update_bookinfo_failure(self, client, mock_db_connection):
-        """Test when book update fails"""
-        mock_get_connection, mock_conn = mock_db_connection
-
-        with patch('bookApp.services.bookinfo_service.BookInfoRepository') as MockHandler:
-            mock_handler_instance = Mock()
-            mock_handler_instance.update_book_info.return_value = False
-            MockHandler.return_value = mock_handler_instance
-
-            response = client.post('/books/1',
-                                   json={'title': 'Test'},
-                                   content_type='application/json')
-
-            assert response.status_code == 405
-            data = response.get_json()
-            assert data is None
-
-    def test_update_bookinfo_database_connection_failed(self, client):
-        """Test 500 error when database connection fails for update"""
-        with patch('bookApp.core.db.get_db_connection', return_value=None):
-            response = client.post('/books/1',
-                                   json={'title': 'Test'},
-                                   content_type='application/json')
-
-            assert response.status_code == 405
-            data = response.get_json()
-            assert data is None
 
 
 if __name__ == '__main__':

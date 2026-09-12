@@ -44,8 +44,8 @@ def add_books():
                 return jsonify( {'error': 'Bad Request: Invalid JSON data' } ), 400
             BookService(get_db()).add_book(data)
         except Exception as e:
-            logging.warning(f"Error processing addbook POST request: {e}")
-            errJson =  { 'error': f"Error processing addbook POST request: {e}" }
+            logging.warning(f"Error processing POST /books request: {e}")
+            errJson =  { 'error': f"Error processing POST /books request: {e}" }
             if data and data.get('title'):
                 logging.warning( f"for the book {data['title']}")
                 errJson['book'] = data['title']
