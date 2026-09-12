@@ -9,5 +9,6 @@ RUN pip install -r requirements.txt
 WORKDIR /pg
 
 COPY bookApp/ ./bookApp/
+COPY schemaBookNew.json ./
 
 ENTRYPOINT ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5000", "bookApp.app:create_app()"]
