@@ -13,6 +13,8 @@ servers:
 paths:
   /books:
     get:
+      tags:
+        - Books
       summary: Get books with filtering, sorting, and pagination
       description: Retrieve books from the collection with optional filtering by author, title, publisher, or series, plus sorting and pagination support
       parameters:
@@ -168,6 +170,8 @@ paths:
         '500':
           $ref: '#/components/responses/DatabaseError'
     post:
+      tags:
+        - Books
       summary: Add a new book to the collection
       description: Add a new book with all its associated metadata
       requestBody:
@@ -196,6 +200,8 @@ paths:
 
   /books/validate:
     get:
+      tags:
+        - Books
       summary: Validate a book against the collection
       description: Check whether a book already exists in the collection by matching ISBN, title, or other criteria. Returns 409 if a match is found, 204 if no match exists.
       parameters:
@@ -273,6 +279,8 @@ paths:
 
   /books/{book_id}:
     get:
+      tags:
+        - Books
       summary: Get a book by ID
       description: Retrieve detailed information for a specific book by its ID
       parameters:
@@ -295,6 +303,8 @@ paths:
         '500':
           $ref: '#/components/responses/DatabaseError'
     put:
+      tags:
+        - Books
       summary: Update a book by ID
       description: Update detailed information for a specific book by its ID
       parameters:
@@ -342,6 +352,8 @@ paths:
         '500':
           $ref: '#/components/responses/DatabaseError'
     delete:
+      tags:
+        - Books
       summary: Delete a book by ID
       description: Delete a specific book and its associated relations by its ID
       parameters:
@@ -373,12 +385,16 @@ paths:
 
   /keepalive:
     get:
+      tags:
+        - System
       summary: Keep-alive check
       description: Health check endpoint that returns an empty 204 response
       responses:
         '204':
           description: Service is alive
     post:
+      tags:
+        - System
       summary: Keep-alive check
       description: Health check endpoint that returns an empty 204 response
       responses:
@@ -387,6 +403,8 @@ paths:
 
   /restart-router:
     post:
+      tags:
+        - System
       summary: Restart the router
       description: Create a restart trigger file for the router. Requires admin role via the X-App-Role header.
       parameters:
@@ -442,6 +460,8 @@ paths:
 
   /authors:
     get:
+      tags:
+        - Authors
       summary: Get authors
       description: Retrieve authors with optional search query
       parameters:
@@ -465,6 +485,8 @@ paths:
 
   /publishers:
     get:
+      tags:
+        - Publishers
       summary: Get publishers
       description: Retrieve publishers with optional search query
       parameters:
@@ -486,6 +508,8 @@ paths:
         '500':
           $ref: '#/components/responses/DatabaseError'
     post:
+      tags:
+        - Publishers
       summary: Add a new publisher
       description: Add a new publisher to the database
       requestBody:
@@ -512,6 +536,8 @@ paths:
 
   /series:
     get:
+      tags:
+        - Books.Series
       summary: Get series
       description: Retrieve series with optional search query
       parameters:
@@ -533,6 +559,8 @@ paths:
         '500':
           $ref: '#/components/responses/DatabaseError'
     post:
+      tags:
+        - Books.Series
       summary: Add a new series
       description: Add a new series to the database
       requestBody:
@@ -559,6 +587,8 @@ paths:
 
   /genres:
     get:
+      tags:
+        - Books.Genres
       summary: Get genres
       description: Retrieve genres with optional search query
       parameters:
@@ -582,6 +612,8 @@ paths:
 
   /labels:
     get:
+      tags:
+        - Books.Labels
       summary: Get labels
       description: Retrieve labels with optional search query
       parameters:
@@ -1186,15 +1218,15 @@ components:
 tags:
   - name: Books
     description: Operations related to books
+  - name: Books.Series
+    description: Operations related to book series
+  - name: Books.Genres
+    description: Operations related to genres
+  - name: Books.Labels
+    description: Operations related to labels
   - name: Authors
     description: Operations related to authors
   - name: Publishers
     description: Operations related to publishers
-  - name: Series
-    description: Operations related to book series
-  - name: Genres
-    description: Operations related to genres
-  - name: Labels
-    description: Operations related to labels
   - name: System
     description: System health and router management operations
