@@ -7,58 +7,53 @@ from jsonschema import validate, ValidationError
 
 import logging
 
+from babel import Locale, UnknownLocaleError
+
 from ..core.isbn import validate_isbn, normalize_isbn
 
-# Maps Polish and English language names to the 3-char code stored in the
-# `language` table (2-letter ISO 639-1 code + trailing underscore, e.g. 'pl_').
+# UI languages whose names should be recognized as input (e.g. a book's
+# "language" field typed in Polish, English or Italian) and whose CLDR data
+# is used to name newly-created `language` rows.
+_SUPPORTED_UI_LOCALES = ('pl', 'en', 'it')
+
+# Locale used for the `name` column of rows this repository creates.
+_DEFAULT_NAME_LOCALE = 'pl'
+
+
+def _build_language_name_mapping(locale_codes):
+    """Build {lowercased language name: ISO 639-1 code} from Babel/CLDR data
+    for each given UI locale, instead of a hand-maintained dict."""
+    mapping = {}
+    for loc_code in locale_codes:
+        try:
+            locale = Locale.parse(loc_code)
+        except UnknownLocaleError:
+            continue
+        for code, name in locale.languages.items():
+            if len(code) == 2 and name:
+                mapping[name.strip().lower()] = code
+    return mapping
+
+
+def _build_language_code_to_name(locale_code):
+    """Build {ISO 639-1 code: display name} for a single locale, used to
+    name newly-created `language` rows."""
+    locale = Locale.parse(locale_code)
+    return {code: name for code, name in locale.languages.items() if len(code) == 2}
+
+
+# Maps language names (Polish, English, Italian, ...) to the 3-char code
+# stored in the `language` table (2-letter ISO 639-1 code + trailing
+# underscore, e.g. 'pl_'). Generated from Babel's CLDR data.
 LANGUAGE_MAPPING = {
-    'polski': 'pl_', 'polish': 'pl_', 'polacco': 'pl_',
-    'angielski': 'en_', 'english': 'en_', 'inglese': 'en_',
-    'niemiecki': 'de_', 'german': 'de_', 'tedesco': 'de_',
-    'francuski': 'fr_', 'french': 'fr_', 'francese': 'fr_',
-    'hiszpański': 'es_', 'spanish': 'es_', 'spagnolo': 'es_',
-    'włoski': 'it_', 'italian': 'it_', 'italiano': 'it_',
-    'portugalski': 'pt_', 'portuguese': 'pt_', 'portoghese': 'pt_',
-    'rosyjski': 'ru_', 'russian': 'ru_', 'russo': 'ru_',
-    'ukraiński': 'uk_', 'ukrainian': 'uk_', 'ucraino': 'uk_',
-    'niderlandzki': 'nl_', 'holenderski': 'nl_', 'dutch': 'nl_', 'olandese': 'nl_',
-    'szwedzki': 'sv_', 'swedish': 'sv_', 'svedese': 'sv_',
-    'norweski': 'no_', 'norwegian': 'no_', 'norvegese': 'no_',
-    'duński': 'da_', 'danish': 'da_', 'danese': 'da_',
-    'fiński': 'fi_', 'finnish': 'fi_', 'finlandese': 'fi_',
-    'czeski': 'cs_', 'czech': 'cs_', 'ceco': 'cs_',
-    'słowacki': 'sk_', 'slovak': 'sk_', 'slovacco': 'sk_',
-    'węgierski': 'hu_', 'hungarian': 'hu_', 'ungherese': 'hu_',
-    'rumuński': 'ro_', 'romanian': 'ro_', 'rumeno': 'ro_',
-    'bułgarski': 'bg_', 'bulgarian': 'bg_', 'bulgaro': 'bg_',
-    'chorwacki': 'hr_', 'croatian': 'hr_', 'croato': 'hr_',
-    'serbski': 'sr_', 'serbian': 'sr_', 'serbo': 'sr_',
-    'grecki': 'el_', 'greek': 'el_', 'greco': 'el_',
-    'turecki': 'tr_', 'turkish': 'tr_', 'turco': 'tr_',
-    'chiński': 'zh_', 'chinese': 'zh_', 'cinese': 'zh_',
-    'japoński': 'ja_', 'japanese': 'ja_', 'giapponese': 'ja_',
-    'koreański': 'ko_', 'korean': 'ko_', 'coreano': 'ko_',
-    'arabski': 'ar_', 'arabic': 'ar_', 'arabo': 'ar_',
-    'hebrajski': 'he_', 'hebrew': 'he_', 'ebraico': 'he_',
-    'hindi': 'hi_',
-    'wietnamski': 'vi_', 'vietnamese': 'vi_', 'vietnamita': 'vi_',
-    'litewski': 'lt_', 'lithuanian': 'lt_', 'lituano': 'lt_',
-    'łotewski': 'lv_', 'latvian': 'lv_', 'lettone': 'lv_',
-    'estoński': 'et_', 'estonian': 'et_', 'estone': 'et_',
+    name: f"{code}_" for name, code in _build_language_name_mapping(_SUPPORTED_UI_LOCALES).items()
 }
 
-# Polish display name for each code, used to give newly-created `language`
-# rows a real name instead of the raw code (see `_ensure_language_exists`).
+# Display name (in _DEFAULT_NAME_LOCALE) for each code, used to give
+# newly-created `language` rows a real name instead of the raw code
+# (see `_ensure_language_exists`).
 LANGUAGE_CODE_TO_NAME = {
-    'pl_': 'polski', 'en_': 'angielski', 'de_': 'niemiecki', 'fr_': 'francuski',
-    'es_': 'hiszpański', 'it_': 'włoski', 'pt_': 'portugalski', 'ru_': 'rosyjski',
-    'uk_': 'ukraiński', 'nl_': 'niderlandzki', 'sv_': 'szwedzki', 'no_': 'norweski',
-    'da_': 'duński', 'fi_': 'fiński', 'cs_': 'czeski', 'sk_': 'słowacki',
-    'hu_': 'węgierski', 'ro_': 'rumuński', 'bg_': 'bułgarski', 'hr_': 'chorwacki',
-    'sr_': 'serbski', 'el_': 'grecki', 'tr_': 'turecki', 'zh_': 'chiński',
-    'ja_': 'japoński', 'ko_': 'koreański', 'ar_': 'arabski', 'he_': 'hebrajski',
-    'hi_': 'hindi', 'vi_': 'wietnamski', 'lt_': 'litewski', 'lv_': 'łotewski',
-    'et_': 'estoński',
+    f"{code}_": name for code, name in _build_language_code_to_name(_DEFAULT_NAME_LOCALE).items()
 }
 
 
