@@ -57,6 +57,28 @@ LANGUAGE_CODE_TO_NAME = {
 }
 
 
+def resolve_language_code(language_data: Any) -> str:
+    """Resolve a language name (Polish, English, Italian, ...) or an ISO
+    639-1/639-2 code into the 3-char code stored in the `language` table.
+    Shared by BookRepository (POST /books) and BookUpdateRepository
+    (PUT /books/<id>) so both accept the same language input."""
+    if not language_data or not str(language_data).strip():
+        return 'pl_'
+
+    lang_str = str(language_data).strip().lower()
+
+    if lang_str in LANGUAGE_MAPPING:
+        return LANGUAGE_MAPPING[lang_str]
+
+    if len(lang_str) == 2:
+        return lang_str + '_'
+
+    if len(lang_str) == 3:
+        return lang_str
+
+    return 'pl_'
+
+
 class BookRepository:
     def __init__(self, connection: mariadb.connections.Connection):
         self.connection = connection
@@ -344,21 +366,7 @@ class BookRepository:
 
     def _get_default_language(self, language_data: Any) -> str:
         """Get language code with validation"""
-        if not language_data or not str(language_data).strip():
-            return 'pl_'
-
-        lang_str = str(language_data).strip().lower()
-
-        if lang_str in LANGUAGE_MAPPING:
-            return LANGUAGE_MAPPING[lang_str]
-
-        if len(lang_str) == 2:
-            return lang_str + '_'
-
-        if len(lang_str) == 3:
-            return lang_str
-
-        return 'pl_'
+        return resolve_language_code(language_data)
 
     def insert_book(self, book_data: Dict[str, Any]) -> int:
         """Insert book data into database with improved error handling and data processing"""

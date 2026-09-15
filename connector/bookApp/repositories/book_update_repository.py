@@ -2,6 +2,7 @@ import mariadb
 from typing import Dict, Any, List, Optional, Tuple
 
 from ..core.isbn import validate_isbn, normalize_isbn
+from .book_repository import resolve_language_code
 
 class BookUpdateRepository:
     def __init__(self, connection: mariadb.connections.Connection):
@@ -71,16 +72,7 @@ class BookUpdateRepository:
         return normalized
 
     def _normalize_language(self, value: Any) -> str:
-        if value is None:
-            return "pl_"
-        normalized = str(value).strip()
-        if not normalized:
-            return "pl_"
-        if len(normalized) == 2:
-            normalized = f"{normalized}_"
-        if len(normalized) != 3:
-            raise ValueError(f"Invalid language code: {value}")
-        return normalized
+        return resolve_language_code(value)
 
     def _ensure_row_exists(self, table: str, row_id: int) -> bool:
         cursor = self.connection.cursor()
