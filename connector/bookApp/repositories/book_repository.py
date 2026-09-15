@@ -9,6 +9,59 @@ import logging
 
 from ..core.isbn import validate_isbn, normalize_isbn
 
+# Maps Polish and English language names to the 3-char code stored in the
+# `language` table (2-letter ISO 639-1 code + trailing underscore, e.g. 'pl_').
+LANGUAGE_MAPPING = {
+    'polski': 'pl_', 'polish': 'pl_', 'polacco': 'pl_',
+    'angielski': 'en_', 'english': 'en_', 'inglese': 'en_',
+    'niemiecki': 'de_', 'german': 'de_', 'tedesco': 'de_',
+    'francuski': 'fr_', 'french': 'fr_', 'francese': 'fr_',
+    'hiszpański': 'es_', 'spanish': 'es_', 'spagnolo': 'es_',
+    'włoski': 'it_', 'italian': 'it_', 'italiano': 'it_',
+    'portugalski': 'pt_', 'portuguese': 'pt_', 'portoghese': 'pt_',
+    'rosyjski': 'ru_', 'russian': 'ru_', 'russo': 'ru_',
+    'ukraiński': 'uk_', 'ukrainian': 'uk_', 'ucraino': 'uk_',
+    'niderlandzki': 'nl_', 'holenderski': 'nl_', 'dutch': 'nl_', 'olandese': 'nl_',
+    'szwedzki': 'sv_', 'swedish': 'sv_', 'svedese': 'sv_',
+    'norweski': 'no_', 'norwegian': 'no_', 'norvegese': 'no_',
+    'duński': 'da_', 'danish': 'da_', 'danese': 'da_',
+    'fiński': 'fi_', 'finnish': 'fi_', 'finlandese': 'fi_',
+    'czeski': 'cs_', 'czech': 'cs_', 'ceco': 'cs_',
+    'słowacki': 'sk_', 'slovak': 'sk_', 'slovacco': 'sk_',
+    'węgierski': 'hu_', 'hungarian': 'hu_', 'ungherese': 'hu_',
+    'rumuński': 'ro_', 'romanian': 'ro_', 'rumeno': 'ro_',
+    'bułgarski': 'bg_', 'bulgarian': 'bg_', 'bulgaro': 'bg_',
+    'chorwacki': 'hr_', 'croatian': 'hr_', 'croato': 'hr_',
+    'serbski': 'sr_', 'serbian': 'sr_', 'serbo': 'sr_',
+    'grecki': 'el_', 'greek': 'el_', 'greco': 'el_',
+    'turecki': 'tr_', 'turkish': 'tr_', 'turco': 'tr_',
+    'chiński': 'zh_', 'chinese': 'zh_', 'cinese': 'zh_',
+    'japoński': 'ja_', 'japanese': 'ja_', 'giapponese': 'ja_',
+    'koreański': 'ko_', 'korean': 'ko_', 'coreano': 'ko_',
+    'arabski': 'ar_', 'arabic': 'ar_', 'arabo': 'ar_',
+    'hebrajski': 'he_', 'hebrew': 'he_', 'ebraico': 'he_',
+    'hindi': 'hi_',
+    'wietnamski': 'vi_', 'vietnamese': 'vi_', 'vietnamita': 'vi_',
+    'litewski': 'lt_', 'lithuanian': 'lt_', 'lituano': 'lt_',
+    'łotewski': 'lv_', 'latvian': 'lv_', 'lettone': 'lv_',
+    'estoński': 'et_', 'estonian': 'et_', 'estone': 'et_',
+}
+
+# Polish display name for each code, used to give newly-created `language`
+# rows a real name instead of the raw code (see `_ensure_language_exists`).
+LANGUAGE_CODE_TO_NAME = {
+    'pl_': 'polski', 'en_': 'angielski', 'de_': 'niemiecki', 'fr_': 'francuski',
+    'es_': 'hiszpański', 'it_': 'włoski', 'pt_': 'portugalski', 'ru_': 'rosyjski',
+    'uk_': 'ukraiński', 'nl_': 'niderlandzki', 'sv_': 'szwedzki', 'no_': 'norweski',
+    'da_': 'duński', 'fi_': 'fiński', 'cs_': 'czeski', 'sk_': 'słowacki',
+    'hu_': 'węgierski', 'ro_': 'rumuński', 'bg_': 'bułgarski', 'hr_': 'chorwacki',
+    'sr_': 'serbski', 'el_': 'grecki', 'tr_': 'turecki', 'zh_': 'chiński',
+    'ja_': 'japoński', 'ko_': 'koreański', 'ar_': 'arabski', 'he_': 'hebrajski',
+    'hi_': 'hindi', 'vi_': 'wietnamski', 'lt_': 'litewski', 'lv_': 'łotewski',
+    'et_': 'estoński',
+}
+
+
 class BookRepository:
     def __init__(self, connection: mariadb.connections.Connection):
         self.connection = connection
@@ -287,7 +340,8 @@ class BookRepository:
             cursor.execute("SELECT 1 FROM language WHERE id = ?", (language_id,))
             if cursor.fetchone():
                 return language_id
-            cursor.execute("INSERT INTO language (id, name) VALUES (?, ?)", (language_id, language_id))
+            language_name = LANGUAGE_CODE_TO_NAME.get(language_id, language_id)
+            cursor.execute("INSERT INTO language (id, name) VALUES (?, ?)", (language_id, language_name))
             self.connection.commit()
             return language_id
         finally:
@@ -300,18 +354,8 @@ class BookRepository:
 
         lang_str = str(language_data).strip().lower()
 
-        language_mapping = {
-            'polski': 'pl_',
-            'polish': 'pl_',
-            'angielski': 'en_',
-            'english': 'en_',
-            'włoski': 'it_',
-            'italian': 'it_',
-            'rosyjski': 'ru_',
-            'koreański': 'ko_'
-        }
-        if lang_str in language_mapping:
-            return language_mapping[lang_str]
+        if lang_str in LANGUAGE_MAPPING:
+            return LANGUAGE_MAPPING[lang_str]
 
         if len(lang_str) == 2:
             return lang_str + '_'
