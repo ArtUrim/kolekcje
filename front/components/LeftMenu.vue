@@ -43,16 +43,30 @@ const showAddBook = computed(() => {
   left: 0;
   top: 0;
   height: 100vh;
-  width: 250px;
+  width: 40px;
   background-color: #2c3e50;
   color: white;
-  padding: 2rem;
+  padding: 2rem 0;
   z-index: 1000;
+  overflow: hidden;
+  transition: width 0.3s ease;
+}
+
+.left-menu:hover {
+  width: 250px;
+  padding: 2rem;
 }
 
 .logo {
   margin-bottom: 3rem;
   text-align: center;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.left-menu:hover .logo {
+  opacity: 1;
 }
 
 .nav-links {
@@ -60,6 +74,13 @@ const showAddBook = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.left-menu:hover .nav-links {
+  opacity: 1;
 }
 
 .nav-links a {
@@ -74,10 +95,17 @@ const showAddBook = computed(() => {
 }
 
 @media (max-width: 768px) {
-  .left-menu {
+  .left-menu,
+  .left-menu:hover {
     width: 100%;
     height: auto;
     padding: 1rem;
+  }
+
+  .logo,
+  .nav-links {
+    opacity: 1;
+    white-space: normal;
   }
 
   .logo {

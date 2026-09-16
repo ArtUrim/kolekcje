@@ -13,7 +13,7 @@
 }
 
 .main-content {
-  margin-left: 250px;
+  margin-left: 40px;
 }
 
 @media (max-width: 768px) {
