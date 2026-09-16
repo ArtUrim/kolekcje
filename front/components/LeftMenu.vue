@@ -1,5 +1,10 @@
 <template>
   <nav class="left-menu">
+    <div class="menu-icon">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
     <div class="logo">
       <h2>Kolekcje</h2>
     </div>
@@ -57,6 +62,31 @@ const showAddBook = computed(() => {
   padding: 2rem;
 }
 
+.menu-icon {
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.menu-icon span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background-color: white;
+}
+
+.left-menu:hover .menu-icon {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .logo {
   margin-bottom: 3rem;
   text-align: center;
@@ -106,6 +136,10 @@ const showAddBook = computed(() => {
   .nav-links {
     opacity: 1;
     white-space: normal;
+  }
+
+  .menu-icon {
+    display: none;
   }
 
   .logo {
