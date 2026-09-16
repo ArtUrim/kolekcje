@@ -4,7 +4,7 @@
       <div class="hero-content">
 			<h1>{{ $t('welcome') }} <span class="highlight-text">kolekcje</span></h1>
          <p>{{ $t('shortDescription') }}</p>
-		   <NuxtLink to="/contact" class="cta-button">{{ $t('contact') }}</NuxtLink>
+		   <NuxtLink :to="localePath('/contact')" class="cta-button">{{ $t('contact') }}</NuxtLink>
       </div>
     </section>
 
@@ -12,6 +12,7 @@
 </template>
 
 <script setup>
+const localePath = useLocalePath()
 </script>
 
 <style scoped>

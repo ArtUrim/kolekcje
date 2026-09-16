@@ -4,14 +4,14 @@
       <h2>Kolekcje</h2>
     </div>
     <ul class="nav-links">
-		 <li><NuxtLink to="/">{{ $t('leftMenu.home') }}</NuxtLink></li>
-		 <li><NuxtLink to="/books">{{ $t('leftMenu.books') }}</NuxtLink></li>
+		 <li><NuxtLink :to="localePath('/')">{{ $t('leftMenu.home') }}</NuxtLink></li>
+		 <li><NuxtLink :to="localePath('/books')">{{ $t('leftMenu.books') }}</NuxtLink></li>
 		<li v-if="showAddBook">
-        <NuxtLink to="/addbook" class="small-text indent-left">
+        <NuxtLink :to="localePath('/addbook')" class="small-text indent-left">
 		  {{ $t('leftMenu.addBook') }}
 		  </NuxtLink>
       </li>
-		<li><NuxtLink to="/contact">{{ $t('contact') }}</NuxtLink></li>
+		<li><NuxtLink :to="localePath('/contact')">{{ $t('contact') }}</NuxtLink></li>
 	
 		<li> <NuxtLink :to="switchLocalePath('pl')">Polski</NuxtLink></li>
 		<li> <NuxtLink :to="switchLocalePath('en')">English</NuxtLink></li>
@@ -28,11 +28,12 @@
 const route = useRoute()
 
 const switchLocalePath = useSwitchLocalePath()
+const localePath = useLocalePath()
 
 const { userRole, triggerRestart } =  useNetworkAdmin();
 
 const showAddBook = computed(() => {
-  return ['/books', '/addbook'].includes(route.path)
+  return [localePath('/books'), localePath('/addbook')].includes(route.path)
 })
 </script>
 
