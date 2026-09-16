@@ -12,6 +12,7 @@ selenium = "*"
 flask = "*"
 jsonschema = "*"
 pytest = "*"
+babel = "*"
 
 [dev-packages]
 pytest = "*"

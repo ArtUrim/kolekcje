@@ -7,7 +7,77 @@ from jsonschema import validate, ValidationError
 
 import logging
 
+from babel import Locale, UnknownLocaleError
+
 from ..core.isbn import validate_isbn, normalize_isbn
+
+# UI languages whose names should be recognized as input (e.g. a book's
+# "language" field typed in Polish, English or Italian) and whose CLDR data
+# is used to name newly-created `language` rows.
+_SUPPORTED_UI_LOCALES = ('pl', 'en', 'it')
+
+# Locale used for the `name` column of rows this repository creates.
+_DEFAULT_NAME_LOCALE = 'pl'
+
+
+def _build_language_name_mapping(locale_codes):
+    """Build {lowercased language name: ISO 639-1 code} from Babel/CLDR data
+    for each given UI locale, instead of a hand-maintained dict."""
+    mapping = {}
+    for loc_code in locale_codes:
+        try:
+            locale = Locale.parse(loc_code)
+        except UnknownLocaleError:
+            continue
+        for code, name in locale.languages.items():
+            if len(code) == 2 and name:
+                mapping[name.strip().lower()] = code
+    return mapping
+
+
+def _build_language_code_to_name(locale_code):
+    """Build {ISO 639-1 code: display name} for a single locale, used to
+    name newly-created `language` rows."""
+    locale = Locale.parse(locale_code)
+    return {code: name for code, name in locale.languages.items() if len(code) == 2}
+
+
+# Maps language names (Polish, English, Italian, ...) to the 3-char code
+# stored in the `language` table (2-letter ISO 639-1 code + trailing
+# underscore, e.g. 'pl_'). Generated from Babel's CLDR data.
+LANGUAGE_MAPPING = {
+    name: f"{code}_" for name, code in _build_language_name_mapping(_SUPPORTED_UI_LOCALES).items()
+}
+
+# Display name (in _DEFAULT_NAME_LOCALE) for each code, used to give
+# newly-created `language` rows a real name instead of the raw code
+# (see `_ensure_language_exists`).
+LANGUAGE_CODE_TO_NAME = {
+    f"{code}_": name for code, name in _build_language_code_to_name(_DEFAULT_NAME_LOCALE).items()
+}
+
+
+def resolve_language_code(language_data: Any) -> str:
+    """Resolve a language name (Polish, English, Italian, ...) or an ISO
+    639-1/639-2 code into the 3-char code stored in the `language` table.
+    Shared by BookRepository (POST /books) and BookUpdateRepository
+    (PUT /books/<id>) so both accept the same language input."""
+    if not language_data or not str(language_data).strip():
+        return 'pl_'
+
+    lang_str = str(language_data).strip().lower()
+
+    if lang_str in LANGUAGE_MAPPING:
+        return LANGUAGE_MAPPING[lang_str]
+
+    if len(lang_str) == 2:
+        return lang_str + '_'
+
+    if len(lang_str) == 3:
+        return lang_str
+
+    return 'pl_'
+
 
 class BookRepository:
     def __init__(self, connection: mariadb.connections.Connection):
@@ -287,7 +357,8 @@ class BookRepository:
             cursor.execute("SELECT 1 FROM language WHERE id = ?", (language_id,))
             if cursor.fetchone():
                 return language_id
-            cursor.execute("INSERT INTO language (id, name) VALUES (?, ?)", (language_id, language_id))
+            language_name = LANGUAGE_CODE_TO_NAME.get(language_id, language_id)
+            cursor.execute("INSERT INTO language (id, name) VALUES (?, ?)", (language_id, language_name))
             self.connection.commit()
             return language_id
         finally:
@@ -295,31 +366,7 @@ class BookRepository:
 
     def _get_default_language(self, language_data: Any) -> str:
         """Get language code with validation"""
-        if not language_data or not str(language_data).strip():
-            return 'pl_'
-
-        lang_str = str(language_data).strip().lower()
-
-        language_mapping = {
-            'polski': 'pl_',
-            'polish': 'pl_',
-            'angielski': 'en_',
-            'english': 'en_',
-            'włoski': 'it_',
-            'italian': 'it_',
-            'rosyjski': 'ru_',
-            'koreański': 'ko_'
-        }
-        if lang_str in language_mapping:
-            return language_mapping[lang_str]
-
-        if len(lang_str) == 2:
-            return lang_str + '_'
-
-        if len(lang_str) == 3:
-            return lang_str
-
-        return 'pl_'
+        return resolve_language_code(language_data)
 
     def insert_book(self, book_data: Dict[str, Any]) -> int:
         """Insert book data into database with improved error handling and data processing"""
