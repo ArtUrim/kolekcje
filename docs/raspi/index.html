@@ -307,8 +307,8 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npx</span> nuxt build --prerender</span></code></pre></div>
 <p><em>Note: This command generates static assets inside the local <code>.output/public</code> (or <code>dist</code>) directory.</em></p></li>
 
-<li><p>Inside running *front* container:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npx</span>docker exec -w /front front npx nuxt build --prerender </span></code></pre></div>
+<li><p>Inside running <em>front</em> container:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex"></span>docker exec -w /front front npx nuxt build --prerender </span></code></pre></div>
 
 <li><p>Transfer these files to your Raspberry Pi:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the target directory on your Raspberry Pi</span></span>
