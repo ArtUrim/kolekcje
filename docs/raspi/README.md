@@ -31,6 +31,11 @@ npx nuxt build --prerender
 
 ```
 
+It's convenient to run this command inside a *front* container. To achieve this:
+
+```bash
+docker exec -w /front front npx nuxt build --prerender
+```
 
 *Note: This command generates static assets inside the local `.output/public` (or `dist`) directory.*
 3. Transfer these files to your Raspberry Pi:

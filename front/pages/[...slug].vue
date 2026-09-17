@@ -13,7 +13,7 @@
             </p>
           </v-card-text>
           <v-card-actions class="justify-center">
-            <v-btn color="primary" to="/">
+            <v-btn color="primary" :to="localePath('/')">
               Go Back Home
             </v-btn>
           </v-card-actions>
@@ -25,5 +25,6 @@
 
 <script setup>
 import { setResponseStatus } from '#app';
+const localePath = useLocalePath()
 setResponseStatus(404);
 </script>

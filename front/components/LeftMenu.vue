@@ -1,17 +1,22 @@
 <template>
   <nav class="left-menu">
+    <div class="menu-icon">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
     <div class="logo">
       <h2>Kolekcje</h2>
     </div>
     <ul class="nav-links">
-		 <li><NuxtLink to="/">{{ $t('leftMenu.home') }}</NuxtLink></li>
-		 <li><NuxtLink to="/books">{{ $t('leftMenu.books') }}</NuxtLink></li>
+		 <li><NuxtLink :to="localePath('/')">{{ $t('leftMenu.home') }}</NuxtLink></li>
+		 <li><NuxtLink :to="localePath('/books')">{{ $t('leftMenu.books') }}</NuxtLink></li>
 		<li v-if="showAddBook">
-        <NuxtLink to="/addbook" class="small-text indent-left">
+        <NuxtLink :to="localePath('/addbook')" class="small-text indent-left">
 		  {{ $t('leftMenu.addBook') }}
 		  </NuxtLink>
       </li>
-		<li><NuxtLink to="/contact">{{ $t('contact') }}</NuxtLink></li>
+		<li><NuxtLink :to="localePath('/contact')">{{ $t('contact') }}</NuxtLink></li>
 	
 		<li> <NuxtLink :to="switchLocalePath('pl')">Polski</NuxtLink></li>
 		<li> <NuxtLink :to="switchLocalePath('en')">English</NuxtLink></li>
@@ -28,11 +33,12 @@
 const route = useRoute()
 
 const switchLocalePath = useSwitchLocalePath()
+const localePath = useLocalePath()
 
 const { userRole, triggerRestart } =  useNetworkAdmin();
 
 const showAddBook = computed(() => {
-  return ['/books', '/addbook'].includes(route.path)
+  return [localePath('/books'), localePath('/addbook')].includes(route.path)
 })
 </script>
 
@@ -42,16 +48,55 @@ const showAddBook = computed(() => {
   left: 0;
   top: 0;
   height: 100vh;
-  width: 250px;
+  width: 40px;
   background-color: #2c3e50;
   color: white;
-  padding: 2rem;
+  padding: 2rem 0;
   z-index: 1000;
+  overflow: hidden;
+  transition: width 0.3s ease;
+}
+
+.left-menu:hover {
+  width: 250px;
+  padding: 2rem;
+}
+
+.menu-icon {
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.menu-icon span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background-color: white;
+}
+
+.left-menu:hover .menu-icon {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .logo {
   margin-bottom: 3rem;
   text-align: center;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.left-menu:hover .logo {
+  opacity: 1;
 }
 
 .nav-links {
@@ -59,6 +104,13 @@ const showAddBook = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.left-menu:hover .nav-links {
+  opacity: 1;
 }
 
 .nav-links a {
@@ -73,10 +125,21 @@ const showAddBook = computed(() => {
 }
 
 @media (max-width: 768px) {
-  .left-menu {
+  .left-menu,
+  .left-menu:hover {
     width: 100%;
     height: auto;
     padding: 1rem;
+  }
+
+  .logo,
+  .nav-links {
+    opacity: 1;
+    white-space: normal;
+  }
+
+  .menu-icon {
+    display: none;
   }
 
   .logo {
