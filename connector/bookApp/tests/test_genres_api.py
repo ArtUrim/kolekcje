@@ -197,3 +197,107 @@ class TestGenresAPI:
                 assert item['title'] == item['value']
                 # id should be an integer
                 assert isinstance(item['id'], int)
+
+
+class TestGenresStatsAPI:
+    """Test cases for the /genres/stats API endpoint."""
+
+    @pytest.fixture
+    def mock_db_connection(self):
+        """Create a mock database connection"""
+        mock_conn = Mock(spec=mariadb.connections.Connection)
+        mock_cursor = Mock()
+        mock_conn.cursor.return_value = mock_cursor
+        return mock_conn, mock_cursor
+
+    def test_get_genres_stats_success(self, client, mock_db_connection):
+        """Test successful retrieval of genre statistics"""
+        mock_conn, mock_cursor = mock_db_connection
+        mock_cursor.__iter__ = Mock(return_value=iter([
+            ('Fantasy', 1, 5),
+            ('Poetry', 2, 0),
+        ]))
+
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
+            response = client.get('/genres/stats')
+
+        assert response.status_code == 200
+        data = response.get_json()
+        assert len(data) == 2
+        assert data[0] == {'value': 'Fantasy', 'id': 1, 'count': 5}
+        assert data[1] == {'value': 'Poetry', 'id': 2, 'count': 0}
+
+        # Genres are counted through the bookGenres junction table
+        sql = mock_cursor.execute.call_args[0][0]
+        assert 'bookGenres' in sql
+
+    def test_get_genres_stats_database_connection_failed(self, client):
+        """Test handling of database connection failure"""
+        with patch('bookApp.core.db.get_db_connection', return_value=None):
+            response = client.get('/genres/stats')
+
+        assert response.status_code == 500
+        data = response.get_json()
+        assert 'error' in data
+
+    def test_get_genres_stats_database_error(self, client, mock_db_connection):
+        """Test handling of database query error"""
+        mock_conn, mock_cursor = mock_db_connection
+        mock_cursor.__iter__ = Mock(side_effect=Exception("Database query failed"))
+
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
+            response = client.get('/genres/stats')
+
+        assert response.status_code == 500
+        data = response.get_json()
+        assert 'error' in data
+
+
+class TestGenreBooksAPI:
+    """Test cases for the /genres/<id> API endpoint."""
+
+    @pytest.fixture
+    def mock_db_connection(self):
+        """Create a mock database connection"""
+        mock_conn = Mock(spec=mariadb.connections.Connection)
+        mock_cursor = Mock()
+        mock_conn.cursor.return_value = mock_cursor
+        return mock_conn, mock_cursor
+
+    def test_get_genre_books_success(self, client, mock_db_connection):
+        """Test successful retrieval of books for a genre"""
+        mock_conn, mock_cursor = mock_db_connection
+        mock_cursor.__iter__ = Mock(return_value=iter([
+            (1, 'Dune'),
+            (2, 'Foundation'),
+        ]))
+
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
+            response = client.get('/genres/1')
+
+        assert response.status_code == 200
+        data = response.get_json()
+        assert len(data) == 2
+        assert data[0] == {'id': 1, 'title': 'Dune'}
+        assert data[1] == {'id': 2, 'title': 'Foundation'}
+
+    def test_get_genre_books_empty_result(self, client, mock_db_connection):
+        """Test retrieval of books for a genre with no books"""
+        mock_conn, mock_cursor = mock_db_connection
+        mock_cursor.__iter__ = Mock(return_value=iter([]))
+
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
+            response = client.get('/genres/999')
+
+        assert response.status_code == 200
+        data = response.get_json()
+        assert data == []
+
+    def test_get_genre_books_database_connection_failed(self, client):
+        """Test handling of database connection failure"""
+        with patch('bookApp.core.db.get_db_connection', return_value=None):
+            response = client.get('/genres/1')
+
+        assert response.status_code == 500
+        data = response.get_json()
+        assert 'error' in data

@@ -12,6 +12,7 @@
     "home": "Home",
     "books": "Libri",
     "addBook": "Aggiungi",
+    "stats": "Statistiche",
 	 "shutdown": "Spegnere"
   },
 	"common": {
@@ -153,6 +154,23 @@
 		"labels": "Etichetta",
       "description": "Descrizione",
 		"note": "Note"
+	},
+	"stats": {
+		"title": "Statistiche",
+		"tabs": {
+			"labels": "Etichette",
+			"genres": "Generi",
+			"series": "Serie",
+			"languages": "Lingue"
+		},
+		"name": "Nome",
+		"occurrences": "Occorrenze",
+		"selectHint": "Seleziona un elemento a sinistra per vedere i libri",
+		"noData": "Nessun dato",
+		"error": "Errore durante il caricamento delle statistiche",
+		"retry": "Riprova",
+		"loadingBook": "Caricamento dei dettagli del libro...",
+		"bookLoadError": "Errore durante il caricamento dei dettagli del libro."
 	},
   "$vuetify": {
     "open": "apre",

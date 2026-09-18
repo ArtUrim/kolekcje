@@ -17,6 +17,7 @@ COPY pages ./pages
 COPY plugins ./plugins
 COPY public ./public
 COPY server ./server
+COPY stores ./stores
 COPY types ./types
 
 RUN npm run build

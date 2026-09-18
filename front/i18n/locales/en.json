@@ -12,6 +12,7 @@
     "home": "Home",
     "books": "Book",
     "addBook": "Add",
+    "stats": "Stats",
 	 "shutdown": "shutdown"
   },
 	"common": {
@@ -154,6 +155,23 @@
 		"labels": "Labels",
 		"description": "Description",
 		"note": "Notes"
+	},
+	"stats": {
+		"title": "Statistics",
+		"tabs": {
+			"labels": "Labels",
+			"genres": "Genres",
+			"series": "Series",
+			"languages": "Languages"
+		},
+		"name": "Name",
+		"occurrences": "Occurrences",
+		"selectHint": "Select an item on the left to see its books",
+		"noData": "No data",
+		"error": "Error loading statistics",
+		"retry": "Retry",
+		"loadingBook": "Loading book details...",
+		"bookLoadError": "Error loading book details."
 	},
 	"book": {
 		"messages": {

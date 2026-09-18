@@ -175,3 +175,80 @@ class TestLabelsAPI:
         assert 'id' in label
         assert label['title'] == label['value']
         assert label['id'] == 42
+
+
+class TestLabelsStatsAPI:
+    """Test cases for the /labels/stats API endpoint."""
+
+    def test_get_labels_stats_success(self, client, mock_db_connection):
+        mock_conn, mock_cursor = mock_db_connection
+        mock_cursor.__iter__ = Mock(return_value=iter([
+            ('Fiction', 1, 3),
+            ('Non-Fiction', 2, 0),
+        ]))
+
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
+            response = client.get('/labels/stats')
+
+        assert response.status_code == 200
+        data = response.get_json()
+        assert len(data) == 2
+        assert data[0] == {'value': 'Fiction', 'id': 1, 'count': 3}
+        assert data[1] == {'value': 'Non-Fiction', 'id': 2, 'count': 0}
+
+    def test_get_labels_stats_database_connection_failed(self, client):
+        with patch('bookApp.core.db.get_db_connection', return_value=None):
+            response = client.get('/labels/stats')
+
+        assert response.status_code == 500
+        data = response.get_json()
+        assert 'error' in data
+
+    def test_get_labels_stats_database_error(self, client, mock_db_connection):
+        mock_conn, mock_cursor = mock_db_connection
+        mock_cursor.__iter__ = Mock(side_effect=Exception("Database query failed"))
+
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
+            response = client.get('/labels/stats')
+
+        assert response.status_code == 500
+        data = response.get_json()
+        assert 'error' in data
+
+
+class TestLabelBooksAPI:
+    """Test cases for the /labels/<id> API endpoint."""
+
+    def test_get_label_books_success(self, client, mock_db_connection):
+        mock_conn, mock_cursor = mock_db_connection
+        mock_cursor.__iter__ = Mock(return_value=iter([
+            (1, 'Dune'),
+            (2, 'Foundation'),
+        ]))
+
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
+            response = client.get('/labels/1')
+
+        assert response.status_code == 200
+        data = response.get_json()
+        assert len(data) == 2
+        assert data[0] == {'id': 1, 'title': 'Dune'}
+
+    def test_get_label_books_empty_result(self, client, mock_db_connection):
+        mock_conn, mock_cursor = mock_db_connection
+        mock_cursor.__iter__ = Mock(return_value=iter([]))
+
+        with patch('bookApp.core.db.get_db_connection', return_value=mock_conn):
+            response = client.get('/labels/999')
+
+        assert response.status_code == 200
+        data = response.get_json()
+        assert data == []
+
+    def test_get_label_books_database_connection_failed(self, client):
+        with patch('bookApp.core.db.get_db_connection', return_value=None):
+            response = client.get('/labels/1')
+
+        assert response.status_code == 500
+        data = response.get_json()
+        assert 'error' in data

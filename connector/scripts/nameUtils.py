@@ -67,16 +67,10 @@ def translate_keys(data: dict) -> dict:
         if key in key_mapping:
             if key == "Data 1. wydania" or key == "Data 1. wyd. pol.":
                 if "firstPublishYear" in translated_data:
-                    logging.warning( f"{podwojony element pierwszego wydania" )
+                    logging.warning( "Duplicated first publish year element" )
                     continue
             translated_data[key_mapping[key]] = value
         else:
             logging.warning(f"Removing unspecified key: '{key}' with value: '{value}'")
-
-    if "publishYear" in translated_data:
-        year = int( translated_data["publishYear"].split('-')[0] )
-
-    if "firstPublishYear" in translated_data:
-        year = int( translated_data["firstPublishYear"].split('-')[0] )
 
     return translated_data
