@@ -4,10 +4,10 @@ services:
     image: mariadb
     restart: always
     environment:
-      - MARIADB_ROOT_PASSWORD=example
-      - MYSQL_USER=example
-      - MYSQL_PASSWORD=example
-      - MYSQL_DATABASE=katalog
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-example}
+      - MYSQL_USER=${DB_USER:-example}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-example}
+      - MYSQL_DATABASE=${DB_NAME:-katalog}
     volumes:
       - db-data:/var/lib/mysql
         #-./conf.d:/etc/mysql/conf.d
@@ -45,6 +45,8 @@ services:
     tty: true
     stdin_open: true
     working_dir: /pg
+    env_file:
+      - .env
     environment:
       - FLASK_APP=bookApp.app
     volumes:
