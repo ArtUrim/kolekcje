@@ -2,6 +2,7 @@
 from bs4 import BeautifulSoup
 import requests
 import json
+import re
 
 import nameUtils
 
@@ -67,6 +68,78 @@ class Opis:
         return dane
 
 
+def toYear( value ):
+    if value is None:
+        return None
+    m = re.search( r'\d{4}', str(value) )
+    return int( m.group(0) ) if m else None
+
+def toPages( value ):
+    if value is None:
+        return None
+    digits = re.sub( r'\D', '', str(value) )
+    return int( digits ) if digits else None
+
+FORMAT_ENUM = { 'unknown', 'hardback', 'hardcover', 'paperback', 'papier',
+                'ebook', 'e-book', 'jacket', 'notebook', '' }
+
+def toFormat( value ):
+    if not value:
+        return None
+    fmt = str(value).strip().lower()
+    if fmt in FORMAT_ENUM:
+        return fmt
+    if 'e-book' in fmt or 'ebook' in fmt:
+        return 'ebook'
+    if 'twarda' in fmt:
+        return 'hardback'
+    if 'miękka' in fmt or 'miekka' in fmt or 'broszura' in fmt:
+        return 'paperback'
+    return 'unknown'
+
+def toNamedEntity( title ):
+    return { 'id': None, 'title': str(title).strip(), 'isCustom': True }
+
+def toNamedEntities( value ):
+    if value is None:
+        return None
+    titles = value if isinstance( value, list ) else str(value).split(',')
+    return [ toNamedEntity( t ) for t in titles if str(t).strip() ]
+
+def toSchema( dane ):
+    transformers = {
+        'publishYear': toYear,
+        'firstPublishYear': toYear,
+        'pages': toPages,
+        'format': toFormat,
+        'author': toNamedEntities,
+        'publisher': toNamedEntities,
+        'genre': toNamedEntities,
+        'series': toNamedEntity,
+    }
+
+    book = {}
+    for key, value in dane.items():
+        if key in transformers:
+            v = transformers[key]( value )
+            if v:
+                book[key] = v
+        else:
+            book[key] = value
+
+    if 'publisher' in book:
+        kept = []
+        for e in book['publisher']:
+            e['title'] = re.sub( r'^wydawnictwo\b[:\s]*', '', e['title'], flags=re.IGNORECASE ).strip()
+            if e['title']:
+                kept.append( e )
+        if kept:
+            book['publisher'] = kept
+        else:
+            del book['publisher']
+
+    return book
+
 def oldMain():
     op = []
     op.append(Opis( 'https://lubimyczytac.pl/ksiazka/4883018/lkajace-ryby-i-inne-opowiadania' ) )
@@ -86,5 +159,5 @@ if __name__ == "__main__":
         bn = nameUtils.transform_name( nameUtils.get_basename_from_uri( b ) )
         print(bn)
         opis = Opis( b )
-        with open( bn + '.json', 'w' ) as fh:
-            json.dump( nameUtils.translate_keys(opis.dane), fh, indent=3 )
+        with open( bn + '.json', 'w', encoding='utf-8' ) as fh:
+            json.dump( toSchema( nameUtils.translate_keys(opis.dane) ), fh, indent=3, ensure_ascii=False )
