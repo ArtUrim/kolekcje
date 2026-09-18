@@ -635,6 +635,175 @@ paths:
         '500':
           $ref: '#/components/responses/DatabaseError'
 
+  /labels/stats:
+    get:
+      tags:
+        - Books.Labels
+      summary: Get label statistics
+      description: Retrieve every label together with the number of books it is assigned to
+      responses:
+        '200':
+          description: Successfully retrieved label statistics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LabelStats'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /labels/{labelId}:
+    get:
+      tags:
+        - Books.Labels
+      summary: Get books for a label
+      description: Retrieve the id and title of every book assigned to the given label
+      parameters:
+        - name: labelId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully retrieved books for the label
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LabelBook'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /series/stats:
+    get:
+      tags:
+        - Books.Series
+      summary: Get series statistics
+      description: Retrieve every series together with the number of books belonging to it
+      responses:
+        '200':
+          description: Successfully retrieved series statistics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SeriesStats'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /series/{seriesId}:
+    get:
+      tags:
+        - Books.Series
+      summary: Get books for a series
+      description: Retrieve the id and title of every book belonging to the given series
+      parameters:
+        - name: seriesId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully retrieved books for the series
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SeriesBook'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /genres/stats:
+    get:
+      tags:
+        - Books.Genres
+      summary: Get genre statistics
+      description: Retrieve every genre together with the number of books assigned to it
+      responses:
+        '200':
+          description: Successfully retrieved genre statistics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GenreStats'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /genres/{genreId}:
+    get:
+      tags:
+        - Books.Genres
+      summary: Get books for a genre
+      description: Retrieve the id and title of every book assigned to the given genre
+      parameters:
+        - name: genreId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully retrieved books for the genre
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GenreBook'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /languages/stats:
+    get:
+      tags:
+        - Books.Language
+      summary: Get language statistics
+      description: Retrieve every language together with the number of books written in it
+      responses:
+        '200':
+          description: Successfully retrieved language statistics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LanguageStats'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /language/{languageId}:
+    get:
+      tags:
+        - Books.Language
+      summary: Get books for a language
+      description: Retrieve the id and title of every book written in the given language
+      parameters:
+        - name: languageId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Language code (e.g. pl_, en_)
+      responses:
+        '200':
+          description: Successfully retrieved books for the language
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LanguageBook'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
 components:
   schemas:
     Book:
@@ -912,6 +1081,126 @@ components:
       example:
         id: 1
         name: "Award Winner"
+
+    LabelStats:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Label ID
+        value:
+          type: string
+          description: Label name
+        count:
+          type: integer
+          description: Number of books this label is assigned to
+      example:
+        id: 1
+        value: "Award Winner"
+        count: 4
+
+    LabelBook:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Book ID
+        title:
+          type: string
+          description: Book title
+      example:
+        id: 42
+        title: "Dune"
+
+    SeriesStats:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Series ID
+        value:
+          type: string
+          description: Series name
+        count:
+          type: integer
+          description: Number of books belonging to this series
+      example:
+        id: 1
+        value: "Harry Potter"
+        count: 7
+
+    SeriesBook:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Book ID
+        title:
+          type: string
+          description: Book title
+      example:
+        id: 42
+        title: "Harry Potter and the Philosopher's Stone"
+
+    GenreStats:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Genre ID
+        value:
+          type: string
+          description: Genre name
+        count:
+          type: integer
+          description: Number of books assigned to this genre
+      example:
+        id: 1
+        value: "Fantasy"
+        count: 5
+
+    GenreBook:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Book ID
+        title:
+          type: string
+          description: Book title
+      example:
+        id: 42
+        title: "Dune"
+
+    LanguageStats:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Language code
+        value:
+          type: string
+          description: Language name
+        count:
+          type: integer
+          description: Number of books written in this language
+      example:
+        id: "pl_"
+        value: "polski"
+        count: 12
+
+    LanguageBook:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Book ID
+        title:
+          type: string
+          description: Book title
+      example:
+        id: 42
+        title: "Solaris"
 
     BookInfo:
       type: object
@@ -1224,6 +1513,8 @@ tags:
     description: Operations related to genres
   - name: Books.Labels
     description: Operations related to labels
+  - name: Books.Language
+    description: Operations related to book languages
   - name: Authors
     description: Operations related to authors
   - name: Publishers
