@@ -14,10 +14,10 @@
 		<v-card-text>
 
 			<!-- ── Error state ───────────────────────────────────────────── -->
-			<div v-if="loadError" class="text-center py-4">
+			<div v-if="loadError[tab]" class="text-center py-4">
 				<v-icon color="error" size="48">mdi-alert-circle</v-icon>
 				<p class="mt-2 text-error">{{ $t('stats.error') }}</p>
-				<v-btn color="primary" variant="outlined" @click="fetchAll">
+				<v-btn color="primary" variant="outlined" @click="fetchCategory(tab)">
 					{{ $t('stats.retry') }}
 				</v-btn>
 			</div>
@@ -27,33 +27,33 @@
 				<v-window-item value="labels">
 					<StatsCategory
 						:items="labelItems"
-						:loading="loading"
+						:loading="loading.labels"
 						:load-books="loadLabelBooks"
-						@book-deleted="fetchAll"
+						@book-deleted="fetchCategory('labels')"
 					/>
 				</v-window-item>
 				<v-window-item value="genres">
 					<StatsCategory
 						:items="genreItems"
-						:loading="loading"
+						:loading="loading.genres"
 						:load-books="loadGenreBooks"
-						@book-deleted="fetchAll"
+						@book-deleted="fetchCategory('genres')"
 					/>
 				</v-window-item>
 				<v-window-item value="series">
 					<StatsCategory
 						:items="seriesItems"
-						:loading="loading"
+						:loading="loading.series"
 						:load-books="loadSeriesBooks"
-						@book-deleted="fetchAll"
+						@book-deleted="fetchCategory('series')"
 					/>
 				</v-window-item>
 				<v-window-item value="languages">
 					<StatsCategory
 						:items="languageItems"
-						:loading="loading"
+						:loading="loading.languages"
 						:load-books="loadLanguageBooks"
-						@book-deleted="fetchAll"
+						@book-deleted="fetchCategory('languages')"
 					/>
 				</v-window-item>
 			</v-window>
@@ -78,8 +78,24 @@ interface CatalogStat {
 
 const tab = ref<StatsTab>('labels')
 
-const loading = ref(false)
-const loadError = ref(false)
+const loading = reactive<Record<StatsCatalog, boolean>>({
+	labels: false,
+	genres: false,
+	series: false,
+	languages: false,
+})
+const loadError = reactive<Record<StatsCatalog, boolean>>({
+	labels: false,
+	genres: false,
+	series: false,
+	languages: false,
+})
+const loaded = reactive<Record<StatsCatalog, boolean>>({
+	labels: false,
+	genres: false,
+	series: false,
+	languages: false,
+})
 const catalogStats = ref<Record<StatsCatalog, CatalogStat[]>>({
 	labels: [],
 	genres: [],
@@ -88,33 +104,41 @@ const catalogStats = ref<Record<StatsCatalog, CatalogStat[]>>({
 })
 
 // ── Data fetching (client side only, so prerender needs no backend) ────────
+// Each catalog's stats are fetched lazily, only the first time its tab is
+// shown, instead of pulling every catalog up front.
 
-const fetchAll = async () => {
-	loading.value = true
-	loadError.value = false
+const STATS_PATH: Record<StatsCatalog, string> = {
+	labels: '/labels/stats',
+	genres: '/genres/stats',
+	series: '/series/stats',
+	languages: '/languages/stats',
+}
+
+const fetchCategory = async (catalog: StatsCatalog) => {
+	loading[catalog] = true
+	loadError[catalog] = false
 
 	try {
-		const [labelStatsResponse, genreStatsResponse, seriesStatsResponse, languageStatsResponse] =
-			await Promise.all([
-				useAPI<CatalogStat[]>('/labels/stats'),
-				useAPI<CatalogStat[]>('/genres/stats'),
-				useAPI<CatalogStat[]>('/series/stats'),
-				useAPI<CatalogStat[]>('/languages/stats'),
-			])
-
-		catalogStats.value = {
-			labels: labelStatsResponse ?? [],
-			genres: genreStatsResponse ?? [],
-			series: seriesStatsResponse ?? [],
-			languages: languageStatsResponse ?? [],
-		}
+		const response = await useAPI<CatalogStat[]>(STATS_PATH[catalog])
+		catalogStats.value[catalog] = response ?? []
+		loaded[catalog] = true
 	} catch (err) {
 		console.error('Error fetching statistics:', err)
-		loadError.value = true
+		loadError[catalog] = true
 	} finally {
-		loading.value = false
+		loading[catalog] = false
 	}
 }
+
+watch(
+	tab,
+	(newTab) => {
+		if (!loaded[newTab] && !loading[newTab]) {
+			fetchCategory(newTab)
+		}
+	},
+	{ immediate: true }
+)
 
 // Fetch the books of a single catalog entry on demand instead of pulling
 // every book up front. Books of a language live under /language/{id}
@@ -139,8 +163,6 @@ const loadLabelBooks = loadCatalogBooks('labels')
 const loadGenreBooks = loadCatalogBooks('genres')
 const loadSeriesBooks = loadCatalogBooks('series')
 const loadLanguageBooks = loadCatalogBooks('languages')
-
-onMounted(fetchAll)
 
 // ── Statistics computation ──────────────────────────────────────────────────
 
