@@ -11,9 +11,12 @@
     <ul class="nav-links">
 		 <li><NuxtLink :to="localePath('/')">{{ $t('leftMenu.home') }}</NuxtLink></li>
 		 <li><NuxtLink :to="localePath('/books')">{{ $t('leftMenu.books') }}</NuxtLink></li>
-		<li v-if="showAddBook">
+		<li v-if="showBooksSubpages">
         <NuxtLink :to="localePath('/addbook')" class="small-text indent-left">
 		  {{ $t('leftMenu.addBook') }}
+		  </NuxtLink> <br/>
+        <NuxtLink :to="localePath('/stats')" class="small-text indent-left">
+		  {{ $t('leftMenu.stats') }}
 		  </NuxtLink>
       </li>
 		<li><NuxtLink :to="localePath('/contact')">{{ $t('contact') }}</NuxtLink></li>
@@ -37,8 +40,8 @@ const localePath = useLocalePath()
 
 const { userRole, triggerRestart } =  useNetworkAdmin();
 
-const showAddBook = computed(() => {
-  return [localePath('/books'), localePath('/addbook')].includes(route.path)
+const showBooksSubpages = computed(() => {
+  return [localePath('/books'), localePath('/addbook'), localePath('/stats')].includes(route.path)
 })
 </script>
 

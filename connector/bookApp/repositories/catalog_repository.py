@@ -30,6 +30,40 @@ class CatalogRepository:
         except mariadb.Error as e:
             raise Exception(f"Database error: {str(e)}")
 
+    def get_stats(self, relation_table: str, relation_fk: str, book_id_field: str) -> List[Dict]:
+        try:
+            cur = self.connection.cursor()
+            sql = (
+                f"SELECT t.{self.name_field} as value, t.id, COUNT(r.{book_id_field}) as count "
+                f"FROM {self.table_name} t "
+                f"LEFT JOIN {relation_table} r ON r.{relation_fk} = t.id "
+                f"GROUP BY t.id, t.{self.name_field} "
+                f"ORDER BY count DESC, t.{self.name_field} ASC"
+            )
+            cur.execute(sql)
+
+            return [{"id": row[1], "value": row[0], "count": row[2]} for row in cur]
+
+        except mariadb.Error as e:
+            raise Exception(f"Database error: {str(e)}")
+
+    def get_books_by_item(
+        self, item_id: int, relation_table: str, relation_fk: str, book_id_field: str
+    ) -> List[Dict]:
+        try:
+            cur = self.connection.cursor()
+            sql = (
+                "SELECT b.id, b.title FROM Books b "
+                f"JOIN {relation_table} r ON r.{book_id_field} = b.id "
+                f"WHERE r.{relation_fk} = ?"
+            )
+            cur.execute(sql, [item_id])
+
+            return [{"id": row[0], "title": row[1]} for row in cur]
+
+        except mariadb.Error as e:
+            raise Exception(f"Database error: {str(e)}")
+
     def add_item(self, data: Dict[str, str]) -> None:
         try:
             if not all(key in data for key in ['value', 'title']):

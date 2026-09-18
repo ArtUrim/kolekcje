@@ -6,6 +6,7 @@
 		"home": "Główna",
 		"books": "Książki",
 		"addBook": "Dodaj",
+		"stats": "Statystyki",
 		"shutdown": "Wyłącz"
 	},
 	"common": {
@@ -148,6 +149,23 @@
 		"labels": "Etykiety",
 		"description": "Opis",
 		"note": "Uwagi"
+	},
+	"stats": {
+		"title": "Statystyki",
+		"tabs": {
+			"labels": "Etykiety",
+			"genres": "Gatunki",
+			"series": "Serie",
+			"languages": "Języki"
+		},
+		"name": "Nazwa",
+		"occurrences": "Wystąpienia",
+		"selectHint": "Wybierz pozycję z listy po lewej, aby zobaczyć książki",
+		"noData": "Brak danych",
+		"error": "Błąd podczas ładowania statystyk",
+		"retry": "Ponów",
+		"loadingBook": "Ładowanie szczegółów książki...",
+		"bookLoadError": "Błąd podczas ładowania szczegółów książki."
 	},
   "input": {
     "clear": "wyczyść"
