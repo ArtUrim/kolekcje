@@ -183,8 +183,6 @@ To verify that your deployment was successful:
 
 ---
 
----
-
 ## Administrative Tasks
 
 The following administrative tasks are executed directly on the machine hosting the **kolekcje** application:
@@ -228,3 +226,4 @@ To launch the Adminer web application for database administration
 ```bash
 docker run --rm --network=kolekcje_katalog-net -p 8080:8080 adminer
 ```
+
