@@ -180,3 +180,50 @@ To verify that your deployment was successful:
 
 * Navigate to `[http://moode.lan](http://moode.lan)` (or your Raspberry Pi IP) to verify moode.audio is operating normally.
 * Navigate to `[http://kolekcje.lan](http://kolekcje.lan)` to verify that your static Nuxt frontend is rendering and communicating with the backend container correctly.
+
+---
+
+## Administrative Tasks
+
+The following administrative tasks are executed directly on the machine hosting the **kolekcje** application:
+
+### 1. Update Connector Image
+
+To update the *connector* image based on a new version of the source code downloaded from the repository:
+
+```bash
+tar xzf bookApp.tgz -C ${HOME}/repos/kolekcje/connector/
+pushd ${HOME}/repos/kolekcje
+docker build -t arturim13/katalog-connector:raspi ./connector/
+docker compose down
+docker compose up
+```
+
+### 2. Update static *frontend*
+
+To update the static front page (built using the `npx nuxt build --prerender` command described above) and packed the dir `${REPO_HOME}/front/.output/public`:
+
+```bash
+pushd /kolekcje/front/public/
+tar czf ${HOME}/kolOld.tgz *
+sudo rm -rf *
+sudo tar xzf ${HOME}/kol.tgz
+```
+
+### 3. DB administration
+
+#### backup
+
+```bash
+source ${HOME}/repos/kolekcje/.env
+docker exec mariadb mariadb-dump -u "${DB_USER}" -p"${DB_PASSWORD}" katalog > db.sql
+```
+
+#### Run MariaDB Adminer WebApp
+
+To launch the Adminer web application for database administration
+
+```bash
+docker run --rm --network=kolekcje_katalog-net -p 8080:8080 adminer
+```
+
